@@ -1,11 +1,14 @@
-import 'dart:io';
+
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:just_audio/just_audio.dart';
+
+
 import 'package:on_audio_query/on_audio_query.dart';
 class Audio extends StatefulWidget {
 
    final SongModel songModel;
-   Audio({super.key, required this.songModel, });
+   final AudioPlayer audioPlayer;
+   Audio({super.key, required this.songModel, required this.audioPlayer, });
 
   @override
   State<Audio> createState() => _AudioState();
@@ -13,21 +16,17 @@ class Audio extends StatefulWidget {
 
 class _AudioState extends State<Audio> {
   final AudioPlayer _audioPlayer = AudioPlayer();
-
+  bool isPlaying = false;
 
   void playSongs() async {
-
     try {
-
       Uri uri = Uri.parse(widget.songModel.uri!);
 
       if (uri.scheme == 'content') {
-        // String filePath = await OnAudioQuery().getPath(widget.songModel.);
-        // await _audioPlayer.setFilePath(filePath);
       } else {
-        await _audioPlayer.setUrl(uri.toString());
+        await _audioPlayer.setSourceUrl(uri.toString());
       }
-      await _audioPlayer.play();
+      await _audioPlayer.play(AssetSource(uri.path));
     } catch (e) {
       print(e.toString());
     }
@@ -51,6 +50,15 @@ class _AudioState extends State<Audio> {
                 color: Colors.blue,
                 child: IconButton(
                     onPressed:() async {
+                      Uri uri= Uri.parse(widget.songModel.uri!);
+                      if(isPlaying){
+                        widget.audioPlayer.pause();
+                      }else {
+                        widget.audioPlayer.play(DeviceFileSource(uri.path));
+                      }
+                      setState(() {
+                        isPlaying=!isPlaying;
+                      });
                     } ,
                     icon: Icon(Icons.voice_chat,color: Colors.black,)),
               ),

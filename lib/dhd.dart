@@ -1,9 +1,14 @@
 
+import 'dart:io';
+
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:just_audio/just_audio.dart';
+
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+
 
 import 'audio.dart';
 
@@ -23,32 +28,41 @@ class _ListMusicState extends State<ListMusic> {
   void initState() {
     super.initState();
     _getSongs();
+
   }
 bool isPlaying = false;
-  void _getSongs() async {
-    if (!kIsWeb) {
-      bool hasPermission = await onAudioQuery.permissionsStatus();
-      if (hasPermission) {
-        songs = await onAudioQuery.querySongs();
-        Future<List<String>> path=onAudioQuery.queryAllPath();
-        print(path);
-        setState(() {});
-      } else {
-        await onAudioQuery.permissionsRequest();
-      }
+  Future<void> _getSongs() async {
+    var status = await Permission.storage.status;
+    if (!status.isGranted) {
+      await Permission.storage.request();
+    }
+    final appDocDir = await getApplicationDocumentsDirectory();
+    final musicDir = Directory('${appDocDir.path}/Music');
+    if (!await musicDir.exists()) {
+      await musicDir.create();
+    }
+
+// Check if musicDir is not null before using the listSync method
+    if (musicDir != null) {
+      final files = musicDir.listSync(recursive: true);
+      final songss = files.where((file) {
+        print('File path: ${file.path}'); // Add this line to print the file path
+        return file.path.endsWith('.mp3');
+      }).toList();
+      print("ffdfgdgfd$songss");
+      setState(() {
+        songs = songss.cast<SongModel>();
+      });
     }
   }
  playSong(String? uri){
     try{
       Uri.parse(uri!);
-      audioPlayer.play();
+      // audioPlayer.play();
       print("play");
       isPlaying=true;
     }on Exception{
-
     }
-
-
  }
   @override
   Widget build(BuildContext context) {
@@ -78,7 +92,8 @@ bool isPlaying = false;
               onTap: (){
                 Navigator.push(
                     context, MaterialPageRoute(
-                    builder: (context)=>Audio(songModel:songs[index],)));
+                    builder: (context)=>Audio(songModel:item.data![index],audioPlayer: audioPlayer
+                      ,)));
               },
             );
           },
