@@ -115,9 +115,9 @@ String pathss="";
               ),
               IconButton(
                   onPressed:(){
-                    Navigator.push(
-                        context, MaterialPageRoute(
-                        builder: (context)=>Audio(path: filepathVoice,)));
+                    // Navigator.push(
+                    //     context, MaterialPageRoute(
+                    //     builder: (context)=>Audio(songModel: songs[index],)));
                   } , icon: Icon(Icons.arrow_back))
             ],
           ),

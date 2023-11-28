@@ -1,7 +1,7 @@
-import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -18,58 +18,71 @@ class _ListMusicState extends State<ListMusic> {
   final OnAudioQuery onAudioQuery = OnAudioQuery();
   List<SongModel> songs = [];
 
+ final AudioPlayer audioPlayer=AudioPlayer();
   @override
   void initState() {
     super.initState();
-
     _getSongs();
   }
-
+bool isPlaying = false;
   void _getSongs() async {
-    // Check if the plugin was granted the necessary permissions.
     if (!kIsWeb) {
       bool hasPermission = await onAudioQuery.permissionsStatus();
-
       if (hasPermission) {
-        // Retrieve a list of songs.
-
         songs = await onAudioQuery.querySongs();
-        print(songs);
-
+        Future<List<String>> path=onAudioQuery.queryAllPath();
+        print(path);
         setState(() {});
       } else {
-        // Request the necessary permissions.
-
         await onAudioQuery.permissionsRequest();
       }
     }
   }
+ playSong(String? uri){
+    try{
+      Uri.parse(uri!);
+      audioPlayer.play();
+      print("play");
+      isPlaying=true;
+    }on Exception{
 
+    }
+
+
+ }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blue,
       ),
-      body: ListView.builder(
-        itemCount: songs.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: GestureDetector(
-                onTap: (){
-                  Navigator.push(
-                      context, MaterialPageRoute(
-                      builder: (context)=>Audio(path: null,makan: songs[index].data,)));
+      body: FutureBuilder<List<SongModel>>(
+        future: onAudioQuery.querySongs(
+          sortType: null,
+          orderType: OrderType.ASC_OR_SMALLER,
+            uriType: UriType.EXTERNAL,
+          ignoreCase: true
+        ),
+        builder:(context, item){ 
 
-                },
-                child: Text(songs[index].data!)),
-            subtitle: Text(songs[index].displayName),
-            leading: QueryArtworkWidget(
-                id: songs[index].id,
-                type: ArtworkType.AUDIO
-            ),
-          );
-        },
+          return ListView.builder(
+          itemCount: songs.length,
+          itemBuilder: (context, index) {
+            return ListTile(
+              title: Text(songs[index].data!),
+              subtitle: Text(songs[index].displayName),
+              leading: QueryArtworkWidget(
+                  id: songs[index].id,
+                  type: ArtworkType.AUDIO
+              ),
+              onTap: (){
+                Navigator.push(
+                    context, MaterialPageRoute(
+                    builder: (context)=>Audio(songModel:songs[index],)));
+              },
+            );
+          },
+        );}
       ),
     );
   }
