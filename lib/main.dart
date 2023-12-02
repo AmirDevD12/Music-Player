@@ -1,5 +1,7 @@
 
+import 'package:first_project/bloc/play_song_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'list_song.dart';
 
@@ -20,7 +22,9 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home:  ListMusic()
+      home: BlocProvider(
+        create: (BuildContext context) =>PlaySongBloc(),
+        child: ListMusic(),)
     );
   }
 }

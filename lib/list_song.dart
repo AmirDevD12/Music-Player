@@ -1,7 +1,10 @@
 
+import 'package:first_project/bloc/newSong/play_new_song_bloc.dart';
+import 'package:first_project/bloc/play_song_bloc.dart';
 import 'package:first_project/screen/playSong_page.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'model/songs_model.dart';
@@ -62,8 +65,17 @@ bool isPlaying = false;
                         // playSong(item.data![index].uri);
                         Navigator.push(
                             context, MaterialPageRoute(
-                            builder: (context)=>PlayPage(songModel:snapshot.data![index],audioPlayer: audioPlayer,
-                            )));
+                            builder: (context)=>MultiBlocProvider(
+
+
+
+                            providers:[BlocProvider(create: (context)=>PlaySongBloc()),
+                            BlocProvider(create: (context)=>PlayNewSongBloc())
+                            ],
+                            child: PlayPage (songModel: snapshot.data![index],audioPlayer: audioPlayer),
+                            )
+
+                            ));
                       },
                     );
                   },
