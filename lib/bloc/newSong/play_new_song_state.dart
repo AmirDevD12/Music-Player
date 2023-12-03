@@ -12,3 +12,4 @@ class NewSongState extends PlayNewSongState{
 
   NewSongState(this.id, this.name, this.artist,this.index);
 }
+class PauseAnimationState extends PlayNewSongState{}

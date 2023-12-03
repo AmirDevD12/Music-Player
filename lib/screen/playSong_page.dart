@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:first_project/bloc/newSong/play_new_song_bloc.dart';
 import 'package:first_project/model/songs_model.dart';
 import 'package:flutter/material.dart';
@@ -18,16 +20,43 @@ class PlayPage extends StatefulWidget {
   State<PlayPage> createState() => _PlayPageState();
 }
 
-class _PlayPageState extends State<PlayPage> {
-
+class _PlayPageState extends State<PlayPage>  with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _animation;
   Duration duration = const Duration();
   Duration position = const Duration();
   bool isPlaying = false;
+  bool _isAnimating= false;
 
   @override
   void initState() {
-    // TODO: implement initState
     playSong();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 30),
+    )..repeat();
+    _animation = Tween<double>(begin: 0, end: 5 ).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.linear,
+      ),
+    );
+  }
+  void _toggleAnimation() {
+      _isAnimating = !_isAnimating;
+      if (_isAnimating) {
+        _animationController.repeat();
+        BlocProvider.of<PlayNewSongBloc>(context).add(PauseAnimationEvent());
+      } else {
+        _animationController.stop();
+        BlocProvider.of<PlayNewSongBloc>(context).add(PauseAnimationEvent());
+      }
+      BlocProvider.of<PlayNewSongBloc>(context).add(PauseAnimationEvent());
+  }
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 
   playSong() {
@@ -117,11 +146,11 @@ class _PlayPageState extends State<PlayPage> {
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Transform.rotate(
-                            angle: 360 * position.inSeconds.toDouble() / 10,
+                          RotationTransition(
+                            turns: _animation,
                             child: QueryArtworkWidget(
                                 artworkBorder:
-                                BorderRadius.all(Radius.circular(100)),
+                                const BorderRadius.all(Radius.circular(100)),
                                 artworkWidth: 200,
                                 artworkHeight: 200,
                                 id: state is NewSongState
@@ -238,6 +267,7 @@ class _PlayPageState extends State<PlayPage> {
                         builder: (context, state) {
                           return IconButton(
                               onPressed: () {
+                                _toggleAnimation();
                                 if (isPlaying) {
                                   widget.audioPlayer.pause();
                                 } else {
@@ -254,29 +284,7 @@ class _PlayPageState extends State<PlayPage> {
                               ));
                         },
                       ),
-                      // BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
-                      //   builder: (context, state) {
-                      //
-                      //     if(state is NewSongState){
-                      //       number=state.index;
-                      //     }
-                      //     return IconButton(
-                      //         onPressed: () {
-                      //           number++;
-                      //           Future<List<SongModel>> songha=SongList().getSongs();
-                      //
-                      //             widget.audioPlayer.seekToPrevious();
-                      //           BlocProvider.of<PlaySongBloc>(context)
-                      //               .add(PausePlayEvent());
-                      //
-                      //         },
-                      //         icon: Icon(
-                      //           Icons.skip_next,
-                      //           size: 40,
-                      //           color: Colors.white,
-                      //         ));
-                      //   },
-                      // ),
+
                       BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
                         builder: (context, state) {
                           if(state is NewSongState){
