@@ -2,7 +2,6 @@
 import 'package:first_project/bloc/newSong/play_new_song_bloc.dart';
 import 'package:first_project/bloc/play_song_bloc.dart';
 import 'package:first_project/screen/playSong_page.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
@@ -24,6 +23,7 @@ class _ListMusicState extends State<ListMusic> {
   @override
   void initState() {
     super.initState();
+
   }
 bool isPlaying = false;
 
@@ -32,7 +32,7 @@ bool isPlaying = false;
       audioPlayer.setAudioSource(
         AudioSource.uri(Uri.parse(uri!))
       );
-      Uri.parse(uri!);
+      Uri.parse(uri);
       audioPlayer.play();
       print("play");
       isPlaying=true;
