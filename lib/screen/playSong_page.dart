@@ -10,25 +10,58 @@ import '../bloc/play_song_bloc.dart';
 class PlayPage extends StatefulWidget {
   final SongModel songModel;
   final AudioPlayer audioPlayer;
-
+  final int? length;
   const PlayPage(
-      {super.key, required this.songModel, required this.audioPlayer});
+      {super.key, required this.songModel, required this.audioPlayer, required this.length});
 
   @override
   State<PlayPage> createState() => _PlayPageState();
 }
 
-class _PlayPageState extends State<PlayPage> {
-
+class _PlayPageState extends State<PlayPage> with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _animation;
   Duration duration = const Duration();
   Duration position = const Duration();
   bool isPlaying = false;
+  bool _isAnimating= false;
   SongList songList = SongList();
-
+  String title = "";
+  String disName = "";
+  double length =0;
   @override
   void initState() {
     // TODO: implement initState
+    length=widget.length!.toDouble();
+    length=length*200;
     newSong(widget.songModel.uri);
+
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 30),
+    )..repeat();
+    _animation = Tween<double>(begin: 0, end: 5 ).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.linear,
+      ),
+    );
+  } @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+  void _toggleAnimation() {
+    _isAnimating = !_isAnimating;
+    if (_isAnimating) {
+      _animationController.stop();
+      BlocProvider.of<PlayNewSongBloc>(context).add(PauseAnimationEvent());
+
+    } else {
+      _animationController.repeat();
+      BlocProvider.of<PlayNewSongBloc>(context).add(PauseAnimationEvent());
+    }
+    BlocProvider.of<PlayNewSongBloc>(context).add(PauseAnimationEvent());
   }
 
   newSong(String? uri) {
@@ -93,24 +126,31 @@ class _PlayPageState extends State<PlayPage> {
                   Transform.rotate(
                     angle:  position.inSeconds.toDouble(),
                     child: BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
-
-
-
-
-                      builder: (context, state) {
+                      builder: (context, state) {bool isId=true;
                         if (state is NewSongState) {
                           id = state.id;
+
+                          if (id==0) {
+                            isId=false;
+                          }else {isId= true;}
                         }
 
-                        return QueryArtworkWidget(
-                            artworkBorder:
-                            BorderRadius.all(Radius.circular(100)),
-                            artworkWidth: 200,
-                            artworkHeight: 200,
-                            id: state is NewSongState
-                                ? id
-                                : widget.songModel.id,
-                            type: ArtworkType.AUDIO);
+                        return RotationTransition(
+                          turns: _animation,
+                          child:isId? QueryArtworkWidget(
+                              artworkBorder:
+                              BorderRadius.all(Radius.circular(100)),
+                              artworkWidth: 200,
+                              artworkHeight: 200,
+                              id: state is NewSongState ||state is PauseAnimationState&&id!=0
+                                  ? id
+                                  : widget.songModel.id,
+                              type: ArtworkType.AUDIO):
+                          RotationTransition(
+
+                              turns: _animation,
+                              child: Image.asset("assets/icon/vinyl-record.png",width: 80,height: 80,)),
+                        );
                       },
                     ),
                   )
@@ -123,27 +163,26 @@ class _PlayPageState extends State<PlayPage> {
               width: 300,
               child: BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
                 builder: (context, state) {
-                  String title = "";
-                  String disName = "";
+
                   if (state is NewSongState) {
                     title = state.name;
                     disName = state.artist;
                   }
                   return ListTile(
                     title: Text(
-                      state is NewSongState
+                      state is NewSongState||state is PauseAnimationState&&id!=0
                           ? title
                           : widget.songModel.title,
-                      style: TextStyle(
+                      style: const TextStyle(
                           color: Colors.white,
                           fontSize: 20,
                           fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text(
-                      state is NewSongState
+                      state is NewSongState ||state is PauseAnimationState&&id!=0
                           ? disName
                           : widget.songModel.displayNameWOExt,
-                      style: TextStyle(
+                      style: const TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 18),
                     ),
                   );
@@ -153,7 +192,7 @@ class _PlayPageState extends State<PlayPage> {
             Padding(
               padding: const EdgeInsets.only(left: 20),
               child: IconButton(
-                  onPressed: () {}, icon: Icon(Icons.monitor_heart)),
+                  onPressed: () {}, icon: Image.asset("assets/icon/like.png",width: 25,height: 25,color: Colors.white,)),
             )
           ],
         ),
@@ -181,9 +220,7 @@ class _PlayPageState extends State<PlayPage> {
             )),
           ],
         ),
-        const SizedBox(
-          height: 10,
-        ),
+
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 0),
           child: BlocBuilder<PlaySongBloc, PlaySongState>(
@@ -191,14 +228,14 @@ class _PlayPageState extends State<PlayPage> {
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(position.toString().split(".")[0]),
-                  Text(duration.toString().split(".")[0]),
+                  Text(position.toString().split(".")[0],style: const TextStyle(color: Colors.white),),
+                  Text(duration.toString().split(".")[0],style: const TextStyle(color: Colors.white),),
                 ],
               );
             },
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 20,
         ),
         Row(
@@ -206,39 +243,32 @@ class _PlayPageState extends State<PlayPage> {
           children: [
             IconButton(
                 onPressed: () {},
-                icon: const Icon(
-                  Icons.repeat,
-                  size: 40,
-                  color: Colors.white,
-                )),
+                icon:Image.asset("assets/icon/shuffle.png",width: 35,height: 35,color: Colors.white,) ),
             BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
               builder: (context, state) {
                 int num = 0;
                 if (state is NewSongState) {
-                  num = state.index;
+                  number = state.index;
                 }
                 return IconButton(
                     onPressed: () async {
                       List<SongModel> songs = await songList.getSongs();
-                      newSong(songs[num - 1].uri);
+                      newSong(songs[number - 1].uri);
                       BlocProvider.of<PlayNewSongBloc>(context).add(
                           NewSongEvent(
                               songs[number - 1].id,
                               songs[number - 1].title,
                               songs[number - 1].displayName,
-                              num - 1));
+                              number - 1));
                     },
-                    icon: const Icon(
-                      Icons.skip_next,
-                      size: 45.0,
-                      color: Colors.white,
-                    ));
+                    icon: Image.asset("assets/icon/music-player(1).png",width: 35,height: 35,color: Colors.white,));
               },
             ),
             BlocBuilder<PlaySongBloc, PlaySongState>(
               builder: (context, state) {
                 return IconButton(
                     onPressed: () {
+                      _toggleAnimation();
                       if (isPlaying) {
                         widget.audioPlayer.pause();
                       } else {
@@ -250,7 +280,7 @@ class _PlayPageState extends State<PlayPage> {
                     },
                     icon: Icon(
                       isPlaying ? Icons.pause : Icons.play_arrow,
-                      size: 40,
+                      size: 45,
                       color: Colors.white,
                     ));
               },
@@ -272,23 +302,16 @@ class _PlayPageState extends State<PlayPage> {
                               songs[number + 1].displayName,
                               number + 1));
                     },
-                    icon: const Icon(
-                      Icons.skip_next,
-                      size: 45.0,
-                      color: Colors.white,
-                    ));
+                    icon: Image.asset("assets/icon/music-player(3).png",width: 35,height: 35,color: Colors.white,)
+                );
               },
             ),
             IconButton(
                 onPressed: () {},
-                icon: Icon(
-                  Icons.arrow_drop_down_circle,
-                  size: 40,
-                  color: Colors.white,
-                )),
+                icon: Image.asset("assets/icon/repeat.png",width: 35,height: 35,color: Colors.white,)),
           ],
         ),
-        SizedBox(
+        const SizedBox(
           height: 20,
         ),
         Row(
@@ -296,14 +319,14 @@ class _PlayPageState extends State<PlayPage> {
           children: [
             IconButton(
                 onPressed: () {},
-                icon: Icon(
+                icon: const Icon(
                   Icons.menu,
                   size: 40,
                   color: Colors.white,
                 )),
             IconButton(
                 onPressed: () {},
-                icon: Icon(
+                icon: const Icon(
                   Icons.add_circle_outline,
                   size: 40,
                   color: Colors.white,
@@ -311,24 +334,25 @@ class _PlayPageState extends State<PlayPage> {
           ],
         ),
         SizedBox(
-          height: 1000,
+          height:length??1,
           child: FutureBuilder<List<SongModel>>(
             future: SongList().getSongs(),
             builder: (BuildContext context,
                 AsyncSnapshot<List<SongModel>> snapshot) {
               if (snapshot.hasData) {
                 return ListView.builder(
+                  physics:const NeverScrollableScrollPhysics() ,
                   itemCount: snapshot.data?.length,
                   itemBuilder: (BuildContext context, int index) {
                     return ListTile(
                       title: Text(snapshot.data![index].title,
-                        style: TextStyle(
+                        style: const TextStyle(
                             color: Colors.white,
                             fontSize: 20,
                             fontWeight: FontWeight.bold),),
                       subtitle:
                       Text(snapshot.data![index].displayName,
-                        style: TextStyle(
+                        style: const TextStyle(
 
                             fontSize: 17,
                             fontWeight: FontWeight.bold),),
@@ -336,9 +360,10 @@ class _PlayPageState extends State<PlayPage> {
                           id: snapshot.data![index].id,
                           type: ArtworkType.AUDIO),
                       onTap: () {
+                        if (_isAnimating!=false) {
+                          _toggleAnimation();
+                        }
                         newSong(snapshot.data![index].uri);
-                        print(snapshot.data![index + 1].uri);
-                        print(snapshot.data![index].uri);
                         BlocProvider.of<PlayNewSongBloc>(context).add(
                             NewSongEvent(
                                 snapshot.data![index].id,
