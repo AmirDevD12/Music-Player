@@ -5,8 +5,8 @@ abstract class PlaySongState {}
 
 class PlaySongInitial extends PlaySongState {}
 class DurationState extends PlaySongState {
-  final double start;
-  final double finish;
+  final Duration start;
+  final Duration finish;
   DurationState(this.start, this.finish);
 }
 class PausePlayState extends PlaySongState{}

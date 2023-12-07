@@ -1,12 +1,13 @@
 import 'package:first_project/bloc/newSong/play_new_song_bloc.dart';
 import 'package:first_project/bloc/play_song_bloc.dart';
+import 'package:first_project/model/addres_folder.dart';
 import 'package:first_project/screen/playSong_page.dart';
 import 'package:first_project/widget/popup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
-import 'model/songs_model.dart';
+import '../model/songs_model.dart';
 
 class ListMusic extends StatefulWidget {
   const ListMusic({super.key});
@@ -17,33 +18,12 @@ class ListMusic extends StatefulWidget {
 
 class _ListMusicState extends State<ListMusic> {
   final OnAudioQuery onAudioQuery = OnAudioQuery();
-  List<SongModel> songs = [];
-
   final AudioPlayer audioPlayer = AudioPlayer();
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  bool isPlaying = false;
-
-  playSong(String? uri) {
-    try {
-      audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(uri!)));
-      Uri.parse(uri);
-      audioPlayer.play();
-      print("play");
-      isPlaying = true;
-    } on Exception {}
-  }
-
+  TextStyle style =const TextStyle(color: Colors.white);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blue,
-        title: const Text('Song List'),
-      ),
+      backgroundColor: const Color(0xff1a1b1d),
       body: FutureBuilder<List<SongModel>>(
         future: SongList().getSongs(),
         builder:
@@ -56,12 +36,17 @@ class _ListMusicState extends State<ListMusic> {
                       trailing: const SizedBox(
                           width: 35,
                           child: PopupMenuButtonWidget()),
-                  title: Text(snapshot.data![index].title),
-                  subtitle: Text(snapshot.data![index].displayName),
+                  title: Text(maxLines: 1,snapshot.data![index].title,style: style,),
+                  subtitle: Text(maxLines: 1,snapshot.data![index].displayName,),
                   leading: QueryArtworkWidget(
+                      artworkWidth: 60,
+                      artworkHeight: 60,
+                      artworkFit: BoxFit.cover,
+                      artworkBorder: const BorderRadius.all(Radius.circular(0)),
                       id: snapshot.data![index].id, type: ArtworkType.AUDIO),
-                  onTap: () {
-                        int? length=snapshot.data?.length;
+                  onTap: () async {
+                     AddressFolder().getAddress();
+
                     Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -75,7 +60,6 @@ class _ListMusicState extends State<ListMusic> {
                                   child: PlayPage(
                                       songModel: snapshot.data![index],
                                       audioPlayer: audioPlayer,
-                                    length:length ,
                                   ),
                                 )));
                   },
@@ -85,7 +69,7 @@ class _ListMusicState extends State<ListMusic> {
           } else if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
           }
-          return const CircularProgressIndicator();
+          return const Center(child: CircularProgressIndicator());
         },
       ),
     );

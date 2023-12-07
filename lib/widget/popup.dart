@@ -6,23 +6,23 @@ class PopupMenuButtonWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return
       PopupMenuButton(iconSize: 200,
-        icon: Image.asset("assets/icon/dots.png",width: 40,height: 40,),
+        icon: Image.asset("assets/icon/dots.png",width: 40,height: 40,color: Colors.white,),
         onSelected: (value) {
           // your logic
         },
         itemBuilder: (BuildContext bc) {
           return const [
             PopupMenuItem(
-              child: Text("delete"),
               value: '/hello',
+              child: Text("delete"),
             ),
             PopupMenuItem(
-              child: Text("Share"),
               value: '/about',
+              child: Text("Share"),
             ),
             PopupMenuItem(
-              child: Text("Add to playlist"),
               value: '/contact',
+              child: Text("Add to playlist"),
             )
           ];
         },

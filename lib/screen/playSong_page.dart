@@ -1,18 +1,18 @@
 import 'package:first_project/bloc/newSong/play_new_song_bloc.dart';
+import 'package:first_project/model/newSong.dart';
 import 'package:first_project/model/songs_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
-
 import '../bloc/play_song_bloc.dart';
 
 class PlayPage extends StatefulWidget {
   final SongModel songModel;
   final AudioPlayer audioPlayer;
-  final int? length;
+
   const PlayPage(
-      {super.key, required this.songModel, required this.audioPlayer, required this.length});
+      {super.key, required this.songModel, required this.audioPlayer,});
 
   @override
   State<PlayPage> createState() => _PlayPageState();
@@ -21,20 +21,25 @@ class PlayPage extends StatefulWidget {
 class _PlayPageState extends State<PlayPage> with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _animation;
-  Duration duration = const Duration();
-  Duration position = const Duration();
-  bool isPlaying = false;
+
+  bool isPlaying = true;
   bool _isAnimating= false;
   SongList songList = SongList();
-  String title = "";
-  String disName = "";
-  double length =0;
+  final playlistss = ConcatenatingAudioSource(
+    useLazyPreparation: true,
+    shuffleOrder: DefaultShuffleOrder(),
+    children: [
+      AudioSource.uri(Uri.parse('https://example.com/track1.mp3')),
+      AudioSource.uri(Uri.parse('https://example.com/track2.mp3')),
+      AudioSource.uri(Uri.parse('https://example.com/track3.mp3')),
+    ],
+  );
+
   @override
   void initState() {
     // TODO: implement initState
-    length=widget.length!.toDouble();
-    length=length*200;
-    newSong(widget.songModel.uri);
+
+    PlayNewSong().newSong(widget.songModel.uri, widget.audioPlayer, context);
 
     _animationController = AnimationController(
       vsync: this,
@@ -52,6 +57,7 @@ class _PlayPageState extends State<PlayPage> with SingleTickerProviderStateMixin
     super.dispose();
   }
   void _toggleAnimation() {
+    playlistss.children;
     _isAnimating = !_isAnimating;
     if (_isAnimating) {
       _animationController.stop();
@@ -63,38 +69,13 @@ class _PlayPageState extends State<PlayPage> with SingleTickerProviderStateMixin
     }
     BlocProvider.of<PlayNewSongBloc>(context).add(PauseAnimationEvent());
   }
-
-  newSong(String? uri) {
-    print(uri);
-    try {
-      widget.audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(uri!)));
-      widget.audioPlayer.play();
-      isPlaying = true;
-
-      widget.audioPlayer.durationStream.listen((event) {
-        duration = event!;
-        BlocProvider.of<PlaySongBloc>(context).add(DurationEvent(
-          position.inSeconds.toDouble(),
-          duration.inSeconds.toDouble(),
-        ));
-      });
-      widget.audioPlayer.positionStream.listen((event) {
-        position = event;
-        BlocProvider.of<PlaySongBloc>(context).add(DurationEvent(
-          position.inSeconds.toDouble(),
-          duration.inSeconds.toDouble(),
-        ));
-      });
-    } catch(e) {print(e);}
-  }
-
   int number = 0;
   int id = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.brown,
+      backgroundColor: const Color(0xff1a1b1d),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -124,32 +105,37 @@ class _PlayPageState extends State<PlayPage> with SingleTickerProviderStateMixin
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Transform.rotate(
-                    angle:  position.inSeconds.toDouble(),
+                    angle: 10,
                     child: BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
-                      builder: (context, state) {bool isId=true;
+                      buildWhen: (privioce,current){
+                        if (current is PauseAnimationState) {
+                          return false;
+                        }  else {
+                          return true;
+                        }
+                      },
+                      builder: (context, state) {
                         if (state is NewSongState) {
                           id = state.id;
-
-                          if (id==0) {
-                            isId=false;
-                          }else {isId= true;}
                         }
-
                         return RotationTransition(
                           turns: _animation,
-                          child:isId? QueryArtworkWidget(
-                              artworkBorder:
-                              BorderRadius.all(Radius.circular(100)),
-                              artworkWidth: 200,
-                              artworkHeight: 200,
-                              id: state is NewSongState ||state is PauseAnimationState&&id!=0
-                                  ? id
-                                  : widget.songModel.id,
-                              type: ArtworkType.AUDIO):
-                          RotationTransition(
+                          child: CircleAvatar(
+                            backgroundImage: const AssetImage("assets/icon/vinyl-record.png"),
+                            radius: 120,
+                            child: Center(
+                              child: QueryArtworkWidget(
+                                  artworkBorder:
+                                  const BorderRadius.all(Radius.circular(100)),
+                                  artworkWidth: 200,
+                                  artworkHeight: 200,
+                                  id: state is NewSongState ||state is PauseAnimationState&&id!=0
+                                      ? id
+                                      : widget.songModel.id,
+                                  type: ArtworkType.AUDIO),
+                            ),
+                          )
 
-                              turns: _animation,
-                              child: Image.asset("assets/icon/vinyl-record.png",width: 80,height: 80,)),
                         );
                       },
                     ),
@@ -163,13 +149,14 @@ class _PlayPageState extends State<PlayPage> with SingleTickerProviderStateMixin
               width: 300,
               child: BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
                 builder: (context, state) {
-
+                   String title="";
+                   String disName="";
                   if (state is NewSongState) {
                     title = state.name;
                     disName = state.artist;
                   }
                   return ListTile(
-                    title: Text(
+                    title: Text(maxLines: 1,
                       state is NewSongState||state is PauseAnimationState&&id!=0
                           ? title
                           : widget.songModel.title,
@@ -178,7 +165,7 @@ class _PlayPageState extends State<PlayPage> with SingleTickerProviderStateMixin
                           fontSize: 20,
                           fontWeight: FontWeight.bold),
                     ),
-                    subtitle: Text(
+                    subtitle: Text(maxLines: 1,
                       state is NewSongState ||state is PauseAnimationState&&id!=0
                           ? disName
                           : widget.songModel.displayNameWOExt,
@@ -200,11 +187,17 @@ class _PlayPageState extends State<PlayPage> with SingleTickerProviderStateMixin
           children: [
             Expanded(child: BlocBuilder<PlaySongBloc, PlaySongState>(
               builder: (context, state) {
+                Duration duration = const Duration();
+                Duration position = const Duration();
+                if (state is DurationState) {
+                  position=state.start;
+                  duration=state.finish;
+                }
                 return Slider(
                   activeColor: Colors.white,
                   inactiveColor: Colors.grey,
-                  value: position.inSeconds.toDouble(),
-                  max: duration.inSeconds.toDouble(),
+                  value: duration.inSeconds.toDouble(),
+                  max: position.inSeconds.toDouble(),
                   min: const Duration(milliseconds: 0)
                       .inSeconds
                       .toDouble(),
@@ -212,8 +205,8 @@ class _PlayPageState extends State<PlayPage> with SingleTickerProviderStateMixin
                     changeSeconds(value.toInt());
                     value = value;
                     BlocProvider.of<PlaySongBloc>(context).add(
-                        DurationEvent(position.inSeconds.toDouble(),
-                            duration.inSeconds.toDouble()));
+                        DurationEvent(position,
+                            duration));
                   },
                 );
               },
@@ -225,11 +218,17 @@ class _PlayPageState extends State<PlayPage> with SingleTickerProviderStateMixin
           padding: const EdgeInsets.symmetric(horizontal: 0),
           child: BlocBuilder<PlaySongBloc, PlaySongState>(
             builder: (context, state) {
+              Duration duration = const Duration();
+              Duration position = const Duration();
+              if (state is DurationState) {
+                position=state.start;
+                duration=state.finish;
+              }
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(position.toString().split(".")[0],style: const TextStyle(color: Colors.white),),
-                  Text(duration.toString().split(".")[0],style: const TextStyle(color: Colors.white),),
+                  Text(maxLines: 1,duration.toString().split(".")[0],style: const TextStyle(color: Colors.white),),
+                  Text(maxLines: 1,position.toString().split(".")[0],style: const TextStyle(color: Colors.white),),
                 ],
               );
             },
@@ -246,14 +245,21 @@ class _PlayPageState extends State<PlayPage> with SingleTickerProviderStateMixin
                 icon:Image.asset("assets/icon/shuffle.png",width: 35,height: 35,color: Colors.white,) ),
             BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
               builder: (context, state) {
-                int num = 0;
+
                 if (state is NewSongState) {
                   number = state.index;
                 }
                 return IconButton(
                     onPressed: () async {
+                      if (_isAnimating!=false) {
+                        _toggleAnimation();
+                      }
                       List<SongModel> songs = await songList.getSongs();
-                      newSong(songs[number - 1].uri);
+                      PlayNewSong().newSong(songs[number -1].uri, widget.audioPlayer, context);
+                      if (!isPlaying) {
+                        isPlaying=true;
+                      }
+                      // newSong(songs[number - 1].uri);
                       BlocProvider.of<PlayNewSongBloc>(context).add(
                           NewSongEvent(
                               songs[number - 1].id,
@@ -293,8 +299,15 @@ class _PlayPageState extends State<PlayPage> with SingleTickerProviderStateMixin
                 }
                 return IconButton(
                     onPressed: () async {
+                      if (_isAnimating!=false) {
+                        _toggleAnimation();
+                      }
                       List<SongModel> songs = await songList.getSongs();
-                      newSong(songs[number + 1].uri);
+                      PlayNewSong().newSong(songs[number +1].uri, widget.audioPlayer, context);
+                      // newSong(songs[number + 1].uri);
+                      if (!isPlaying) {
+                        isPlaying=true;
+                      }
                       BlocProvider.of<PlayNewSongBloc>(context).add(
                           NewSongEvent(
                               songs[number + 1].id,
@@ -333,64 +346,62 @@ class _PlayPageState extends State<PlayPage> with SingleTickerProviderStateMixin
                 )),
           ],
         ),
-        SizedBox(
-          height:length??1,
-          child: FutureBuilder<List<SongModel>>(
-            future: SongList().getSongs(),
-            builder: (BuildContext context,
-                AsyncSnapshot<List<SongModel>> snapshot) {
-              if (snapshot.hasData) {
-                return ListView.builder(
-                  physics:const NeverScrollableScrollPhysics() ,
-                  itemCount: snapshot.data?.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return ListTile(
-                      title: Text(snapshot.data![index].title,
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold),),
-                      subtitle:
-                      Text(snapshot.data![index].displayName,
-                        style: const TextStyle(
+        FutureBuilder<List<SongModel>>(
+          future: SongList().getSongs(),
+          builder: (BuildContext context,
+              AsyncSnapshot<List<SongModel>> snapshot) {
+            if (snapshot.hasData) {
+              return ListView.builder(
+                shrinkWrap: true,
+                physics:const NeverScrollableScrollPhysics() ,
+                itemCount: snapshot.data?.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return ListTile(
+                    title: Text(maxLines: 1,snapshot.data![index].title,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold),),
+                    subtitle:
+                    Text(maxLines: 1,snapshot.data![index].displayName,
+                      style: const TextStyle(
 
-                            fontSize: 17,
-                            fontWeight: FontWeight.bold),),
-                      leading: QueryArtworkWidget(
-                          id: snapshot.data![index].id,
-                          type: ArtworkType.AUDIO),
-                      onTap: () {
-                        if (_isAnimating!=false) {
-                          _toggleAnimation();
-                        }
-                        newSong(snapshot.data![index].uri);
-                        BlocProvider.of<PlayNewSongBloc>(context).add(
-                            NewSongEvent(
-                                snapshot.data![index].id,
-                                snapshot.data![index].title,
-                                snapshot.data![index].displayName,
-                                index));
-                      },
-                    );
-                  },
-                );
-              } else if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              }
-              return const CircularProgressIndicator();
-            },
-          ),
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold),),
+                    leading: QueryArtworkWidget(
+                        id: snapshot.data![index].id,
+                        type: ArtworkType.AUDIO),
+                    onTap: () {
+                      if (_isAnimating!=false) {
+                        _toggleAnimation();
+                        isPlaying=true;
+                      }
+                      PlayNewSong().newSong(snapshot.data![index].uri, widget.audioPlayer, context);
+                      // newSong(snapshot.data![index].uri);
+                      BlocProvider.of<PlayNewSongBloc>(context).add(
+                          NewSongEvent(
+                              snapshot.data![index].id,
+                              snapshot.data![index].title,
+                              snapshot.data![index].displayName,
+                              index));
+
+                    },
+                  );
+                },
+              );
+            } else if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            }
+            return const CircularProgressIndicator();
+          },
         ),
         ],
       ),
     )],
     )
-    ,
     )
-    ,
     );
   }
-
   void changeSeconds(int seconds) {
     Duration duration = Duration(seconds: seconds);
     widget.audioPlayer.seek(duration);
