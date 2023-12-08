@@ -26,7 +26,7 @@ class _AlbumPageState extends State<AlbumPage> {
     return Scaffold(
       backgroundColor: const Color(0xff1a1b1d),
       body: FutureBuilder<List<SongModel>>(
-        future: SongList().getSongs(),
+        future: SongList().getSongs(SongSortType.ALBUM),
         builder:
             (BuildContext context, AsyncSnapshot<List<SongModel>> snapshot) {
           if (snapshot.hasData) {

@@ -254,7 +254,7 @@ class _PlayPageState extends State<PlayPage> with SingleTickerProviderStateMixin
                       if (_isAnimating!=false) {
                         _toggleAnimation();
                       }
-                      List<SongModel> songs = await songList.getSongs();
+                      List<SongModel> songs = await songList.getSongs(SongSortType.TITLE);
                       PlayNewSong().newSong(songs[number -1].uri, widget.audioPlayer, context);
                       if (!isPlaying) {
                         isPlaying=true;
@@ -302,7 +302,7 @@ class _PlayPageState extends State<PlayPage> with SingleTickerProviderStateMixin
                       if (_isAnimating!=false) {
                         _toggleAnimation();
                       }
-                      List<SongModel> songs = await songList.getSongs();
+                      List<SongModel> songs = await songList.getSongs(SongSortType.TITLE);
                       PlayNewSong().newSong(songs[number +1].uri, widget.audioPlayer, context);
                       // newSong(songs[number + 1].uri);
                       if (!isPlaying) {
@@ -346,55 +346,55 @@ class _PlayPageState extends State<PlayPage> with SingleTickerProviderStateMixin
                 )),
           ],
         ),
-        FutureBuilder<List<SongModel>>(
-          future: SongList().getSongs(),
-          builder: (BuildContext context,
-              AsyncSnapshot<List<SongModel>> snapshot) {
-            if (snapshot.hasData) {
-              return ListView.builder(
-                shrinkWrap: true,
-                physics:const NeverScrollableScrollPhysics() ,
-                itemCount: snapshot.data?.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return ListTile(
-                    title: Text(maxLines: 1,snapshot.data![index].title,
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold),),
-                    subtitle:
-                    Text(maxLines: 1,snapshot.data![index].displayName,
-                      style: const TextStyle(
-
-                          fontSize: 17,
-                          fontWeight: FontWeight.bold),),
-                    leading: QueryArtworkWidget(
-                        id: snapshot.data![index].id,
-                        type: ArtworkType.AUDIO),
-                    onTap: () {
-                      if (_isAnimating!=false) {
-                        _toggleAnimation();
-                        isPlaying=true;
-                      }
-                      PlayNewSong().newSong(snapshot.data![index].uri, widget.audioPlayer, context);
-                      // newSong(snapshot.data![index].uri);
-                      BlocProvider.of<PlayNewSongBloc>(context).add(
-                          NewSongEvent(
-                              snapshot.data![index].id,
-                              snapshot.data![index].title,
-                              snapshot.data![index].displayName,
-                              index));
-
-                    },
-                  );
-                },
-              );
-            } else if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-            }
-            return const CircularProgressIndicator();
-          },
-        ),
+        // FutureBuilder<List<SongModel>>(
+        //   future: SongList().getSongs(),
+        //   builder: (BuildContext context,
+        //       AsyncSnapshot<List<SongModel>> snapshot) {
+        //     if (snapshot.hasData) {
+        //       return ListView.builder(
+        //         shrinkWrap: true,
+        //         physics:const NeverScrollableScrollPhysics() ,
+        //         itemCount: snapshot.data?.length,
+        //         itemBuilder: (BuildContext context, int index) {
+        //           return ListTile(
+        //             title: Text(maxLines: 1,snapshot.data![index].title,
+        //               style: const TextStyle(
+        //                   color: Colors.white,
+        //                   fontSize: 20,
+        //                   fontWeight: FontWeight.bold),),
+        //             subtitle:
+        //             Text(maxLines: 1,snapshot.data![index].displayName,
+        //               style: const TextStyle(
+        //
+        //                   fontSize: 17,
+        //                   fontWeight: FontWeight.bold),),
+        //             leading: QueryArtworkWidget(
+        //                 id: snapshot.data![index].id,
+        //                 type: ArtworkType.AUDIO),
+        //             onTap: () {
+        //               if (_isAnimating!=false) {
+        //                 _toggleAnimation();
+        //                 isPlaying=true;
+        //               }
+        //               PlayNewSong().newSong(snapshot.data![index].uri, widget.audioPlayer, context);
+        //               // newSong(snapshot.data![index].uri);
+        //               BlocProvider.of<PlayNewSongBloc>(context).add(
+        //                   NewSongEvent(
+        //                       snapshot.data![index].id,
+        //                       snapshot.data![index].title,
+        //                       snapshot.data![index].displayName,
+        //                       index));
+        //
+        //             },
+        //           );
+        //         },
+        //       );
+        //     } else if (snapshot.hasError) {
+        //       return Text('Error: ${snapshot.error}');
+        //     }
+        //     return const CircularProgressIndicator();
+        //   },
+        // ),
         ],
       ),
     )],

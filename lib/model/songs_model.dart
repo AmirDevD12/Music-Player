@@ -1,25 +1,20 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 class SongList {
-  Future<List<SongModel>> getSongs() async {
+  Future<List<SongModel>> getSongs(SongSortType? songSortType) async {
     List<SongModel> songs = [];
 
     if (!kIsWeb) {
       bool hasPermission = await OnAudioQuery().permissionsStatus();
-
       if (hasPermission) {
-        // Retrieve a list of songs.
-        List<SongModel> songsData = await OnAudioQuery().querySongs();
-
+        List<SongModel> songsData = await OnAudioQuery().querySongs(sortType: songSortType??SongSortType.DATE_ADDED);
         for (SongModel song in songsData) {
           songs.add(song);
         }
       } else {
-        // Request the necessary permissions.
+
         await OnAudioQuery().permissionsRequest();
       }
     }

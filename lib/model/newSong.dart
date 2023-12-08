@@ -7,7 +7,7 @@ class PlayNewSong {
   void newSong(String? uri,AudioPlayer audioPlayer,BuildContext context) {
     Duration duration = const Duration();
     Duration position = const Duration();
-    print(uri);
+
     try {
       audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(uri!)));
       audioPlayer.play();

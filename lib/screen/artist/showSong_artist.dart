@@ -77,7 +77,7 @@ class _ShowListArtistState extends State<ShowListArtist> {
                                           audioPlayer: audioPlayer,
                                         ),
                                       )));
-                            print(snapshot.data![index].title);
+
                             },
                           ),
                         );

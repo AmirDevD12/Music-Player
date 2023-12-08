@@ -1,5 +1,4 @@
 
-import 'package:first_project/model/songs_model.dart';
 import 'package:first_project/screen/album/albom_page.dart';
 import 'package:first_project/screen/artist/count_artist.dart';
 import 'package:first_project/screen/folder/folder_song.dart';
@@ -55,7 +54,7 @@ List<String> ListIssue=<String>["Songs ","Artist","Album","Folder"];
               padding: const EdgeInsets.all(8.0),
               child: Container(
                 width: MediaQuery.of(context).size.width,
-                height: 50,
+                height: 40,
                 child: Row(crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
@@ -63,7 +62,7 @@ List<String> ListIssue=<String>["Songs ","Artist","Album","Folder"];
                         scrollDirection: Axis.horizontal,
                         itemCount: 4,
                         itemBuilder: (BuildContext context, int index) {
-                          print(ListIssue.length);
+
                           return Column(crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Padding(
