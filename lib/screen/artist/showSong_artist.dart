@@ -1,6 +1,8 @@
 
 import 'package:first_project/bloc/newSong/play_new_song_bloc.dart';
 import 'package:first_project/bloc/play_song_bloc.dart';
+import 'package:first_project/locator.dart';
+import 'package:first_project/model/list_artist.dart';
 import 'package:first_project/model/songs_model.dart';
 import 'package:first_project/screen/playSong_page.dart';
 import 'package:first_project/widget/playall_container.dart';
@@ -23,7 +25,7 @@ class _ShowListArtistState extends State<ShowListArtist> {
 
   final OnAudioQuery onAudioQuery = OnAudioQuery();
 
-  final AudioPlayer audioPlayer = AudioPlayer();
+
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +49,7 @@ class _ShowListArtistState extends State<ShowListArtist> {
             ),
             Expanded(
               child: FutureBuilder<List<SongModel>>(
-                future: SongList().getLisArtist(widget.nameArtist),
+                future: locator.get<ListArtist>().getLisArtist(widget.nameArtist),
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     return ListView.builder(
@@ -68,13 +70,13 @@ class _ShowListArtistState extends State<ShowListArtist> {
                                       builder: (context) => MultiBlocProvider(
                                         providers: [
                                           BlocProvider(
-                                              create: (context) => PlaySongBloc()),
+                                              create: (context) => locator.get<PlaySongBloc>()),
                                           BlocProvider(
                                               create: (context) => PlayNewSongBloc())
                                         ],
                                         child: PlayPage(
                                           songModel: snapshot.data![index],
-                                          audioPlayer: audioPlayer,
+                                          audioPlayer: locator.get<AudioPlayer>(),
                                         ),
                                       )));
 

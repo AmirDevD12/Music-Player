@@ -8,15 +8,7 @@ Future<List<String>>  location() async {
   }
   return songs;
 }
-Future<List<SongModel>> getSongFile(String path) async {
-  List<SongModel> songsData = await OnAudioQuery().queryFromFolder(path);
-  return songsData;
-}
 
-// Future<List<String>> getSongs() async {
-//   List<SongModel> songs = [];
-//
-//       List<String> songsData = await OnAudioQuery().queryAllPath();
-//       return songsData;
-// }
+
+
 }

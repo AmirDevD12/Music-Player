@@ -1,3 +1,5 @@
+import 'package:first_project/locator.dart';
+import 'package:first_project/model/song_count_artist.dart';
 import 'package:first_project/model/songs_model.dart';
 import 'package:first_project/screen/artist/showSong_artist.dart';
 import 'package:first_project/widget/playall_container.dart';
@@ -13,7 +15,6 @@ class Artist extends StatefulWidget {
   State<Artist> createState() => _ListMusicState();
 }
 class _ListMusicState extends State<Artist> {
-  Future<Map<String, int>> songsByArtist = SongList().getSongCountByArtist();
   @override
   void initState() {
     super.initState();
@@ -25,7 +26,7 @@ class _ListMusicState extends State<Artist> {
     return Scaffold(
         backgroundColor: const Color(0xff1a1b1d),
         body: FutureBuilder<Map<String, int>>(
-          future: SongList().getSongCountByArtist(),
+          future: locator.get<SongCountArtist>().getSongCountByArtist(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               return ListView.builder(

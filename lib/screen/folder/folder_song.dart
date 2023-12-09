@@ -27,11 +27,13 @@ class AlbumList extends StatelessWidget {
               return ListTile(
                 title: Text(maxLines: 1,file[index],style: TextStyle(color: Colors.white),),
                 subtitle: Text(maxLines: 1,snapshot.data![index],style: TextStyle(fontSize: 18),),
+                leading: Image.asset("assets/icon/folder.png",color:Colors.deepPurpleAccent ,),
                 onTap: (){
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => ShowSongFolder(path: snapshot.data![index],)));
+                          builder: (context) => ShowSongFolder(path: snapshot.data![index],nameFile:file[index])));
+                  
                 },
               );
             },

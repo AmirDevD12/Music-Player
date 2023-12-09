@@ -1,4 +1,5 @@
 import 'package:first_project/bloc/newSong/play_new_song_bloc.dart';
+import 'package:first_project/model/chengeAnimation.dart';
 import 'package:first_project/model/newSong.dart';
 import 'package:first_project/model/songs_model.dart';
 import 'package:flutter/material.dart';
@@ -23,18 +24,7 @@ class _PlayPageState extends State<PlayPage> with SingleTickerProviderStateMixin
   late Animation<double> _animation;
 
   bool isPlaying = true;
-  bool _isAnimating= false;
   SongList songList = SongList();
-  final playlistss = ConcatenatingAudioSource(
-    useLazyPreparation: true,
-    shuffleOrder: DefaultShuffleOrder(),
-    children: [
-      AudioSource.uri(Uri.parse('https://example.com/track1.mp3')),
-      AudioSource.uri(Uri.parse('https://example.com/track2.mp3')),
-      AudioSource.uri(Uri.parse('https://example.com/track3.mp3')),
-    ],
-  );
-
   @override
   void initState() {
     // TODO: implement initState
@@ -51,27 +41,14 @@ class _PlayPageState extends State<PlayPage> with SingleTickerProviderStateMixin
         curve: Curves.linear,
       ),
     );
+    ChangeAnimation().toggleAnimation(_animationController,context,isPlaying);
   } @override
   void dispose() {
     _animationController.dispose();
     super.dispose();
   }
-  void _toggleAnimation() {
-    playlistss.children;
-    _isAnimating = !_isAnimating;
-    if (_isAnimating) {
-      _animationController.stop();
-      BlocProvider.of<PlayNewSongBloc>(context).add(PauseAnimationEvent());
-
-    } else {
-      _animationController.repeat();
-      BlocProvider.of<PlayNewSongBloc>(context).add(PauseAnimationEvent());
-    }
-    BlocProvider.of<PlayNewSongBloc>(context).add(PauseAnimationEvent());
-  }
   int number = 0;
   int id = 0;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -148,6 +125,13 @@ class _PlayPageState extends State<PlayPage> with SingleTickerProviderStateMixin
               SizedBox(
               width: 300,
               child: BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
+                buildWhen: (privioce,current){
+                  if (current is PauseAnimationState) {
+                    return false;
+                  }else {
+                    return true;
+                  }
+                },
                 builder: (context, state) {
                    String title="";
                    String disName="";
@@ -251,14 +235,15 @@ class _PlayPageState extends State<PlayPage> with SingleTickerProviderStateMixin
                 }
                 return IconButton(
                     onPressed: () async {
-                      if (_isAnimating!=false) {
-                        _toggleAnimation();
-                      }
+
+
+
                       List<SongModel> songs = await songList.getSongs(SongSortType.TITLE);
-                      PlayNewSong().newSong(songs[number -1].uri, widget.audioPlayer, context);
+
                       if (!isPlaying) {
                         isPlaying=true;
                       }
+                      ChangeAnimation().toggleAnimation(_animationController,context,isPlaying?true:false );
                       // newSong(songs[number - 1].uri);
                       BlocProvider.of<PlayNewSongBloc>(context).add(
                           NewSongEvent(
@@ -266,6 +251,7 @@ class _PlayPageState extends State<PlayPage> with SingleTickerProviderStateMixin
                               songs[number - 1].title,
                               songs[number - 1].displayName,
                               number - 1));
+                      PlayNewSong().newSong(songs[number -1].uri, widget.audioPlayer, context);
                     },
                     icon: Image.asset("assets/icon/music-player(1).png",width: 35,height: 35,color: Colors.white,));
               },
@@ -273,16 +259,21 @@ class _PlayPageState extends State<PlayPage> with SingleTickerProviderStateMixin
             BlocBuilder<PlaySongBloc, PlaySongState>(
               builder: (context, state) {
                 return IconButton(
-                    onPressed: () {
-                      _toggleAnimation();
+                    onPressed: () async {
+
                       if (isPlaying) {
                         widget.audioPlayer.pause();
                       } else {
                         widget.audioPlayer.play();
                       }
                       isPlaying = !isPlaying;
+
                       BlocProvider.of<PlaySongBloc>(context)
                           .add(PausePlayEvent());
+                      ChangeAnimation().toggleAnimation(_animationController, context,isPlaying?true:false);
+
+
+
                     },
                     icon: Icon(
                       isPlaying ? Icons.pause : Icons.play_arrow,
@@ -299,15 +290,16 @@ class _PlayPageState extends State<PlayPage> with SingleTickerProviderStateMixin
                 }
                 return IconButton(
                     onPressed: () async {
-                      if (_isAnimating!=false) {
-                        _toggleAnimation();
-                      }
+
+
+
                       List<SongModel> songs = await songList.getSongs(SongSortType.TITLE);
                       PlayNewSong().newSong(songs[number +1].uri, widget.audioPlayer, context);
                       // newSong(songs[number + 1].uri);
                       if (!isPlaying) {
                         isPlaying=true;
                       }
+                      ChangeAnimation().toggleAnimation(_animationController,context,isPlaying?true:false );
                       BlocProvider.of<PlayNewSongBloc>(context).add(
                           NewSongEvent(
                               songs[number + 1].id,

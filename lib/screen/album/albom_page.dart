@@ -1,5 +1,6 @@
 import 'package:first_project/bloc/newSong/play_new_song_bloc.dart';
 import 'package:first_project/bloc/play_song_bloc.dart';
+import 'package:first_project/locator.dart';
 import 'package:first_project/model/songs_model.dart';
 import 'package:first_project/screen/playSong_page.dart';
 import 'package:first_project/widget/popup.dart';
@@ -18,7 +19,7 @@ class AlbumPage extends StatefulWidget {
 
 class _AlbumPageState extends State<AlbumPage> {
   final OnAudioQuery onAudioQuery = OnAudioQuery();
-  final AudioPlayer audioPlayer = AudioPlayer();
+
 
   TextStyle style =const TextStyle(color: Colors.white);
   @override
@@ -38,7 +39,7 @@ class _AlbumPageState extends State<AlbumPage> {
                       width: 35,
                       child: PopupMenuButtonWidget()),
                   title: Text(maxLines: 1,snapshot.data![index].album!,style: style,),
-                  subtitle: Text(maxLines: 1,snapshot.data![index].displayName,),
+                  subtitle: Text(maxLines: 1,snapshot.data![index].artist!,),
                   leading: QueryArtworkWidget(
                       artworkWidth: 60,
                       artworkHeight: 60,
@@ -52,13 +53,13 @@ class _AlbumPageState extends State<AlbumPage> {
                             builder: (context) => MultiBlocProvider(
                               providers: [
                                 BlocProvider(
-                                    create: (context) => PlaySongBloc()),
+                                    create: (context) => locator.get<PlaySongBloc>()),
                                 BlocProvider(
                                     create: (context) => PlayNewSongBloc())
                               ],
                               child: PlayPage(
                                 songModel: snapshot.data![index],
-                                audioPlayer: audioPlayer,
+                                audioPlayer: locator.get<AudioPlayer>(),
                               ),
                             )));
                   },
