@@ -20,11 +20,11 @@ class _ListMusicState extends State<Artist> {
     super.initState();
   }
 
-  TextStyle style = const TextStyle(color: Colors.white);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: const Color(0xff1a1b1d),
+
         body: FutureBuilder<Map<String, int>>(
           future: locator.get<SongCountArtist>().getSongCountByArtist(),
           builder: (context, snapshot) {
@@ -43,7 +43,7 @@ class _ListMusicState extends State<Artist> {
                       title:Text(
                         maxLines: 1,
                         artist,
-                        style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold,color: Colors.white),
+
                       ),
                       subtitle:  Text(
                           maxLines: 1,

@@ -21,11 +21,11 @@ class _AlbumPageState extends State<AlbumPage> {
   final OnAudioQuery onAudioQuery = OnAudioQuery();
 
 
-  TextStyle style =const TextStyle(color: Colors.white);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xff1a1b1d),
+
       body: FutureBuilder<List<SongModel>>(
         future: SongList().getSongs(SongSortType.ALBUM),
         builder:
@@ -38,7 +38,7 @@ class _AlbumPageState extends State<AlbumPage> {
                   trailing: const SizedBox(
                       width: 35,
                       child: PopupMenuButtonWidget()),
-                  title: Text(maxLines: 1,snapshot.data![index].album!,style: style,),
+                  title: Text(maxLines: 1,snapshot.data![index].album!,),
                   subtitle: Text(maxLines: 1,snapshot.data![index].artist!,),
                   leading: QueryArtworkWidget(
                       artworkWidth: 60,

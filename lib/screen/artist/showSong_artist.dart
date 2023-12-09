@@ -21,7 +21,7 @@ class ShowListArtist extends StatefulWidget {
 }
 
 class _ShowListArtistState extends State<ShowListArtist> {
-  TextStyle style =const TextStyle(color: Colors.white);
+
 
   final OnAudioQuery onAudioQuery = OnAudioQuery();
 
@@ -30,11 +30,11 @@ class _ShowListArtistState extends State<ShowListArtist> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: const Color(0xff1a1b1d),
+
         appBar: AppBar(
 
-          backgroundColor: const Color(0xff1a1b1d),
-          title: Text(widget.nameArtist,style: style,),
+
+          title: Text(widget.nameArtist,),
         ),
         body:Column(
 
@@ -61,7 +61,7 @@ class _ShowListArtistState extends State<ShowListArtist> {
                             trailing: const SizedBox(
                                 width: 35,
                                 child: PopupMenuButtonWidget()),
-                            title: Text(maxLines: 1,snapshot.data![index].title,style: style,),
+                            title: Text(maxLines: 1,snapshot.data![index].title),
                             subtitle: Text(maxLines: 1,snapshot.data![index].displayName,),
                             onTap: (){
                               Navigator.push(

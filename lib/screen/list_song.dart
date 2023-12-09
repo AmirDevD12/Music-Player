@@ -3,13 +3,14 @@ import 'package:first_project/bloc/play_song_bloc.dart';
 import 'package:first_project/bloc/sort/sort_song_bloc.dart';
 import 'package:first_project/locator.dart';
 import 'package:first_project/screen/playSong_page.dart';
+import 'package:first_project/theme_mode.dart';
 import 'package:first_project/widget/playall_container.dart';
 import 'package:first_project/widget/popup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
+import 'package:provider/provider.dart';
 import '../model/songs_model.dart';
 
 class ListMusic extends StatefulWidget {
@@ -20,16 +21,16 @@ class ListMusic extends StatefulWidget {
 }
 
 class _ListMusicState extends State<ListMusic> {
+
   final OnAudioQuery onAudioQuery = OnAudioQuery();
-  final AudioPlayer audioPlayer = locator.get<AudioPlayer>();
   SongSortType songSortType = SongSortType.TITLE;
-  TextStyle style = const TextStyle(color: Colors.white);
+
   String select="";
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
-      backgroundColor: const Color(0xff1a1b1d),
-      body: Column(
+      body: Column(mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Expanded(
               child: Row(
@@ -37,9 +38,9 @@ class _ListMusicState extends State<ListMusic> {
             children: [
               SizedBox(width: 110, height: 30, child: PlayAllContainer()),
               PopupMenuButton(
-                color: const Color(0xff1a1b1d),
 
-                icon: Icon(Icons.sort,color: Colors.white,size: 30,),
+
+                icon: Icon(Icons.sort,size: 30,),
                 onSelected: (value) {
                   print(value);
                   select=value;
@@ -58,12 +59,11 @@ class _ListMusicState extends State<ListMusic> {
                           children: [
                             Text(
                               "Based on add time",
-                              style: style,
                             ),
                           const SizedBox(width: 10,),
                           select=='/time'?  const Icon(
                               Icons.check,
-                              color: Colors.white,
+
                             ):const SizedBox()
                           ],
                         ),
@@ -80,11 +80,11 @@ class _ListMusicState extends State<ListMusic> {
                         children: [
                           Text(
                             "Based on name",
-                            style: style,
+
                           ),const SizedBox(width: 10,),
                           select=='/name'? const Icon(
                             Icons.check,
-                            color: Colors.white,
+
                           ):const SizedBox()
                         ],
                       ),
@@ -100,11 +100,11 @@ class _ListMusicState extends State<ListMusic> {
                         children: [
                           Text(
                             "Based on artist",
-                            style: style,
+
                           ),const SizedBox(width: 10,),
                           select=='/artist'? const Icon(
                             Icons.check,
-                            color: Colors.white,
+
                           ):const SizedBox()
                         ],
                       ),
@@ -133,7 +133,7 @@ class _ListMusicState extends State<ListMusic> {
                         title: Text(
                           maxLines: 1,
                           snapshot.data![index].title,
-                          style: style,
+
                         ),
                         subtitle: Text(
                           maxLines: 1,

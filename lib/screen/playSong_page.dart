@@ -2,10 +2,12 @@ import 'package:first_project/bloc/newSong/play_new_song_bloc.dart';
 import 'package:first_project/model/chengeAnimation.dart';
 import 'package:first_project/model/newSong.dart';
 import 'package:first_project/model/songs_model.dart';
+import 'package:first_project/theme_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
+import 'package:provider/provider.dart';
 import '../bloc/play_song_bloc.dart';
 
 class PlayPage extends StatefulWidget {
@@ -51,8 +53,9 @@ class _PlayPageState extends State<PlayPage> with SingleTickerProviderStateMixin
   int id = 0;
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
-      backgroundColor: const Color(0xff1a1b1d),
+
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -67,7 +70,7 @@ class _PlayPageState extends State<PlayPage> with SingleTickerProviderStateMixin
                       },
                       icon: const Icon(
                         Icons.keyboard_arrow_down_rounded,
-                        color: Colors.white,
+
                         size: 40,
                       )),
                 ],
@@ -145,7 +148,7 @@ class _PlayPageState extends State<PlayPage> with SingleTickerProviderStateMixin
                           ? title
                           : widget.songModel.title,
                       style: const TextStyle(
-                          color: Colors.white,
+
                           fontSize: 20,
                           fontWeight: FontWeight.bold),
                     ),
@@ -163,9 +166,11 @@ class _PlayPageState extends State<PlayPage> with SingleTickerProviderStateMixin
             Padding(
               padding: const EdgeInsets.only(left: 20),
               child: IconButton(
-                  onPressed: () {}, icon: Image.asset("assets/icon/like.png",width: 25,height: 25,color: Colors.white,)),
+                  onPressed: () {}, icon: Image.asset("assets/icon/like.png",
+                color: themeProvider.isDarkMode?Colors.white:Colors.black,
+                width: 25,height: 25,),
             )
-          ],
+            )],
         ),
         Row(
           children: [
@@ -178,8 +183,8 @@ class _PlayPageState extends State<PlayPage> with SingleTickerProviderStateMixin
                   duration=state.finish;
                 }
                 return Slider(
-                  activeColor: Colors.white,
-                  inactiveColor: Colors.grey,
+
+
                   value: duration.inSeconds.toDouble(),
                   max: position.inSeconds.toDouble(),
                   min: const Duration(milliseconds: 0)
@@ -211,8 +216,8 @@ class _PlayPageState extends State<PlayPage> with SingleTickerProviderStateMixin
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(maxLines: 1,duration.toString().split(".")[0],style: const TextStyle(color: Colors.white),),
-                  Text(maxLines: 1,position.toString().split(".")[0],style: const TextStyle(color: Colors.white),),
+                  Text(maxLines: 1,duration.toString().split(".")[0],),
+                  Text(maxLines: 1,position.toString().split(".")[0]),
                 ],
               );
             },
@@ -226,7 +231,9 @@ class _PlayPageState extends State<PlayPage> with SingleTickerProviderStateMixin
           children: [
             IconButton(
                 onPressed: () {},
-                icon:Image.asset("assets/icon/shuffle.png",width: 35,height: 35,color: Colors.white,) ),
+                icon:Image.asset("assets/icon/shuffle.png",
+                  color: themeProvider.isDarkMode?Colors.white:Colors.black,
+                    width: 35,height: 35,) ),
             BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
               builder: (context, state) {
 
@@ -253,7 +260,10 @@ class _PlayPageState extends State<PlayPage> with SingleTickerProviderStateMixin
                               number - 1));
                       PlayNewSong().newSong(songs[number -1].uri, widget.audioPlayer, context);
                     },
-                    icon: Image.asset("assets/icon/music-player(1).png",width: 35,height: 35,color: Colors.white,));
+                    icon: Image.asset("assets/icon/music-player(1).png",
+                      color: themeProvider.isDarkMode?Colors.white:Colors.black,
+                      width: 35,height: 35,
+                    ));
               },
             ),
             BlocBuilder<PlaySongBloc, PlaySongState>(
@@ -277,8 +287,9 @@ class _PlayPageState extends State<PlayPage> with SingleTickerProviderStateMixin
                     },
                     icon: Icon(
                       isPlaying ? Icons.pause : Icons.play_arrow,
-                      size: 45,
-                      color: Colors.white,
+                      size: 40,
+                      color: themeProvider.isDarkMode?Colors.white:Colors.black,
+
                     ));
               },
             ),
@@ -307,13 +318,19 @@ class _PlayPageState extends State<PlayPage> with SingleTickerProviderStateMixin
                               songs[number + 1].displayName,
                               number + 1));
                     },
-                    icon: Image.asset("assets/icon/music-player(3).png",width: 35,height: 35,color: Colors.white,)
+                    icon: Image.asset("assets/icon/music-player(3).png",
+                      color: themeProvider.isDarkMode?Colors.white:Colors.black,
+                        width: 35,height: 35,
+                    )
                 );
               },
             ),
             IconButton(
                 onPressed: () {},
-                icon: Image.asset("assets/icon/repeat.png",width: 35,height: 35,color: Colors.white,)),
+                icon: Image.asset("assets/icon/repeat.png",
+                  color: themeProvider.isDarkMode?Colors.white:Colors.black,
+
+                  width: 35,height: 35,)),
           ],
         ),
         const SizedBox(
@@ -327,7 +344,7 @@ class _PlayPageState extends State<PlayPage> with SingleTickerProviderStateMixin
                 icon: const Icon(
                   Icons.menu,
                   size: 40,
-                  color: Colors.white,
+
                 )),
             IconButton(
                 onPressed: () {},

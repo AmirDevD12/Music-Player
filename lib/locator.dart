@@ -19,6 +19,7 @@ void setup() {
   GetIt.I.registerSingleton<AudioPlayer>(AudioPlayer());
   GetIt.I.registerSingleton<PlaySongBloc>(PlaySongBloc());
   GetIt.I.registerSingleton<SortSongBloc>(SortSongBloc());
+
   GetIt.I.registerSingleton<PlayNewSongBloc>(PlayNewSongBloc());
   GetIt.I.registerSingleton<AddressFolder>(AddressFolder());
   GetIt.I.registerSingleton<GetSongFile>(GetSongFile());
