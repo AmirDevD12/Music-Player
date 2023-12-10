@@ -1,5 +1,6 @@
 
 import 'package:first_project/bloc/sort/sort_song_bloc.dart';
+import 'package:flutter/animation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:just_audio/just_audio.dart';
 import 'bloc/newSong/play_new_song_bloc.dart';

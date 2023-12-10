@@ -1,4 +1,5 @@
 
+import 'package:first_project/bloc/newSong/play_new_song_bloc.dart';
 import 'package:first_project/bloc/play_song_bloc.dart';
 import 'package:first_project/bloc/sort/sort_song_bloc.dart';
 
@@ -41,6 +42,7 @@ class MyApp extends StatelessWidget {
               providers: [
                 BlocProvider( create: (BuildContext context) =>locator.get<PlaySongBloc>()),
                 BlocProvider( create: (BuildContext context) =>locator.get<SortSongBloc>()),
+                BlocProvider( create: (BuildContext context) =>locator.get<PlayNewSongBloc>()),
               ],
 
               child: MyHomePage(),)

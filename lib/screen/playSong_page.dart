@@ -84,41 +84,38 @@ class _PlayPageState extends State<PlayPage> with SingleTickerProviderStateMixin
                 Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Transform.rotate(
-                    angle: 10,
-                    child: BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
-                      buildWhen: (privioce,current){
-                        if (current is PauseAnimationState) {
-                          return false;
-                        }  else {
-                          return true;
-                        }
-                      },
-                      builder: (context, state) {
-                        if (state is NewSongState) {
-                          id = state.id;
-                        }
-                        return RotationTransition(
-                          turns: _animation,
-                          child: CircleAvatar(
-                            backgroundImage: const AssetImage("assets/icon/vinyl-record.png"),
-                            radius: 120,
-                            child: Center(
-                              child: QueryArtworkWidget(
-                                  artworkBorder:
-                                  const BorderRadius.all(Radius.circular(100)),
-                                  artworkWidth: 200,
-                                  artworkHeight: 200,
-                                  id: state is NewSongState ||state is PauseAnimationState&&id!=0
-                                      ? id
-                                      : widget.songModel.id,
-                                  type: ArtworkType.AUDIO),
-                            ),
-                          )
+                  BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
+                    buildWhen: (privioce,current){
+                      if (current is PauseAnimationState) {
+                        return false;
+                      }  else {
+                        return true;
+                      }
+                    },
+                    builder: (context, state) {
+                      if (state is NewSongState) {
+                        id = state.id;
+                      }
+                      return RotationTransition(
+                        turns: _animation,
+                        child: CircleAvatar(
+                          backgroundImage: const AssetImage("assets/icon/vinyl-record.png"),
+                          radius: 120,
+                          child: Center(
+                            child: QueryArtworkWidget(
+                                artworkBorder:
+                                const BorderRadius.all(Radius.circular(100)),
+                                artworkWidth: 200,
+                                artworkHeight: 200,
+                                id: state is NewSongState ||state is PauseAnimationState&&id!=0
+                                    ? id
+                                    : widget.songModel.id,
+                                type: ArtworkType.AUDIO),
+                          ),
+                        )
 
-                        );
-                      },
-                    ),
+                      );
+                    },
                   )
                 ],
               ),
