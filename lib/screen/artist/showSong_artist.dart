@@ -1,12 +1,11 @@
 
 import 'package:first_project/bloc/newSong/play_new_song_bloc.dart';
 import 'package:first_project/bloc/play_song_bloc.dart';
+import 'package:first_project/core/playall_container.dart';
+import 'package:first_project/core/popup.dart';
 import 'package:first_project/locator.dart';
 import 'package:first_project/model/list_artist.dart';
-import 'package:first_project/model/songs_model.dart';
 import 'package:first_project/screen/playSong_page.dart';
-import 'package:first_project/widget/playall_container.dart';
-import 'package:first_project/widget/popup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
@@ -21,7 +20,7 @@ class ShowListArtist extends StatefulWidget {
 }
 
 class _ShowListArtistState extends State<ShowListArtist> {
-  TextStyle style =const TextStyle(color: Colors.white);
+
 
   final OnAudioQuery onAudioQuery = OnAudioQuery();
 
@@ -30,11 +29,11 @@ class _ShowListArtistState extends State<ShowListArtist> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: const Color(0xff1a1b1d),
+
         appBar: AppBar(
 
-          backgroundColor: const Color(0xff1a1b1d),
-          title: Text(widget.nameArtist,style: style,),
+
+          title: Text(widget.nameArtist,),
         ),
         body:Column(
 
@@ -61,7 +60,7 @@ class _ShowListArtistState extends State<ShowListArtist> {
                             trailing: const SizedBox(
                                 width: 35,
                                 child: PopupMenuButtonWidget()),
-                            title: Text(maxLines: 1,snapshot.data![index].title,style: style,),
+                            title: Text(maxLines: 1,snapshot.data![index].title),
                             subtitle: Text(maxLines: 1,snapshot.data![index].displayName,),
                             onTap: (){
                               Navigator.push(

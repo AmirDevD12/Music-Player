@@ -13,14 +13,14 @@ class PlayNewSong {
       audioPlayer.play();
       audioPlayer.durationStream.listen((event) {
         duration = event!;
-        BlocProvider.of<PlaySongBloc>(context).add(DurationEvent(
+        context.read<PlaySongBloc>().add(DurationEvent(
           duration,
           position,
         ));
       });
       audioPlayer.positionStream.listen((event) {
         position = event;
-        BlocProvider.of<PlaySongBloc>(context).add(DurationEvent(
+        context.read<PlaySongBloc>().add(DurationEvent(
           duration,
           position,
         ));

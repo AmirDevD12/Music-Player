@@ -4,13 +4,9 @@ import 'package:first_project/screen/folder/showSongFolder.dart';
 import 'package:flutter/material.dart';
 
 class AlbumList extends StatelessWidget {
-
-
-  AlbumList({Key? key,}) : super(key: key);
-  TextStyle style =const TextStyle(color: Colors.white);
   @override
   Widget build(BuildContext context) {
-    // namefolder();
+
     return FutureBuilder<List<String>>(
       future: AddressFolder().location(),
       builder: (context, snapshot) {
@@ -25,9 +21,9 @@ class AlbumList extends StatelessWidget {
                   file.add(fileName);
               }
               return ListTile(
-                title: Text(maxLines: 1,file[index],style: TextStyle(color: Colors.white),),
-                subtitle: Text(maxLines: 1,snapshot.data![index],style: TextStyle(fontSize: 18),),
-                leading: Image.asset("assets/icon/folder.png",color:Colors.deepPurpleAccent ,),
+                title: Text(maxLines: 1,file[index],),
+                subtitle: Text(maxLines: 1,snapshot.data![index],),
+                leading: Image.asset("assets/icon/folder.png",),
                 onTap: (){
                   Navigator.push(
                       context,
@@ -44,8 +40,4 @@ class AlbumList extends StatelessWidget {
       },
     );
   }
-  // namefolder() async {
-  //   List<String> path = await AddressFolder().getSongs();
-  //   print(path);
-  // }
 }

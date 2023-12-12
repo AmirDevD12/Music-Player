@@ -4,16 +4,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ChangeAnimation{
-  toggleAnimation(AnimationController animationController,BuildContext context,bool isAnimating) {
+  toggleAnimation(AnimationController animationController,bool isAnimating) {
 
     if (!isAnimating) {
       animationController.stop();
-      BlocProvider.of<PlayNewSongBloc>(context).add(PauseAnimationEvent());
+
 
     } else {
       animationController.repeat();
-      BlocProvider.of<PlayNewSongBloc>(context).add(PauseAnimationEvent());
+
     }
-    BlocProvider.of<PlayNewSongBloc>(context).add(PauseAnimationEvent());
+
   }
 }

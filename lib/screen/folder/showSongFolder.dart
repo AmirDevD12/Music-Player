@@ -14,17 +14,16 @@ import 'package:on_audio_query/on_audio_query.dart';
 class ShowSongFolder extends StatelessWidget {
   final String path;
   final String nameFile;
-  ShowSongFolder({Key? key, required this.path, required this.nameFile,}) : super(key: key);
-  TextStyle style =const TextStyle(color: Colors.white);
+  const ShowSongFolder({Key? key, required this.path, required this.nameFile,}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        foregroundColor: Colors.white24,
-        backgroundColor: const Color(0xff1a1b1d),
-        title:Text(nameFile,style: TextStyle(color: Colors.white),) ,
+
+        title:Text(nameFile,) ,
       ),
-      backgroundColor: const Color(0xff1a1b1d),
+
       body: FutureBuilder<List<SongModel>>(
         future: locator.get<GetSongFile>().getSongFile(path),
         builder: (context, snapshot) {
@@ -33,8 +32,8 @@ class ShowSongFolder extends StatelessWidget {
               itemCount: snapshot.data?.length ,
               itemBuilder: (context, index) {
                 return ListTile(
-                  title: Text(maxLines: 1,snapshot.data![index].title,style: TextStyle(color: Colors.white),),
-                  subtitle: Text(maxLines: 1,snapshot.data![index].displayName,style: TextStyle(fontSize: 18),),
+                  title: Text(maxLines: 1,snapshot.data![index].title,),
+                  subtitle: Text(maxLines: 1,snapshot.data![index].displayName,),
                   leading: QueryArtworkWidget(
                       artworkWidth: 60,
                       artworkHeight: 60,
@@ -50,7 +49,7 @@ class ShowSongFolder extends StatelessWidget {
                                 BlocProvider(
                                     create: (context) => locator.get<PlaySongBloc>()),
                                 BlocProvider(
-                                    create: (context) => PlayNewSongBloc())
+                                    create: (context) => locator.get<PlayNewSongBloc>())
                               ],
                               child: PlayPage(
                                 songModel: snapshot.data![index],
@@ -68,8 +67,4 @@ class ShowSongFolder extends StatelessWidget {
       ),
     );
   }
-// namefolder() async {
-//   List<String> path = await AddressFolder().getSongs();
-//   print(path);
-// }
 }
