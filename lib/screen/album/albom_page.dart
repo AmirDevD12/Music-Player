@@ -23,7 +23,7 @@ class _AlbumPageState extends State<AlbumPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder<List<SongModel>>(
-        future: SongList().getSongs(SongSortType.ALBUM),
+        future: SongList().getSongs(SongSortType.ALBUM,null),
         builder:
             (BuildContext context, AsyncSnapshot<List<SongModel>> snapshot) {
           if (snapshot.hasData) {

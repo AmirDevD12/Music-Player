@@ -1,4 +1,5 @@
 
+import 'package:first_project/bloc/favorite_song/favorite_bloc.dart';
 import 'package:first_project/bloc/sort/sort_song_bloc.dart';
 import 'package:flutter/animation.dart';
 import 'package:get_it/get_it.dart';
@@ -22,6 +23,7 @@ void setup() {
   GetIt.I.registerSingleton<AudioPlayer>(AudioPlayer());
   GetIt.I.registerSingleton<PlaySongBloc>(PlaySongBloc());
   GetIt.I.registerSingleton<SortSongBloc>(SortSongBloc());
+  GetIt.I.registerSingleton<FavoriteBloc>(FavoriteBloc());
 
   GetIt.I.registerSingleton<PlayNewSongBloc>(PlayNewSongBloc());
   GetIt.I.registerSingleton<AddressFolder>(AddressFolder());

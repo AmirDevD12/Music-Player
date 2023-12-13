@@ -1,3 +1,4 @@
+import 'package:first_project/bloc/favorite_song/favorite_bloc.dart';
 import 'package:first_project/bloc/newSong/play_new_song_bloc.dart';
 import 'package:first_project/bloc/play_song_bloc.dart';
 import 'package:first_project/bloc/sort/sort_song_bloc.dart';
@@ -31,6 +32,7 @@ class _ListMusicState extends State<ListMusic> {
 
   }
   String select = "";
+  String path="";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,6 +50,7 @@ class _ListMusicState extends State<ListMusic> {
                 child: BlocBuilder<PlaySongBloc, PlaySongState>(
                   buildWhen: (perivioce,current){
                     if (current is DeleteSongState) {
+                      path=current.path;
                       return true ;
                     } else {
                       return false;
@@ -55,7 +58,7 @@ class _ListMusicState extends State<ListMusic> {
                   },
                   builder: (context, state) {
                     return FutureBuilder<List<SongModel>>(
-                      future: SongList().getSongs(sort),
+                      future: SongList().getSongs(sort,path==""?null:path),
                       builder: (BuildContext context,
                           AsyncSnapshot<List<SongModel>> snapshot) {
                         if (snapshot.hasData) {
@@ -81,7 +84,9 @@ class _ListMusicState extends State<ListMusic> {
                                       return [
                                         PopupMenuItem(
                                           onTap: () {
+
                                             locator.get<DeleteSong>().getDeleteSong(snapshot.data![index]);
+                                            BlocProvider.of<PlaySongBloc>(context).add(DeleteSongEvent(snapshot.data![index].data));
                                           },
                                           value: '/delete',
                                           child: Text("delete"),
@@ -99,12 +104,14 @@ class _ListMusicState extends State<ListMusic> {
                                   ),
                                 ),
                                 title: Text(
+                                  style: TextStyle(color: themeProvider.isDarkMode?Colors.white:Colors.black,fontFamily: "ibm",fontSize: 15,fontWeight: FontWeight.bold),
                                   maxLines: 1,
-                                  snapshot.data![index].title,
+                                  snapshot.data!.reversed.toList()![index].title,
                                 ),
                                 subtitle: Text(
+                                  style: TextStyle(color: themeProvider.isDarkMode?Colors.white:Colors.black,fontFamily: "ibm",fontSize: 14,),
                                   maxLines: 1,
-                                  snapshot.data![index].displayName,
+                                  snapshot.data!.reversed.toList()![index].displayName,
                                 ),
                                 leading: QueryArtworkWidget(
                                     artworkWidth: 60,
@@ -112,11 +119,10 @@ class _ListMusicState extends State<ListMusic> {
                                     artworkFit: BoxFit.cover,
                                     artworkBorder: const BorderRadius.all(
                                         Radius.circular(5)),
-                                    id: snapshot.data![index].id,
+                                    id: snapshot.data!.reversed.toList()![index].id,
                                     type: ArtworkType.AUDIO),
                                 onTap: () async {
-                                  BlocProvider.of<PlaySongBloc>(context)
-                                      .add(PausePlayEvent());
+
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -130,6 +136,10 @@ class _ListMusicState extends State<ListMusic> {
                                                   BlocProvider(
                                                     create: (context) => locator
                                                         .get<PlayNewSongBloc>(),
+                                                  ),
+                                                  BlocProvider(
+                                                    create: (context) => locator
+                                                        .get<FavoriteBloc>(),
                                                   ),
                                                 ],
                                                 child: PlayPage(

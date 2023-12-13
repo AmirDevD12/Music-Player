@@ -10,6 +10,11 @@ class DurationEvent extends PlaySongEvent{
 class PausePlayEvent extends PlaySongEvent{}
 class ShowEvent extends PlaySongEvent{
   SongModel songModel;
-  ShowEvent(this.songModel);
+  bool play;
+  ShowEvent(this.songModel,this.play);
 }
-class DeleteSongEvent extends PlaySongEvent{}
+class DeleteSongEvent extends PlaySongEvent{
+  String path;
+
+  DeleteSongEvent(this.path);
+}

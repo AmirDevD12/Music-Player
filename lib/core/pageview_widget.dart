@@ -3,11 +3,11 @@ import 'package:first_project/bloc/play_song_bloc.dart';
 import 'package:first_project/bloc/sort/sort_song_bloc.dart';
 import 'package:first_project/core/playall_container.dart';
 import 'package:first_project/core/them_seitcher.dart';
+import 'package:first_project/core/theme/theme_mode.dart';
 import 'package:first_project/screen/album/albom_page.dart';
 import 'package:first_project/screen/artist/count_artist.dart';
 import 'package:first_project/screen/folder/folder_song.dart';
 import 'package:first_project/screen/list_song.dart';
-import 'package:first_project/core/theme/theme_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:on_audio_query/on_audio_query.dart';
@@ -15,6 +15,8 @@ import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import 'bottomNavigation_widget.dart';
+import 'container_type_of_song.dart';
+
 
 
 
@@ -36,18 +38,17 @@ class _MyHomePageState extends State<MyHomePage> {
     const Center(child: AlbumPage()),
     Center(child: AlbumList()),
   ];
-  int curr=0;
-List<String> ListIssue=<String>["Songs ","Artist","Album","Folder"];
 
+List<String> ListIssue=<String>["Songs ","Artist","Album","Folder"];
+  int curr=0;
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
 
       appBar: AppBar(
         actions: const [ThemeSwitcher()],
 
-        title: const Text('My music',textAlign: TextAlign.center,),
+        title: const Text('My music',style: TextStyle(color: Colors.white),),
       ),
       bottomNavigationBar: BlocBuilder<PlaySongBloc, PlaySongState>(
         buildWhen: (privioc,current){
@@ -66,8 +67,15 @@ List<String> ListIssue=<String>["Songs ","Artist","Album","Folder"];
       body: Column(
         children: [
           const SizedBox(height: 10,),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              const ContainerTypeSong(name: 'Favorites', imagePath: "assets/icon/love-song.png", color: Colors.deepPurple,),
+              ContainerTypeSong(name: 'Playlist', imagePath: "assets/icon/list.png", color: Colors.green.shade900,),
+              const ContainerTypeSong(name: 'New items', imagePath: "assets/icon/clock.png", color: Colors.orange,),
+            ],
+          ),
+          const SizedBox(height: 10,),
           Expanded(
-
               child: Row(crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
@@ -89,6 +97,7 @@ List<String> ListIssue=<String>["Songs ","Artist","Album","Folder"];
                                         curve: Curves.easeOut);
                                   },
                                   child:  Text(ListIssue[index],
+                                    style: const TextStyle(fontFamily: "ibm",fontSize: 15,fontWeight: FontWeight.bold),
                                        ),
                                 ),
                               ),

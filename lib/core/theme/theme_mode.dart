@@ -24,13 +24,16 @@ class MyThemes {
       titleMedium: GoogleFonts.ubuntu(color: Colors.white, fontSize: 18),
         bodyLarge:GoogleFonts.ubuntu(color: Colors.red),
         bodyMedium:GoogleFonts.ubuntu(color: Colors.white),
+      displayLarge: GoogleFonts.ubuntu(color: Colors.white),
+      displaySmall: GoogleFonts.ubuntu(color: Colors.white),
+      headlineMedium: GoogleFonts.ubuntu(color: Colors.white),
 
 
     ),
     fontFamily: "ibm",
     canvasColor: Colors.red,
     appBarTheme: const AppBarTheme(color: Color(0xff1a1b1d)),
-    cardColor: const Color(0xff1a1b1d),
+
     iconButtonTheme: const IconButtonThemeData(style: ButtonStyle()),
     primaryIconTheme: const IconThemeData(color: Colors.green),
     backgroundColor: Colors.white,

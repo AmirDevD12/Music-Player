@@ -19,10 +19,10 @@ class PlaySongBloc extends Bloc<PlaySongEvent, PlaySongState> {
       emit(PausePlayState());
     });
     on<ShowEvent>((event, emit){
-      emit(ShowNavState(event.songModel));
+      emit(ShowNavState(event.songModel,event.play));
     });
     on<DeleteSongEvent>((event, emit){
-      emit(DeleteSongState());
+      emit(DeleteSongState(event.path));
     });
   }
 }
