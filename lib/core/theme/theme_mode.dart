@@ -24,16 +24,19 @@ class MyThemes {
       titleMedium: GoogleFonts.ubuntu(color: Colors.white, fontSize: 18),
         bodyLarge:GoogleFonts.ubuntu(color: Colors.red),
         bodyMedium:GoogleFonts.ubuntu(color: Colors.white),
+      displayLarge: GoogleFonts.ubuntu(color: Colors.white),
+      displaySmall: GoogleFonts.ubuntu(color: Colors.white),
+      headlineMedium: GoogleFonts.ubuntu(color: Colors.white),
 
 
     ),
     fontFamily: "ibm",
     canvasColor: Colors.red,
-    appBarTheme: AppBarTheme(color: const Color(0xff1a1b1d)),
-    cardColor: const Color(0xff1a1b1d),
-    iconButtonTheme: IconButtonThemeData(style: ButtonStyle()),
-    primaryIconTheme: IconThemeData(color: Colors.green),
-    backgroundColor: Colors.white,
+    appBarTheme: const AppBarTheme(color: Color(0xff1a1b1d)),
+
+    iconButtonTheme: const IconButtonThemeData(style: ButtonStyle()),
+    primaryIconTheme: const IconThemeData(color: Colors.green),
+
     unselectedWidgetColor: Colors.red,
     primaryColorLight: Colors.white,
     scaffoldBackgroundColor: const Color(0xff1a1b1d),
@@ -58,7 +61,7 @@ class MyThemes {
       bodyMedium:GoogleFonts.ubuntu(color: Colors.black),
     ),
       fontFamily: "ibm",
-    appBarTheme: AppBarTheme(backgroundColor: Colors.deepPurple),
+    appBarTheme: const AppBarTheme(backgroundColor: Colors.deepPurple),
     unselectedWidgetColor: Colors.black,
     primaryColorLight: Colors.black,
     scaffoldBackgroundColor: Colors.white,

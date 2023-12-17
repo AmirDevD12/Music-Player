@@ -14,7 +14,7 @@ import 'package:on_audio_query/on_audio_query.dart';
 class ShowSongFolder extends StatelessWidget {
   final String path;
   final String nameFile;
-  ShowSongFolder({Key? key, required this.path, required this.nameFile,}) : super(key: key);
+  const ShowSongFolder({Key? key, required this.path, required this.nameFile,}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +49,7 @@ class ShowSongFolder extends StatelessWidget {
                                 BlocProvider(
                                     create: (context) => locator.get<PlaySongBloc>()),
                                 BlocProvider(
-                                    create: (context) => PlayNewSongBloc())
+                                    create: (context) => locator.get<PlayNewSongBloc>())
                               ],
                               child: PlayPage(
                                 songModel: snapshot.data![index],
@@ -67,8 +67,4 @@ class ShowSongFolder extends StatelessWidget {
       ),
     );
   }
-// namefolder() async {
-//   List<String> path = await AddressFolder().getSongs();
-//   print(path);
-// }
 }

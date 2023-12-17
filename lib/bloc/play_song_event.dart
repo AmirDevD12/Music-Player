@@ -8,3 +8,13 @@ class DurationEvent extends PlaySongEvent{
   DurationEvent(this.start, this.finish);
 }
 class PausePlayEvent extends PlaySongEvent{}
+class ShowEvent extends PlaySongEvent{
+  SongModel songModel;
+  bool play;
+  ShowEvent(this.songModel,this.play);
+}
+class DeleteSongEvent extends PlaySongEvent{
+  String path;
+
+  DeleteSongEvent(this.path);
+}

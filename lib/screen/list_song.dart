@@ -1,10 +1,11 @@
+import 'package:first_project/bloc/favorite_song/favorite_bloc.dart';
 import 'package:first_project/bloc/newSong/play_new_song_bloc.dart';
 import 'package:first_project/bloc/play_song_bloc.dart';
 import 'package:first_project/bloc/sort/sort_song_bloc.dart';
 import 'package:first_project/locator.dart';
 import 'package:first_project/model/delete_model.dart';
 import 'package:first_project/screen/playSong_page.dart';
-import 'package:first_project/theme_mode.dart';
+import 'package:first_project/core/theme/theme_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
@@ -13,7 +14,9 @@ import 'package:provider/provider.dart';
 import '../model/songs_model.dart';
 
 class ListMusic extends StatefulWidget {
-  const ListMusic({super.key});
+  const ListMusic({
+    super.key,
+  });
 
   @override
   State<ListMusic> createState() => _ListMusicState();
@@ -21,108 +24,146 @@ class ListMusic extends StatefulWidget {
 
 class _ListMusicState extends State<ListMusic> {
 
-  final OnAudioQuery onAudioQuery = OnAudioQuery();
   SongSortType songSortType = SongSortType.TITLE;
+@override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
 
-  String select="";
+  }
+  String select = "";
+  String path="";
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-      body: Column(mainAxisAlignment: MainAxisAlignment.start,
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           BlocBuilder<SortSongBloc, SortSongState>(
-           builder: (context, state) {
-             SongSortType sort=SongSortType.TITLE;
-             if (state is SortByAddState){
-               sort=state.songSortType;
-             }
-               return Expanded(
-            flex: 8,
-            child: FutureBuilder<List<SongModel>>(
-              future: SongList().getSongs(sort),
-              builder: (BuildContext context,
-                  AsyncSnapshot<List<SongModel>> snapshot) {
-                if (snapshot.hasData) {
-                  return ListView.builder(
+            builder: (context, state) {
+              SongSortType sort = SongSortType.TITLE;
+              if (state is SortByAddState) {
+                sort = state.songSortType;
+              }
+              return Expanded(
+                flex: 8,
+                child: BlocBuilder<PlaySongBloc, PlaySongState>(
+                  buildWhen: (perivioce,current){
+                    if (current is DeleteSongState) {
+                      path=current.path;
+                      return true ;
+                    } else {
+                      return false;
+                    }
+                  },
+                  builder: (context, state) {
+                    return FutureBuilder<List<SongModel>>(
+                      future: SongList().getSongs(sort,path==""?null:path),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<List<SongModel>> snapshot) {
+                        if (snapshot.hasData) {
+                          return ListView.builder(
+                            itemCount: snapshot.data?.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              final themeProvider =
+                                  Provider.of<ThemeProvider>(context);
+                              return ListTile(
+                                trailing: SizedBox(
+                                  width: 36,
+                                  child: PopupMenuButton(
+                                    iconSize: 200,
+                                    icon: Image.asset(
+                                      "assets/icon/dots.png",
+                                      width: 40,
+                                      height: 40,
+                                      color: themeProvider.isDarkMode
+                                          ? Colors.white
+                                          : Colors.black,
+                                    ),
+                                    itemBuilder: (BuildContext bc) {
+                                      return [
+                                        PopupMenuItem(
+                                          onTap: () {
 
-                    itemCount: snapshot.data?.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      final themeProvider = Provider.of<ThemeProvider>(context);
-                      return ListTile(
-                        trailing:    SizedBox(width: 36,
-                          child: PopupMenuButton(iconSize: 200,
-                            icon: Image.asset("assets/icon/dots.png",
-                              width: 40,height: 40,color:themeProvider.isDarkMode?Colors.white:Colors.black ,),
-                            itemBuilder: (BuildContext bc) {
-                              return  [
-                                PopupMenuItem(
-                                  onTap: (){
-                                    DeleteSong().getDeleteSong(snapshot.data![index]);
-                                  },
-                                  value: '/hello',
-                                  child: Text("delete"),
-                                ),
-                                PopupMenuItem(
-                                  value: '/about',
-                                  child: Text("Share"),
-                                ),
-                                PopupMenuItem(
-                                  value: '/contact',
-                                  child: Text("Add to playlist"),
-                                )
-                              ];
-                            },
-                          ),
-                        ),
-                        title: Text(
-                          maxLines: 1,
-                          snapshot.data![index].title,
-
-                        ),
-                        subtitle: Text(
-                          maxLines: 1,
-                          snapshot.data![index].displayName,
-                        ),
-                        leading: QueryArtworkWidget(
-                            artworkWidth: 60,
-                            artworkHeight: 60,
-                            artworkFit: BoxFit.cover,
-                            artworkBorder:
-                                const BorderRadius.all(Radius.circular(0)),
-                            id: snapshot.data![index].id,
-                            type: ArtworkType.AUDIO),
-                        onTap: () async {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => MultiBlocProvider(
-                                        providers: [
-                                          BlocProvider(
-                                              create: (context) =>
-                                                  locator.get<PlaySongBloc>()),
-                                          BlocProvider(
-                                              create: (context) =>
-                                                  locator.get<PlayNewSongBloc>())
-                                        ],
-                                        child: PlayPage(
-                                          songModel: snapshot.data![index],
-                                          audioPlayer: locator.get<AudioPlayer>(),
+                                            locator.get<DeleteSong>().getDeleteSong(snapshot.data![index]);
+                                            BlocProvider.of<PlaySongBloc>(context).add(DeleteSongEvent(snapshot.data![index].data));
+                                          },
+                                          value: '/delete',
+                                          child: Text("delete"),
                                         ),
-                                      )));
-                        },
-                      );
-                    },
-                  );
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                }
-                return const Center(child: CircularProgressIndicator());
-              },
-            ),
-          );
-  },
-),
+                                        const PopupMenuItem(
+                                          value: '/share',
+                                          child: Text("Share"),
+                                        ),
+                                        const PopupMenuItem(
+                                          value: '/add',
+                                          child: Text("Add to playlist"),
+                                        )
+                                      ];
+                                    },
+                                  ),
+                                ),
+                                title: Text(
+                                  style: TextStyle(color: themeProvider.isDarkMode?Colors.white:Colors.black,fontFamily: "ibm",fontSize: 15,fontWeight: FontWeight.bold),
+                                  maxLines: 1,
+                                  snapshot.data!.reversed.toList()![index].title,
+                                ),
+                                subtitle: Text(
+                                  style: TextStyle(color: themeProvider.isDarkMode?Colors.white:Colors.black,fontFamily: "ibm",fontSize: 14,),
+                                  maxLines: 1,
+                                  snapshot.data!.reversed.toList()![index].displayName,
+                                ),
+                                leading: QueryArtworkWidget(
+                                    artworkWidth: 60,
+                                    artworkHeight: 60,
+                                    artworkFit: BoxFit.cover,
+                                    artworkBorder: const BorderRadius.all(
+                                        Radius.circular(5)),
+                                    id: snapshot.data!.reversed.toList()![index].id,
+                                    type: ArtworkType.AUDIO),
+                                onTap: () async {
+
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              MultiBlocProvider(
+                                                providers: [
+                                                  BlocProvider(
+                                                      create: (context) =>
+                                                          locator.get<
+                                                              PlaySongBloc>()),
+                                                  BlocProvider(
+                                                    create: (context) => locator
+                                                        .get<PlayNewSongBloc>(),
+                                                  ),
+                                                  BlocProvider(
+                                                    create: (context) => locator
+                                                        .get<FavoriteBloc>(),
+                                                  ),
+                                                ],
+                                                child: PlayPage(
+                                                  songModel:
+                                                      snapshot.data![index],
+                                                  audioPlayer: locator
+                                                      .get<AudioPlayer>(),
+                                                ),
+                                              )));
+                                },
+                              );
+                            },
+                          );
+                        } else if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        }
+                        return const Center(child: CircularProgressIndicator());
+                      },
+                    );
+                  },
+                ),
+              );
+            },
+          ),
         ],
       ),
     );

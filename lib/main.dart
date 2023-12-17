@@ -2,13 +2,12 @@
 import 'package:first_project/bloc/newSong/play_new_song_bloc.dart';
 import 'package:first_project/bloc/play_song_bloc.dart';
 import 'package:first_project/bloc/sort/sort_song_bloc.dart';
-
-import 'package:first_project/theme_mode.dart';
-import 'package:first_project/widget/pageview_widget.dart';
+import 'package:first_project/core/theme/theme_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
-
+import 'core/pageview_screen.dart';
+import 'core/pageview_widget.dart';
 import 'locator.dart';
 
 void main() {
@@ -17,7 +16,6 @@ void main() {
       MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (context) => ThemeProvider()),
-
         ],
         child: const MyApp(),
       )
@@ -40,12 +38,11 @@ class MyApp extends StatelessWidget {
             darkTheme: MyThemes.darkTheme,
             home: MultiBlocProvider(
               providers: [
-                BlocProvider( create: (BuildContext context) =>locator.get<PlaySongBloc>()),
-                BlocProvider( create: (BuildContext context) =>locator.get<SortSongBloc>()),
-                BlocProvider( create: (BuildContext context) =>locator.get<PlayNewSongBloc>()),
+                BlocProvider<PlaySongBloc>( create: (context) =>locator.get<PlaySongBloc>()),
+                BlocProvider<SortSongBloc>( create: (context) =>locator.get<SortSongBloc>()),
+                BlocProvider<PlayNewSongBloc>( create: (context) =>locator.get<PlayNewSongBloc>()),
               ],
-
-              child: MyHomePage(),)
+              child: const MyHomePage(),)
         );
       },
 

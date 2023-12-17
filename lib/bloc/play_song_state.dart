@@ -10,3 +10,13 @@ class DurationState extends PlaySongState {
   DurationState(this.start, this.finish);
 }
 class PausePlayState extends PlaySongState{}
+class ShowNavState extends PlaySongState{
+  SongModel songModel;
+  bool play;
+  ShowNavState(this.songModel,this.play);
+}
+class DeleteSongState extends PlaySongState{
+  String path;
+
+  DeleteSongState(this.path);
+}

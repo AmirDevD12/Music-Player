@@ -1,12 +1,11 @@
 
 import 'package:first_project/bloc/newSong/play_new_song_bloc.dart';
 import 'package:first_project/bloc/play_song_bloc.dart';
+import 'package:first_project/core/playall_container.dart';
+import 'package:first_project/core/popup.dart';
 import 'package:first_project/locator.dart';
 import 'package:first_project/model/list_artist.dart';
-import 'package:first_project/model/songs_model.dart';
 import 'package:first_project/screen/playSong_page.dart';
-import 'package:first_project/widget/playall_container.dart';
-import 'package:first_project/widget/popup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';

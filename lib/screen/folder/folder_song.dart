@@ -4,12 +4,9 @@ import 'package:first_project/screen/folder/showSongFolder.dart';
 import 'package:flutter/material.dart';
 
 class AlbumList extends StatelessWidget {
-
-
-
   @override
   Widget build(BuildContext context) {
-    // namefolder();
+
     return FutureBuilder<List<String>>(
       future: AddressFolder().location(),
       builder: (context, snapshot) {
@@ -18,7 +15,7 @@ class AlbumList extends StatelessWidget {
           return ListView.builder(
             itemCount: snapshot.data?.length ,
             itemBuilder: (context, index) {
-              for(int i=0; i<snapshot.data!.length-1;i++){
+              for(int i=0; i<=snapshot.data!.length-1;i++){
                 List<String> parts = snapshot.data![index].split('/');
                 String fileName = parts[parts.length-1];
                   file.add(fileName);
@@ -43,8 +40,4 @@ class AlbumList extends StatelessWidget {
       },
     );
   }
-  // namefolder() async {
-  //   List<String> path = await AddressFolder().getSongs();
-  //   print(path);
-  // }
 }
