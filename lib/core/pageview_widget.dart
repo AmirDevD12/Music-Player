@@ -16,7 +16,7 @@ import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import 'bottomNavigation_widget.dart';
-import 'card_widget.dart';
+
 import 'container_type_of_song.dart';
 class PageViewSong extends StatefulWidget {
   const PageViewSong({super.key});

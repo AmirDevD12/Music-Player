@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'core/pageview_screen.dart';
-import 'core/pageview_widget.dart';
 import 'locator.dart';
 
 void main() {
