@@ -8,7 +8,7 @@ import 'package:first_project/screen/album/albom_page.dart';
 import 'package:first_project/screen/artist/count_artist.dart';
 import 'package:first_project/screen/folder/folder_song.dart';
 import 'package:first_project/screen/list_song.dart';
-import 'package:first_project/screen/search_bottum.dart';
+import 'package:first_project/screen/bottum_navigation/search_bottum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:on_audio_query/on_audio_query.dart';
@@ -50,7 +50,7 @@ List<String> ListIssue=<String>["Songs ","Artist","Album","Folder"];
           //   ],
           // ),
           // const SizedBox(height: 10,),
-          Expanded(flex: 1,
+          Expanded(flex: 2,
               child: Row(crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(

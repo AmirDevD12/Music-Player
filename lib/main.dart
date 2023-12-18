@@ -5,12 +5,20 @@ import 'package:first_project/bloc/sort/sort_song_bloc.dart';
 import 'package:first_project/core/theme/theme_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'core/pageview_screen.dart';
 import 'locator.dart';
+import 'model/favorite_song.dart';
 
-void main() {
-  setup();
+
+
+void main() async {
+
+ await Hive.initFlutter();
+  Hive.registerAdapter(FavoriteSongAdapter());
+await  Hive.openBox<FavoriteSong>("Favorite");
+ setup();
   runApp(
       MultiProvider(
         providers: [

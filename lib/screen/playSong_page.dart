@@ -2,11 +2,14 @@ import 'package:first_project/bloc/favorite_song/favorite_bloc.dart';
 import 'package:first_project/bloc/newSong/play_new_song_bloc.dart';
 import 'package:first_project/locator.dart';
 import 'package:first_project/model/chengeAnimation.dart';
+import 'package:first_project/model/favorite_song.dart';
 import 'package:first_project/model/newSong.dart';
 import 'package:first_project/model/songs_model.dart';
 import 'package:first_project/core/theme/theme_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+
 import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
@@ -210,8 +213,14 @@ class _PlayPageState extends State<PlayPage>
                         builder: (context, state) {
 
                           return IconButton(
-                            onPressed: () {
+                            onPressed: () async {
                               like=!like;
+                              add(widget.songModel);
+                              print(widget.songModel);
+                              // var hive=await Hive.openBox("Favorite");
+                              // hive.put("value1",widget.songModel);
+                              // SongModel amir=hive.get("value1");
+                              // print(amir);
                               BlocProvider.of<FavoriteBloc>(context).add(FavoriteSongEvent());
                             },
                             icon: Image.asset(
@@ -467,9 +476,13 @@ class _PlayPageState extends State<PlayPage>
       ],
     )));
   }
-
   void changeSeconds(int seconds) {
     Duration duration = Duration(seconds: seconds);
     widget.audioPlayer.seek(duration);
+  }
+  add(SongModel songModel) async {
+    var box = await Hive.openBox<FavoriteSong>("Favorite");
+    FavoriteSong favorite = FavoriteSong(songModel.title,songModel.data,songModel.id,songModel.artist!);
+    await  box.add(favorite);
   }
 }

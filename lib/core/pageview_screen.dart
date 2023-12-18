@@ -7,9 +7,10 @@ import 'package:first_project/core/them_seitcher.dart';
 import 'package:first_project/core/theme/theme_mode.dart';
 import 'package:first_project/screen/album/albom_page.dart';
 import 'package:first_project/screen/artist/count_artist.dart';
+import 'package:first_project/screen/bottum_navigation/favorite_screen.dart';
 import 'package:first_project/screen/folder/folder_song.dart';
 import 'package:first_project/screen/list_song.dart';
-import 'package:first_project/screen/search_bottum.dart';
+import 'package:first_project/screen/bottum_navigation/search_bottum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:on_audio_query/on_audio_query.dart';
@@ -32,7 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
     const Center(child:PageViewSong() ),
     const Center(child: SearchScreen()),
     const Center(child: AlbumPage()),
-    Center(child: AlbumList()),
+     Center(child: FavoriteScreen()),
   ];
   int curr=0;
   @override
@@ -61,6 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     : const SizedBox();
               },
             ),
+            const SizedBox(height: 5,),
             Expanded(
 
               child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -86,7 +88,16 @@ class _MyHomePageState extends State<MyHomePage> {
                       },
                       child: CardWidget(text: 'search', iconData: Icons.search,)),
                   CardWidget(text: 'Home', iconData: Icons.home,),
-                  CardWidget(text: 'Home', iconData: Icons.home,),
+                  GestureDetector(
+                      onTap:(){
+
+                        curr=3;
+                        controller.animateToPage(curr,
+                            duration: const Duration(milliseconds: 10),
+                            curve: Curves.easeOut);
+
+                      }
+                      ,child: CardWidget(text: 'Home', iconData: Icons.home,)),
                 ],
               ),
             )

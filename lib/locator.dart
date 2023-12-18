@@ -1,6 +1,7 @@
 
 import 'package:first_project/bloc/favorite_song/favorite_bloc.dart';
 import 'package:first_project/bloc/sort/sort_song_bloc.dart';
+import 'package:first_project/model/favorite_song.dart';
 import 'package:flutter/animation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:just_audio/just_audio.dart';
@@ -37,4 +38,6 @@ void setup() {
   GetIt.I.registerSingleton<SongList>(SongList());
   GetIt.I.registerSingleton<PathSong>(PathSong());
   GetIt.I.registerSingleton<DeleteSong>(DeleteSong());
+  GetIt.I.registerSingleton<FavoriteSongAdapter>(FavoriteSongAdapter());
+
 }
