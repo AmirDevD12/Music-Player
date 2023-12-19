@@ -4,4 +4,7 @@ part of 'favorite_bloc.dart';
 abstract class FavoriteState {}
 
 class FavoriteInitial extends FavoriteState {}
-class FavoriteSongState extends FavoriteState {}
+class FavoriteSongState extends FavoriteState {
+ final bool like;
+ FavoriteSongState(this.like);
+}

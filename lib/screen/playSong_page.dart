@@ -38,10 +38,9 @@ class _PlayPageState extends State<PlayPage>
   bool like=true;
   @override
   void initState() {
-    // TODO: implement initState
 
+    checkFavorite(widget.songModel,context);
     PlayNewSong().newSong(widget.songModel.uri, widget.audioPlayer, context);
-
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 30),
@@ -58,7 +57,10 @@ class _PlayPageState extends State<PlayPage>
 
   @override
   void dispose() {
+    BlocProvider.of<PlaySongBloc>(context)
+        .add(ShowEvent(widget.songModel, isPlaying));
     _animationController.dispose();
+    Navigator.pop(context);
     super.dispose();
   }
 
@@ -211,17 +213,20 @@ class _PlayPageState extends State<PlayPage>
                       padding: const EdgeInsets.only(left: 20),
                       child: BlocBuilder<FavoriteBloc, FavoriteState>(
                         builder: (context, state) {
+                         if (state is FavoriteSongState) {
 
+                           if (state.like) {
+                             like=false;
+                           }else{like=true;}
+                         }
                           return IconButton(
                             onPressed: () async {
                               like=!like;
-                              add(widget.songModel);
-                              print(widget.songModel);
-                              // var hive=await Hive.openBox("Favorite");
-                              // hive.put("value1",widget.songModel);
-                              // SongModel amir=hive.get("value1");
-                              // print(amir);
-                              BlocProvider.of<FavoriteBloc>(context).add(FavoriteSongEvent());
+                              if (!like) {
+                                add(widget.songModel,context);
+                              }else{
+                                deleteFavorite(widget.songModel,context);
+                              }
                             },
                             icon: Image.asset(
                               like?"assets/icon/like.png":"assets/icon/heart.png",
@@ -326,12 +331,14 @@ class _PlayPageState extends State<PlayPage>
                             ChangeAnimation().toggleAnimation(
                                 _animationController, isPlaying ? true : false);
                             // newSong(songs[number - 1].uri);
+                            // ignore: use_build_context_synchronously
                             BlocProvider.of<PlayNewSongBloc>(context).add(
                                 NewSongEvent(
                                     songs[number - 1].id,
                                     songs[number - 1].title,
                                     songs[number - 1].displayName,
                                     number - 1));
+                            // ignore: use_build_context_synchronously
                             PlayNewSong().newSong(songs[number - 1].uri,
                                 widget.audioPlayer, context);
                           },
@@ -480,9 +487,39 @@ class _PlayPageState extends State<PlayPage>
     Duration duration = Duration(seconds: seconds);
     widget.audioPlayer.seek(duration);
   }
-  add(SongModel songModel) async {
+  add(SongModel songModel,BuildContext context) async {
     var box = await Hive.openBox<FavoriteSong>("Favorite");
     FavoriteSong favorite = FavoriteSong(songModel.title,songModel.data,songModel.id,songModel.artist!);
     await  box.add(favorite);
+    BlocProvider.of<FavoriteBloc>(context).add(FavoriteSongEvent(true));
   }
+
+}
+
+void deleteFavorite(SongModel songModel,BuildContext context) {
+  Box favorite = Hive.box<FavoriteSong>("Favorite");
+  for(int i=0; i<favorite.length;i++) {
+    final FavoriteSong favoriteSongs = favorite.getAt(i);
+    if (favoriteSongs.path == songModel.data &&
+        favoriteSongs.id == songModel.id) {
+      favorite.deleteAt(i);
+      BlocProvider.of<FavoriteBloc>(context).add(FavoriteSongEvent(false));
+      return;
+    }
+  }
+}
+
+ checkFavorite(SongModel songModel,BuildContext context) {
+  Box favorite = Hive.box<FavoriteSong>("Favorite");
+  bool check=false;
+  for(int i=0; i<favorite.length;i++){
+    final FavoriteSong favoriteSongs = favorite.getAt(i);
+    if (favoriteSongs.path==songModel.data&&favoriteSongs.id==songModel.id) {
+    BlocProvider.of<FavoriteBloc>(context).add(FavoriteSongEvent(true));
+    check=true;
+    return ;
+    }
+    if (!check) {
+      BlocProvider.of<FavoriteBloc>(context).add(FavoriteSongEvent(false));}
+    }
 }

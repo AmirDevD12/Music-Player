@@ -149,6 +149,8 @@ class _ListMusicState extends State<ListMusic> {
                                                       .get<AudioPlayer>(),
                                                 ),
                                               )));
+                                  BlocProvider.of<PlaySongBloc>(context)
+                                      .add(ShowEvent(snapshot.data![index], true));
                                 },
                               );
                             },
