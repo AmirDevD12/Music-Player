@@ -18,11 +18,11 @@ import '../bloc/play_song_bloc.dart';
 class PlayPage extends StatefulWidget {
   final SongModel songModel;
   final AudioPlayer audioPlayer;
-
+  final bool play;
   const PlayPage({
     super.key,
     required this.songModel,
-    required this.audioPlayer,
+    required this.audioPlayer, required this.play,
   });
 
   @override
@@ -40,7 +40,12 @@ class _PlayPageState extends State<PlayPage>
   void initState() {
 
     checkFavorite(widget.songModel,context);
-    PlayNewSong().newSong(widget.songModel.uri, widget.audioPlayer, context);
+    if(widget.play){
+      PlayNewSong().newSong(widget.songModel.uri, widget.audioPlayer, context);
+    }else{
+      PlayNewSong().newSong(null, widget.audioPlayer, context);
+    }
+
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 30),
@@ -53,12 +58,12 @@ class _PlayPageState extends State<PlayPage>
     );
     ChangeAnimation().toggleAnimation(_animationController, isPlaying);
     BlocProvider.of<PlayNewSongBloc>(context).add(PauseAnimationEvent());
+    BlocProvider.of<PlayNewSongBloc>(context).add(
+        NewSongEvent(widget.songModel.id, widget.songModel.title,widget.songModel.artist!, 1));
   }
 
   @override
   void dispose() {
-    BlocProvider.of<PlaySongBloc>(context)
-        .add(ShowEvent(widget.songModel, isPlaying));
     _animationController.dispose();
     Navigator.pop(context);
     super.dispose();
@@ -156,28 +161,27 @@ class _PlayPageState extends State<PlayPage>
                 ],
               ),
 
-              Row(
+              Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  SizedBox(
-                    width: 300,
-                    child: BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
-                      buildWhen: (privioce, current) {
-                        if (current is PauseAnimationState) {
-                          return false;
-                        } else {
-                          return true;
-                        }
-                      },
-                      builder: (context, state) {
-                        final themeProvider =
-                            Provider.of<ThemeProvider>(context);
-                        String title = "";
-                        String disName = "";
-                        if (state is NewSongState) {
-                          title = state.name;
-                          disName = state.artist;
-                        }
-                        return ListTile(
+                  BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
+                    buildWhen: (privioce, current) {
+                      if (current is PauseAnimationState) {
+                        return false;
+                      } else {
+                        return true;
+                      }
+                    },
+                    builder: (context, state) {
+                      final themeProvider =
+                          Provider.of<ThemeProvider>(context);
+                      String title = "";
+                      String disName = "";
+                      if (state is NewSongState) {
+                        title = state.name;
+                        disName = state.artist;
+                      }
+                      return Expanded(
+                        child: ListTile(
                           title: Text(
                             style: TextStyle(
                                 color: themeProvider.isDarkMode
@@ -205,40 +209,38 @@ class _PlayPageState extends State<PlayPage>
                                 ? disName
                                 : widget.songModel.displayNameWOExt,
                           ),
-                        );
-                      },
-                    ),
+                        ),
+                      );
+                    },
                   ),
-                  Padding(
-                      padding: const EdgeInsets.only(left: 20),
-                      child: BlocBuilder<FavoriteBloc, FavoriteState>(
-                        builder: (context, state) {
-                         if (state is FavoriteSongState) {
+                  BlocBuilder<FavoriteBloc, FavoriteState>(
+                    builder: (context, state) {
+                     if (state is FavoriteSongState) {
 
-                           if (state.like) {
-                             like=false;
-                           }else{like=true;}
-                         }
-                          return IconButton(
-                            onPressed: () async {
-                              like=!like;
-                              if (!like) {
-                                add(widget.songModel,context);
-                              }else{
-                                deleteFavorite(widget.songModel,context);
-                              }
-                            },
-                            icon: Image.asset(
-                              like?"assets/icon/like.png":"assets/icon/heart.png",
-                              color: themeProvider.isDarkMode
-                                  ? Colors.white
-                                  : Colors.black,
-                              width: 25,
-                              height: 25,
-                            ),
-                          );
+                       if (state.like) {
+                         like=false;
+                       }else{like=true;}
+                     }
+                      return IconButton(
+                        onPressed: () async {
+                          like=!like;
+                          if (!like) {
+                            add(widget.songModel,context);
+                          }else{
+                            deleteFavorite(widget.songModel,context);
+                          }
                         },
-                      ))
+                        icon: Image.asset(
+                          like?"assets/icon/like.png":"assets/icon/heart.png",
+                          color: themeProvider.isDarkMode
+                              ? Colors.white
+                              : Colors.black,
+                          width: 25,
+                          height: 25,
+                        ),
+                      );
+                    },
+                  )
                 ],
               ),
               Row(

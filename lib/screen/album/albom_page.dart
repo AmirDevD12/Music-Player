@@ -62,7 +62,7 @@ class _AlbumPageState extends State<AlbumPage> {
                                   ],
                                   child: PlayPage(
                                     songModel: snapshot.data![index],
-                                    audioPlayer: locator.get<AudioPlayer>(),
+                                    audioPlayer: locator.get<AudioPlayer>(), play: true,
                                   ),
                                 )));
                   },

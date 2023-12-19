@@ -174,7 +174,7 @@ List<String> ListIssue=<String>["Songs ","Artist","Album","Folder"];
                   ),
                 )),
             Expanded(
-              flex: 15,
+              flex: 20,
               child: PageView(
                 scrollDirection: Axis.horizontal,
                 controller: controller,

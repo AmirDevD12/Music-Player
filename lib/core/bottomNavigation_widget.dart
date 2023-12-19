@@ -14,8 +14,7 @@ import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
 
 class BottomNavigationBarScreen extends StatefulWidget {
-  final SongModel songModel;
-  const BottomNavigationBarScreen({super.key, required this.songModel});
+  const BottomNavigationBarScreen({super.key,});
 
   @override
   State<BottomNavigationBarScreen> createState() =>
@@ -177,10 +176,7 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
                                   const BorderRadius.all(Radius.circular(100)),
                               artworkWidth: 50,
                               artworkHeight: 50,
-                              id: state is NewSongState ||
-                                      state is PauseAnimationState && id != 0
-                                  ? id
-                                  : widget.songModel.id,
+                              id: id,
                               type: ArtworkType.AUDIO),
                         ),
                       ));

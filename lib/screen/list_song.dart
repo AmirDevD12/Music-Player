@@ -46,7 +46,7 @@ class _ListMusicState extends State<ListMusic> {
                 sort = state.songSortType;
               }
               return Expanded(
-                flex: 8,
+                flex: 10,
                 child: BlocBuilder<PlaySongBloc, PlaySongState>(
                   buildWhen: (perivioce,current){
                     if (current is DeleteSongState) {
@@ -122,7 +122,8 @@ class _ListMusicState extends State<ListMusic> {
                                     id: snapshot.data!.reversed.toList()![index].id,
                                     type: ArtworkType.AUDIO),
                                 onTap: () async {
-
+                                  BlocProvider.of<PlaySongBloc>(context).add(
+                                      ShowEvent(snapshot.data![index],true));
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -146,11 +147,12 @@ class _ListMusicState extends State<ListMusic> {
                                                   songModel:
                                                       snapshot.data![index],
                                                   audioPlayer: locator
-                                                      .get<AudioPlayer>(),
+                                                      .get<AudioPlayer>(), play: true,
                                                 ),
                                               )));
-                                  BlocProvider.of<PlaySongBloc>(context)
-                                      .add(ShowEvent(snapshot.data![index], true));
+                                BlocProvider.of<PlayNewSongBloc>(context).add(
+                                    NewSongEvent(snapshot.data![index].id,snapshot.data![index].title,
+                                        snapshot.data![index].artist!,index));
                                 },
                               );
                             },

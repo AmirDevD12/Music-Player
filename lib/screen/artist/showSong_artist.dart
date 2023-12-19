@@ -75,7 +75,7 @@ class _ShowListArtistState extends State<ShowListArtist> {
                                         ],
                                         child: PlayPage(
                                           songModel: snapshot.data![index],
-                                          audioPlayer: locator.get<AudioPlayer>(),
+                                          audioPlayer: locator.get<AudioPlayer>(), play: true,
                                         ),
                                       )));
 

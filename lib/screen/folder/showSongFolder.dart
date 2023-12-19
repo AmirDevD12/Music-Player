@@ -53,7 +53,7 @@ class ShowSongFolder extends StatelessWidget {
                               ],
                               child: PlayPage(
                                 songModel: snapshot.data![index],
-                                audioPlayer: locator.get<AudioPlayer>(),
+                                audioPlayer: locator.get<AudioPlayer>(), play: true,
                               ),
                             )));
                   },
