@@ -1,6 +1,7 @@
 import 'package:first_project/bloc/newSong/play_new_song_bloc.dart';
 import 'package:first_project/bloc/play_song_bloc.dart';
 import 'package:first_project/core/popup.dart';
+import 'package:first_project/core/theme/theme_mode.dart';
 import 'package:first_project/locator.dart';
 import 'package:first_project/model/songs_model.dart';
 import 'package:first_project/screen/playSong_page.dart';
@@ -23,7 +24,7 @@ class _AlbumPageState extends State<AlbumPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder<List<SongModel>>(
-        future: SongList().getSongs(SongSortType.ALBUM,null),
+        future: SongList().getSongs(SongSortType.ALBUM),
         builder:
             (BuildContext context, AsyncSnapshot<List<SongModel>> snapshot) {
           if (snapshot.hasData) {
@@ -34,10 +35,12 @@ class _AlbumPageState extends State<AlbumPage> {
                   trailing:
                       const SizedBox(width: 35, child: PopupMenuButtonWidget()),
                   title: Text(
+                    style: locator.get<MyThemes>().title(context),
                     maxLines: 1,
                     snapshot.data![index].album!,
                   ),
                   subtitle: Text(
+                    style: locator.get<MyThemes>().subTitle(context),
                     maxLines: 1,
                     snapshot.data![index].artist!,
                   ),

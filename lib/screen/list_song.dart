@@ -2,69 +2,133 @@ import 'package:first_project/bloc/favorite_song/favorite_bloc.dart';
 import 'package:first_project/bloc/newSong/play_new_song_bloc.dart';
 import 'package:first_project/bloc/play_song_bloc.dart';
 import 'package:first_project/bloc/sort/sort_song_bloc.dart';
+import 'package:first_project/core/playall_container.dart';
 import 'package:first_project/locator.dart';
+import 'package:first_project/model/dataBase/delete_song_dataBase/delete_song.dart';
 import 'package:first_project/model/delete_model.dart';
 import 'package:first_project/screen/playSong_page.dart';
 import 'package:first_project/core/theme/theme_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
 import '../model/songs_model.dart';
 
-class ListMusic extends StatefulWidget {
-  const ListMusic({
-    super.key,
-  });
-
-  @override
-  State<ListMusic> createState() => _ListMusicState();
-}
-
-class _ListMusicState extends State<ListMusic> {
-
+class ListMusic extends StatelessWidget {
   SongSortType songSortType = SongSortType.TITLE;
-@override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
 
-  }
   String select = "";
-  String path="";
+  Box boxDelete = Hive.box<DeleteSong>("Delete");
+  int length = 0;
+  ListMusic({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          BlocBuilder<SortSongBloc, SortSongState>(
-            builder: (context, state) {
-              SongSortType sort = SongSortType.TITLE;
-              if (state is SortByAddState) {
-                sort = state.songSortType;
-              }
-              return Expanded(
-                flex: 10,
-                child: BlocBuilder<PlaySongBloc, PlaySongState>(
-                  buildWhen: (perivioce,current){
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SizedBox(width: 110, height: 30, child: PlayAllContainer()),
+                PopupMenuButton(
+                  icon: const Icon(Icons.sort,size: 30,),
+                  onSelected: (value) {
+                    print(value);
+                    // select=value;
+                  },
+                  itemBuilder: (BuildContext bc) {
+                    return [
+                      PopupMenuItem(
+                        onTap: (){
+                          var songSortType=SongSortType.DATE_ADDED;
+                          BlocProvider.of<SortSongBloc>(context).add(SortByAddEvent(songSortType));
+                        },
+                        value: '/time',
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Based on add time",
+                            ),
+                            SizedBox(width: 10,),
+
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem(
+                        onTap: (){
+                          var songSortType=SongSortType.TITLE;
+                          BlocProvider.of<SortSongBloc>(context).add(SortByAddEvent(songSortType));
+                        },
+                        value: '/name',
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Based on name",
+
+                            ),SizedBox(width: 10,),
+
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem(
+                        onTap: (){
+                          var songSortType=SongSortType.ARTIST;
+                          BlocProvider.of<SortSongBloc>(context).add(SortByAddEvent(songSortType));
+                        },
+                        value: '/artist',
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Based on artist",
+
+                            ),SizedBox(width: 10,),
+
+                          ],
+                        ),
+                      ),
+
+                    ];
+                  },
+                )
+              ],
+            ),
+          ),
+          Expanded(
+            child: BlocBuilder<SortSongBloc, SortSongState>(
+              builder: (context, state) {
+                SongSortType sort = SongSortType.TITLE;
+                if (state is SortByAddState) {
+                  sort = state.songSortType;
+                }
+                return BlocBuilder<PlaySongBloc, PlaySongState>(
+                  buildWhen: (perivioce, current) {
                     if (current is DeleteSongState) {
-                      path=current.path;
-                      return true ;
+                      return true;
                     } else {
                       return false;
                     }
                   },
                   builder: (context, state) {
                     return FutureBuilder<List<SongModel>>(
-                      future: SongList().getSongs(sort,path==""?null:path),
+                      future:
+                          SongList().getSongs(sort),
                       builder: (BuildContext context,
                           AsyncSnapshot<List<SongModel>> snapshot) {
                         if (snapshot.hasData) {
                           return ListView.builder(
                             itemCount: snapshot.data?.length,
                             itemBuilder: (BuildContext context, int index) {
+
                               final themeProvider =
                                   Provider.of<ThemeProvider>(context);
                               return ListTile(
@@ -84,12 +148,18 @@ class _ListMusicState extends State<ListMusic> {
                                       return [
                                         PopupMenuItem(
                                           onTap: () {
-
-                                            locator.get<DeleteSong>().getDeleteSong(snapshot.data![index]);
-                                            BlocProvider.of<PlaySongBloc>(context).add(DeleteSongEvent(snapshot.data![index].data));
+                                            add(snapshot.data![index].data);
+                                            locator
+                                                .get<DeleteSongFile>()
+                                                .getDeleteSong(
+                                                    snapshot.data![index]);
+                                            BlocProvider.of<PlaySongBloc>(
+                                                    context)
+                                                .add(DeleteSongEvent(snapshot
+                                                    .data![index].data));
                                           },
                                           value: '/delete',
-                                          child: Text("delete"),
+                                          child: const Text("delete"),
                                         ),
                                         const PopupMenuItem(
                                           value: '/share',
@@ -104,14 +174,14 @@ class _ListMusicState extends State<ListMusic> {
                                   ),
                                 ),
                                 title: Text(
-                                  style: TextStyle(color: themeProvider.isDarkMode?Colors.white:Colors.black,fontFamily: "ibm",fontSize: 15,fontWeight: FontWeight.bold),
+                                  style:locator.get<MyThemes>().title(context) ,
                                   maxLines: 1,
-                                  snapshot.data!.reversed.toList()![index].title,
+                                  snapshot.data![index].title,
                                 ),
                                 subtitle: Text(
-                                  style: TextStyle(color: themeProvider.isDarkMode?Colors.white:Colors.black,fontFamily: "ibm",fontSize: 14,),
+                                  style: locator.get<MyThemes>().subTitle(context),
                                   maxLines: 1,
-                                  snapshot.data!.reversed.toList()![index].displayName,
+                                  snapshot.data![index].displayName,
                                 ),
                                 leading: QueryArtworkWidget(
                                     artworkWidth: 60,
@@ -119,11 +189,11 @@ class _ListMusicState extends State<ListMusic> {
                                     artworkFit: BoxFit.cover,
                                     artworkBorder: const BorderRadius.all(
                                         Radius.circular(5)),
-                                    id: snapshot.data!.reversed.toList()![index].id,
-                                    type: ArtworkType.AUDIO),
+                                    id: snapshot.data![index].id,
+                                    type: ArtworkType.AUDIO ),
                                 onTap: () async {
                                   BlocProvider.of<PlaySongBloc>(context).add(
-                                      ShowEvent(snapshot.data![index],true));
+                                      ShowEvent(snapshot.data![index], true));
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -147,12 +217,16 @@ class _ListMusicState extends State<ListMusic> {
                                                   songModel:
                                                       snapshot.data![index],
                                                   audioPlayer: locator
-                                                      .get<AudioPlayer>(), play: true,
+                                                      .get<AudioPlayer>(),
+                                                  play: true,
                                                 ),
                                               )));
-                                BlocProvider.of<PlayNewSongBloc>(context).add(
-                                    NewSongEvent(snapshot.data![index].id,snapshot.data![index].title,
-                                        snapshot.data![index].artist!,index));
+                                  BlocProvider.of<PlayNewSongBloc>(context).add(
+                                      NewSongEvent(
+                                          snapshot.data![index].id,
+                                          snapshot.data![index].title,
+                                          snapshot.data![index].artist!,
+                                          index));
                                 },
                               );
                             },
@@ -164,12 +238,18 @@ class _ListMusicState extends State<ListMusic> {
                       },
                     );
                   },
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
         ],
       ),
     );
+  }
+
+  add(String path) async {
+    var box = await Hive.openBox<DeleteSong>("Delete");
+    DeleteSong deleteSong = DeleteSong(path);
+    await box.add(deleteSong);
   }
 }

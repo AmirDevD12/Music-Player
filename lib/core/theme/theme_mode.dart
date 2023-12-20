@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class ThemeProvider extends ChangeNotifier{
 
@@ -15,6 +16,20 @@ class ThemeProvider extends ChangeNotifier{
 }
 
 class MyThemes {
+
+  TextStyle title(BuildContext context){
+    ThemeProvider themeProvider=Provider.of<ThemeProvider>(context);
+    TextStyle textStyleTitle= TextStyle(fontWeight: FontWeight.bold,fontFamily: "ibm",fontSize: 15,color:themeProvider.isDarkMode?Colors.white:Colors.black);
+    return textStyleTitle;
+  }
+
+  TextStyle subTitle(BuildContext context){
+    ThemeProvider themeProvider=Provider.of<ThemeProvider>(context);
+    TextStyle textStySub= TextStyle(fontFamily: "ibm",fontSize: 15,color: themeProvider.isDarkMode?Colors.white:Colors.black);
+    return textStySub;
+  }
+
+
   static final darkTheme = ThemeData(
     textTheme: TextTheme(
       titleLarge: GoogleFonts.ubuntu(color: Colors.white, fontSize: 22,fontWeight: FontWeight.bold),

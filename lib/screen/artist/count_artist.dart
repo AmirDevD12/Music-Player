@@ -1,4 +1,5 @@
 import 'package:first_project/core/popup.dart';
+import 'package:first_project/core/theme/theme_mode.dart';
 import 'package:first_project/locator.dart';
 import 'package:first_project/model/song_count_artist.dart';
 import 'package:first_project/screen/artist/showSong_artist.dart';
@@ -12,11 +13,6 @@ class Artist extends StatefulWidget {
 }
 
 class _ListMusicState extends State<Artist> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,13 +31,14 @@ class _ListMusicState extends State<Artist> {
                   trailing:
                       const SizedBox(width: 35, child: PopupMenuButtonWidget()),
                   title: Text(
+                    style: locator.get<MyThemes>().title(context),
                     maxLines: 1,
                     artist,
                   ),
                   subtitle: Text(
                       maxLines: 1,
                       'Song Count: $songCount',
-                      style: const TextStyle(fontSize: 16)),
+                      style: locator.get<MyThemes>().subTitle(context)),
                   onTap: () {
                     Navigator.push(
                         context,

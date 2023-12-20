@@ -1,8 +1,8 @@
 
 import 'package:first_project/bloc/newSong/play_new_song_bloc.dart';
 import 'package:first_project/bloc/play_song_bloc.dart';
+import 'package:first_project/core/theme/theme_mode.dart';
 import 'package:first_project/locator.dart';
-import 'package:first_project/model/addres_folder.dart';
 import 'package:first_project/model/get_song_file.dart';
 import 'package:first_project/screen/playSong_page.dart';
 import 'package:flutter/material.dart';
@@ -32,8 +32,8 @@ class ShowSongFolder extends StatelessWidget {
               itemCount: snapshot.data?.length ,
               itemBuilder: (context, index) {
                 return ListTile(
-                  title: Text(maxLines: 1,snapshot.data![index].title,),
-                  subtitle: Text(maxLines: 1,snapshot.data![index].displayName,),
+                  title: Text(maxLines: 1,snapshot.data![index].title,style: locator.get<MyThemes>().title(context),),
+                  subtitle: Text(maxLines: 1,snapshot.data![index].displayName,style: locator.get<MyThemes>().subTitle(context),),
                   leading: QueryArtworkWidget(
                       artworkWidth: 60,
                       artworkHeight: 60,

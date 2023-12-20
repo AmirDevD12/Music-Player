@@ -1,4 +1,6 @@
 
+import 'package:first_project/core/theme/theme_mode.dart';
+import 'package:first_project/locator.dart';
 import 'package:first_project/model/addres_folder.dart';
 import 'package:first_project/screen/folder/showSongFolder.dart';
 import 'package:flutter/material.dart';
@@ -21,8 +23,8 @@ class AlbumList extends StatelessWidget {
                   file.add(fileName);
               }
               return ListTile(
-                title: Text(maxLines: 1,file[index],),
-                subtitle: Text(maxLines: 1,snapshot.data![index],),
+                title: Text(maxLines: 1,file[index],style: locator.get<MyThemes>().title(context)),
+                subtitle: Text(maxLines: 1,snapshot.data![index],style:locator.get<MyThemes>().subTitle(context)),
                 leading: Image.asset("assets/icon/folder.png",),
                 onTap: (){
                   Navigator.push(

@@ -10,7 +10,9 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'core/pageview_screen.dart';
 import 'locator.dart';
-import 'model/favorite_song.dart';
+import 'model/dataBase/delete_song_dataBase/delete_song.dart';
+import 'model/dataBase/favorite_dataBase/favorite_song.dart';
+
 
 
 
@@ -18,7 +20,9 @@ void main() async {
 
  await Hive.initFlutter();
   Hive.registerAdapter(FavoriteSongAdapter());
+  Hive.registerAdapter(DeleteSongAdapter());
 await  Hive.openBox<FavoriteSong>("Favorite");
+await  Hive.openBox<DeleteSong>("Delete");
  setup();
   runApp(
       MultiProvider(

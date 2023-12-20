@@ -3,6 +3,7 @@ import 'package:first_project/bloc/newSong/play_new_song_bloc.dart';
 import 'package:first_project/bloc/play_song_bloc.dart';
 import 'package:first_project/core/playall_container.dart';
 import 'package:first_project/core/popup.dart';
+import 'package:first_project/core/theme/theme_mode.dart';
 import 'package:first_project/locator.dart';
 import 'package:first_project/model/list_artist.dart';
 import 'package:first_project/screen/playSong_page.dart';
@@ -60,8 +61,8 @@ class _ShowListArtistState extends State<ShowListArtist> {
                             trailing: const SizedBox(
                                 width: 35,
                                 child: PopupMenuButtonWidget()),
-                            title: Text(maxLines: 1,snapshot.data![index].title),
-                            subtitle: Text(maxLines: 1,snapshot.data![index].displayName,),
+                            title: Text(maxLines: 1,snapshot.data![index].title,style: locator.get<MyThemes>().title(context),),
+                            subtitle: Text(maxLines: 1,snapshot.data![index].displayName,style: locator.get<MyThemes>().subTitle(context),),
                             onTap: (){
                               Navigator.push(
                                   context,

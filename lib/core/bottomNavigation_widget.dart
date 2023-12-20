@@ -28,7 +28,6 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
   late AnimationController _animationMusic;
 
   late Animation<double> _animation;
-  late Animation<double> _SpeedAnimation;
   int id = 0;
   int number = 0;
   @override
@@ -114,7 +113,7 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
                   return IconButton(
                       onPressed: () async {
                         List<SongModel> songs =
-                            await SongList().getSongs(SongSortType.TITLE,null);
+                            await SongList().getSongs(SongSortType.TITLE);
                         // ignore: use_build_context_synchronously
                         PlayNewSong().newSong(songs[number + 1].uri,
                             locator.get<AudioPlayer>(), context);

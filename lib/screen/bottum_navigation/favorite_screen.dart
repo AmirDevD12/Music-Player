@@ -1,5 +1,7 @@
 import 'package:first_project/core/theme/theme_mode.dart';
-import 'package:first_project/model/favorite_song.dart';
+import 'package:first_project/locator.dart';
+import 'package:first_project/model/dataBase/favorite_dataBase/favorite_song.dart';
+
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:on_audio_query/on_audio_query.dart';
@@ -70,12 +72,12 @@ class FavoriteScreen extends StatelessWidget {
                 ),
                 title: Text(
                   favoriteSongs.title!,
-                  style: TextStyle(color: themeProvider.isDarkMode?Colors.white:Colors.black,fontFamily: "ibm",fontSize: 15,fontWeight: FontWeight.bold),
+                  style: locator.get<MyThemes>().title(context),
                   maxLines: 1,
                 ),
                 subtitle: Text(
                   favoriteSongs.artist!,
-                  style: TextStyle(color: themeProvider.isDarkMode?Colors.white:Colors.black,fontFamily: "ibm",fontSize: 14,),
+                  style: locator.get<MyThemes>().subTitle(context),
                   maxLines: 1,
                 ),
                 leading: QueryArtworkWidget(

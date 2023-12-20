@@ -2,7 +2,8 @@ import 'package:first_project/bloc/favorite_song/favorite_bloc.dart';
 import 'package:first_project/bloc/newSong/play_new_song_bloc.dart';
 import 'package:first_project/locator.dart';
 import 'package:first_project/model/chengeAnimation.dart';
-import 'package:first_project/model/favorite_song.dart';
+import 'package:first_project/model/dataBase/favorite_dataBase/favorite_song.dart';
+
 import 'package:first_project/model/newSong.dart';
 import 'package:first_project/model/songs_model.dart';
 import 'package:first_project/core/theme/theme_mode.dart';
@@ -172,8 +173,6 @@ class _PlayPageState extends State<PlayPage>
                       }
                     },
                     builder: (context, state) {
-                      final themeProvider =
-                          Provider.of<ThemeProvider>(context);
                       String title = "";
                       String disName = "";
                       if (state is NewSongState) {
@@ -183,13 +182,7 @@ class _PlayPageState extends State<PlayPage>
                       return Expanded(
                         child: ListTile(
                           title: Text(
-                            style: TextStyle(
-                                color: themeProvider.isDarkMode
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontFamily: "ibm",
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold),
+                            style: locator.get<MyThemes>().title(context),
                             maxLines: 1,
                             state is NewSongState ||
                                     state is PauseAnimationState && id != 0
@@ -197,12 +190,7 @@ class _PlayPageState extends State<PlayPage>
                                 : widget.songModel.title,
                           ),
                           subtitle: Text(
-                            style: TextStyle(
-                                color: themeProvider.isDarkMode
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontSize: 18,
-                                fontFamily: "ibm"),
+                            style:locator.get<MyThemes>().subTitle(context),
                             maxLines: 1,
                             state is NewSongState ||
                                     state is PauseAnimationState && id != 0
@@ -232,9 +220,9 @@ class _PlayPageState extends State<PlayPage>
                         },
                         icon: Image.asset(
                           like?"assets/icon/like.png":"assets/icon/heart.png",
-                          color: themeProvider.isDarkMode
-                              ? Colors.white
-                              : Colors.black,
+                          color: like
+                              ? Colors.red
+                              : Colors.red,
                           width: 25,
                           height: 25,
                         ),
@@ -325,7 +313,7 @@ class _PlayPageState extends State<PlayPage>
                           onPressed: () async {
                             List<SongModel> songs = await locator
                                 .get<SongList>()
-                                .getSongs(SongSortType.TITLE, null);
+                                .getSongs(SongSortType.TITLE);
 
                             if (!isPlaying) {
                               isPlaying = true;
@@ -388,7 +376,7 @@ class _PlayPageState extends State<PlayPage>
                           onPressed: () async {
                             List<SongModel> songs = await locator
                                 .get<SongList>()
-                                .getSongs(SongSortType.TITLE, null);
+                                .getSongs(SongSortType.TITLE);
                             PlayNewSong().newSong(songs[number + 1].uri,
                                 widget.audioPlayer, context);
                             // newSong(songs[number + 1].uri);
