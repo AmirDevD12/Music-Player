@@ -6,6 +6,7 @@ import 'package:first_project/core/them_seitcher.dart';
 import 'package:first_project/locator.dart';
 import 'package:first_project/screen/album/albom_page.dart';
 import 'package:first_project/screen/bottum_navigation/favorite_screen.dart';
+import 'package:first_project/screen/bottum_navigation/list_song_bottomnav.dart';
 import 'package:first_project/screen/bottum_navigation/search_bottum.dart';
 import 'package:first_project/screen/playSong_page.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +30,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final List<Widget> _list = <Widget>[
     const Center(child: PageViewSong()),
     const Center(child: SearchScreen()),
-    Center(child: FavoriteScreen()),
+    Center(child: ListSongBottomNavigation(show: false,)),
     const Center(child: AlbumPage()),
   ];
 
@@ -39,6 +40,12 @@ class _MyHomePageState extends State<MyHomePage> {
     // TODO: implement dispose
     super.dispose();
 
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+     OnAudioQuery().permissionsStatus();
   }
   late SongModel songModel;
   @override

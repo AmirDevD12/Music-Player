@@ -1,6 +1,7 @@
 
 import 'package:first_project/bloc/favorite_song/favorite_bloc.dart';
 import 'package:first_project/bloc/newSong/play_new_song_bloc.dart';
+import 'package:first_project/bloc/play_list/play_list_bloc.dart';
 import 'package:first_project/bloc/play_song_bloc.dart';
 import 'package:first_project/bloc/sort/sort_song_bloc.dart';
 import 'package:first_project/core/theme/theme_mode.dart';
@@ -10,6 +11,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'core/pageview_screen.dart';
 import 'locator.dart';
+import 'model/dataBase/add_play_list/add_play_list_recent_add.dart';
+import 'model/dataBase/add_recent_play/add_recent_play.dart';
 import 'model/dataBase/delete_song_dataBase/delete_song.dart';
 import 'model/dataBase/favorite_dataBase/favorite_song.dart';
 
@@ -17,12 +20,14 @@ import 'model/dataBase/favorite_dataBase/favorite_song.dart';
 
 
 void main() async {
-
  await Hive.initFlutter();
   Hive.registerAdapter(FavoriteSongAdapter());
   Hive.registerAdapter(DeleteSongAdapter());
+  Hive.registerAdapter(RecentPlayAdapter());
 await  Hive.openBox<FavoriteSong>("Favorite");
 await  Hive.openBox<DeleteSong>("Delete");
+await  Hive.openBox<AddTOPlayListRecent>("Recent add");
+await  Hive.openBox<RecentPlay>("Recent play");
  setup();
   runApp(
       MultiProvider(
@@ -54,6 +59,7 @@ class MyApp extends StatelessWidget {
                 BlocProvider<SortSongBloc>( create: (context) =>locator.get<SortSongBloc>()),
                 BlocProvider<PlayNewSongBloc>( create: (context) =>locator.get<PlayNewSongBloc>()),
                 BlocProvider<FavoriteBloc>( create: (context) =>locator.get<FavoriteBloc>()),
+                BlocProvider<PlayListBloc>( create: (context) =>locator.get<PlayListBloc>()),
               ],
               child: const MyHomePage(),)
         );

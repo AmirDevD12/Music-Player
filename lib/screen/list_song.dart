@@ -1,9 +1,12 @@
 import 'package:first_project/bloc/favorite_song/favorite_bloc.dart';
 import 'package:first_project/bloc/newSong/play_new_song_bloc.dart';
+import 'package:first_project/bloc/play_list/play_list_bloc.dart';
 import 'package:first_project/bloc/play_song_bloc.dart';
 import 'package:first_project/bloc/sort/sort_song_bloc.dart';
+import 'package:first_project/core/card_widget.dart';
 import 'package:first_project/core/playall_container.dart';
 import 'package:first_project/locator.dart';
+import 'package:first_project/model/dataBase/add_recent_play/add_recent_play.dart';
 import 'package:first_project/model/dataBase/delete_song_dataBase/delete_song.dart';
 import 'package:first_project/model/delete_model.dart';
 import 'package:first_project/screen/playSong_page.dart';
@@ -16,6 +19,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
 import '../model/songs_model.dart';
+import 'bottum_navigation/list_song_bottomnav.dart';
 
 class ListMusic extends StatelessWidget {
   SongSortType songSortType = SongSortType.TITLE;
@@ -134,43 +138,85 @@ class ListMusic extends StatelessWidget {
                               return ListTile(
                                 trailing: SizedBox(
                                   width: 36,
-                                  child: PopupMenuButton(
-                                    iconSize: 200,
-                                    icon: Image.asset(
-                                      "assets/icon/dots.png",
-                                      width: 40,
-                                      height: 40,
-                                      color: themeProvider.isDarkMode
-                                          ? Colors.white
-                                          : Colors.black,
-                                    ),
-                                    itemBuilder: (BuildContext bc) {
-                                      return [
-                                        PopupMenuItem(
-                                          onTap: () {
-                                            add(snapshot.data![index].data);
-                                            locator
-                                                .get<DeleteSongFile>()
-                                                .getDeleteSong(
-                                                    snapshot.data![index]);
-                                            BlocProvider.of<PlaySongBloc>(
-                                                    context)
-                                                .add(DeleteSongEvent(snapshot
-                                                    .data![index].data));
-                                          },
-                                          value: '/delete',
-                                          child: const Text("delete"),
-                                        ),
-                                        const PopupMenuItem(
-                                          value: '/share',
-                                          child: Text("Share"),
-                                        ),
-                                        const PopupMenuItem(
-                                          value: '/add',
-                                          child: Text("Add to playlist"),
-                                        )
-                                      ];
+                                  child: InkWell(
+                                    onTap: (){
+                                      showModalBottomSheet<void>(
+                                        // context and builder are
+                                        // required properties in this widget
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          // we set up a container inside which
+                                          // we create center column and display text
+
+                                          // Returning SizedBox instead of a Container
+                                          return Container(
+                                            color: themeProvider.isDarkMode?Colors.black:Colors.white,
+                                            width: double.infinity,
+                                            height: 200,
+                                            child: Column(
+
+                                              children:  <Widget>[
+                                                const SizedBox(height: 10,),
+                                                Text(
+                                                  style:locator.get<MyThemes>().title(context) ,
+                                                  maxLines: 1,
+                                                  snapshot.data![index].title,
+                                                ),
+                                                const SizedBox(height: 20,),
+                                                Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                                  children: [
+                                                    GestureDetector(
+                                                        child: const CardWidget(
+                                                          text: 'My Music',path: "assets/icon/music(1).png",)),
+                                                    GestureDetector(
+
+                                                        child: const CardWidget(
+                                                          text: 'search', path: "assets/icon/magnifying-glass.png",)),
+                                                    GestureDetector(
+                                                      onTap: (){
+                                                        Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                                builder: (context) =>
+                                                                    MultiBlocProvider(
+                                                                      providers: [
+                                                                        BlocProvider(
+                                                                            create: (context) =>
+                                                                                locator.get<
+                                                                                    PlaySongBloc>()),
+                                                                        BlocProvider(
+                                                                          create: (context) => locator
+                                                                              .get<PlayNewSongBloc>(),
+                                                                        ),
+                                                                        BlocProvider(
+                                                                          create: (context) => locator
+                                                                              .get<FavoriteBloc>(),
+                                                                        ),
+                                                                        BlocProvider(
+                                                                          create: (context) => locator
+                                                                              .get<PlayListBloc>(),
+                                                                        ),
+                                                                      ],
+                                                                      child: ListSongBottomNavigation(show: true,)
+                                                                    )));
+
+                                                      },
+
+                                                        child: const CardWidget(text: 'List', path:"assets/icon/list(2).png",)),
+                                                    GestureDetector(
+                                                        child: const CardWidget(
+                                                          text: 'Path',path:  "assets/icon/information-button.png",)),
+                                                  ],
+                                                )
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      );
                                     },
+                                    child: Image.asset("assets/icon/dots.png",width: 25,height: 25,color: themeProvider.isDarkMode?
+                                      Colors.white:Colors.black,),
                                   ),
                                 ),
                                 title: Text(
@@ -221,6 +267,7 @@ class ListMusic extends StatelessWidget {
                                                   play: true,
                                                 ),
                                               )));
+                                             addRecentPlay(snapshot.data![index]);
                                   BlocProvider.of<PlayNewSongBloc>(context).add(
                                       NewSongEvent(
                                           snapshot.data![index].id,
@@ -251,5 +298,22 @@ class ListMusic extends StatelessWidget {
     var box = await Hive.openBox<DeleteSong>("Delete");
     DeleteSong deleteSong = DeleteSong(path);
     await box.add(deleteSong);
+  }
+  addRecentPlay(SongModel songModel) async {
+    bool check=false;
+    var box = await Hive.openBox<RecentPlay>("Recent play");
+    for(int i=0;i<box.length;i++){
+      if (songModel.data==box.getAt(i)?.path) {
+        check=true;
+        return;
+      }
+    }
+    if (!check) {
+      if (box.length>10) {
+        box.deleteAt(0);
+      }
+      RecentPlay recentPlay=RecentPlay(songModel.title, songModel.data, songModel.id, songModel.artist) ;
+      await box.add(recentPlay);
+    }
   }
 }
