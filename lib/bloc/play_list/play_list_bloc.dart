@@ -19,9 +19,10 @@ class PlayListBloc extends Bloc<PlayListEvent, PlayListState> {
       // TODO: implement event handle
       emit(ShowBoxState());
     });
-    on<SelectEvent>((event, emit) {
+    on<SelectListEvent>((event, emit) {
       // TODO: implement event handle
-      emit(SelectState(event.name));
+      emit(SelectListState());
     });
+
   }
 }

@@ -4,7 +4,6 @@ part of 'play_list_bloc.dart';
 abstract class PlayListEvent {}
 class AddFromListEvent extends PlayListEvent {}
 class ShowBoxEvent extends PlayListEvent {}
-class SelectEvent extends PlayListEvent {
-  List<String> name;
-  SelectEvent(this.name);
+class SelectListEvent extends PlayListEvent {
+
 }

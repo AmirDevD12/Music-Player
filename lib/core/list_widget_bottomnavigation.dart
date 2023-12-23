@@ -6,9 +6,12 @@ import 'package:first_project/bloc/play_list/play_list_bloc.dart';
 import 'package:first_project/bloc/play_song_bloc.dart';
 import 'package:first_project/core/theme/theme_mode.dart';
 import 'package:first_project/locator.dart';
+import 'package:first_project/model/dataBase/add_recent_play/add_recent_play.dart';
+import 'package:first_project/model/dataBase/favorite_dataBase/favorite_song.dart';
 import 'package:first_project/screen/playSong_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 
 class ListWidgetBottomNavigation extends StatelessWidget {
@@ -16,7 +19,7 @@ class ListWidgetBottomNavigation extends StatelessWidget {
   final String title;
   final String subTitle;
    ListWidgetBottomNavigation({Key? key, required this.path, required this.title, required this.subTitle}) : super(key: key);
-  String? name;
+  String name="";
   @override
   Widget build(BuildContext context) {
     final _formKey = GlobalKey<FormState>();
@@ -29,6 +32,10 @@ class ListWidgetBottomNavigation extends StatelessWidget {
       child: ListTile(
       trailing: BlocBuilder<PlayListBloc, PlayListState>(
   builder: (context, state) {
+      if(state is SelectListState){
+          add(name);
+      }
+      print(name);
     return state is ShowBoxState?CheckboxIconFormField(
       disabledColor: Colors.black,
       context: context,
@@ -45,7 +52,7 @@ class ListWidgetBottomNavigation extends StatelessWidget {
           name=title;
           print(title);
         } else {
-          name=null;
+          name="";
           print("Icon Not Checked :(");
         }
 
@@ -117,5 +124,22 @@ class ListWidgetBottomNavigation extends StatelessWidget {
     )
       ],
     );
+  }
+  add(String name) async {
+    var boxMain = await Hive.openBox<RecentPlay>("");
+    int length=boxMain.length;
+    if(name=="Recent play"){
+      var box = await Hive.openBox<RecentPlay>(name);
+
+      RecentPlay recentPlay=RecentPlay(boxMain.getAt(length)?.title, boxMain.getAt(length)?.path,
+          boxMain.getAt(length)?.id, boxMain.getAt(length)?.artist);
+      boxMain.deleteAt(length);
+      box.add(recentPlay);
+    }else if(name=="Favorite"){
+      var box = await Hive.openBox<FavoriteSong>(name);
+      FavoriteSong favoriteSong=FavoriteSong(boxMain.getAt(length)?.title, boxMain.getAt(length)?.path,
+          boxMain.getAt(length)?.id, boxMain.getAt(length)?.artist);
+      box.add(favoriteSong);
+    }
   }
 }

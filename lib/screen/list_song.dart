@@ -8,6 +8,7 @@ import 'package:first_project/core/playall_container.dart';
 import 'package:first_project/locator.dart';
 import 'package:first_project/model/dataBase/add_recent_play/add_recent_play.dart';
 import 'package:first_project/model/dataBase/delete_song_dataBase/delete_song.dart';
+import 'package:first_project/model/dataBase/favorite_dataBase/favorite_song.dart';
 import 'package:first_project/model/delete_model.dart';
 import 'package:first_project/screen/playSong_page.dart';
 import 'package:first_project/core/theme/theme_mode.dart';
@@ -175,6 +176,7 @@ class ListMusic extends StatelessWidget {
                                                           text: 'search', path: "assets/icon/magnifying-glass.png",)),
                                                     GestureDetector(
                                                       onTap: (){
+                                                        addPlayList(snapshot.data![index]);
                                                         Navigator.push(
                                                             context,
                                                             MaterialPageRoute(
@@ -315,5 +317,10 @@ class ListMusic extends StatelessWidget {
       RecentPlay recentPlay=RecentPlay(songModel.title, songModel.data, songModel.id, songModel.artist) ;
       await box.add(recentPlay);
     }
+  }
+  addPlayList(SongModel songModel) async {
+    var box = await Hive.openBox<FavoriteSong>("Favorite");
+    FavoriteSong favorite = FavoriteSong(songModel.title,songModel.data,songModel.id,songModel.artist!);
+    await  box.add(favorite);
   }
 }

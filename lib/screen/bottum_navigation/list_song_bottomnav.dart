@@ -18,22 +18,25 @@ class ListSongBottomNavigation extends StatelessWidget {
     Provider.of<ThemeProvider>(context);
     if (show) {
       BlocProvider.of<PlayListBloc>(context).add(ShowBoxEvent());
-    }
-    return   Scaffold(
-//       bottomNavigationBar: BlocBuilder<PlayListBloc, PlayListState>(
-//   builder: (context, state) {
-//
-//     return GestureDetector(
-//         onTap: (){},
-//         child: Container(
-//           width: 300,
-//           color: Colors.red,
-//           child: Text("add")
-//           ,
-//         ),
-//       );
-//   },
-// ),
+    }print("aasaasasasasa");
+    return Scaffold(
+      bottomNavigationBar: BlocBuilder<PlayListBloc, PlayListState>(
+  builder: (context, state) {
+
+    return GestureDetector(
+        onTap: (){
+          BlocProvider.of<PlayListBloc>(context).add(SelectListEvent());
+        },
+        child: Container(
+          width: 300,
+          height: 50,
+          color: Colors.red,
+          child: Text("add")
+          ,
+        ),
+      );
+  },
+),
 
 //       appBar: AppBar(foregroundColor: Colors.white,
 //         title: const Text(
