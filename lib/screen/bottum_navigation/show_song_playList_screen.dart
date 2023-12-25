@@ -1,21 +1,27 @@
 import 'package:first_project/core/theme/theme_mode.dart';
 import 'package:first_project/locator.dart';
-import 'package:first_project/model/dataBase/favorite_dataBase/favorite_song.dart';
-
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
 
 class FavoriteScreen extends StatelessWidget {
-   FavoriteScreen({Key? key}) : super(key: key);
-   Box favorite = Hive.box<FavoriteSong>("Favorite");
+  final String name;
+  final Box boxes;
+   const FavoriteScreen({Key? key, required this.name, required this.boxes}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
 
     return Scaffold(
+    appBar:  AppBar(foregroundColor: Colors.white,
+          title:  Text(
+            style: const TextStyle(color: Colors.white),
+            maxLines: 1,
+            name,
+          ),),
         body: ValueListenableBuilder(
-      valueListenable:favorite.listenable(),
+      valueListenable:boxes.listenable(),
       builder: (context, Box box, child) {
         if (box.values.isEmpty) {
           return const Center(
@@ -32,9 +38,9 @@ class FavoriteScreen extends StatelessWidget {
           ));
         } else {
           return ListView.builder(
-            itemCount: favorite.length,
+            itemCount: box.length,
             itemBuilder: (BuildContext context, int index) {
-              final FavoriteSong favoriteSongs = box.getAt(index);
+
               final themeProvider =
               Provider.of<ThemeProvider>(context);
               return ListTile(
@@ -71,12 +77,12 @@ class FavoriteScreen extends StatelessWidget {
                   ),
                 ),
                 title: Text(
-                  favoriteSongs.title!,
+                  boxes.getAt(index).title!,
                   style: locator.get<MyThemes>().title(context),
                   maxLines: 1,
                 ),
                 subtitle: Text(
-                  favoriteSongs.artist!,
+                  boxes.getAt(index).artist!,
                   style: locator.get<MyThemes>().subTitle(context),
                   maxLines: 1,
                 ),
@@ -86,7 +92,7 @@ class FavoriteScreen extends StatelessWidget {
                     artworkFit: BoxFit.cover,
                     artworkBorder: const BorderRadius.all(
                         Radius.circular(5)),
-                    id: favoriteSongs.id!,
+                    id: boxes.getAt(index).id!,
                     type: ArtworkType.AUDIO),
                 onTap: () async {
 
@@ -98,4 +104,5 @@ class FavoriteScreen extends StatelessWidget {
       },
     ));
   }
+
 }

@@ -1,8 +1,8 @@
 import 'package:hive/hive.dart';
-part "add_play_list_recent_add.g.dart";
+part "play_list_recent_add.g.dart";
 @HiveType(typeId: 3)
-class AddTOPlayListRecent{
-  AddTOPlayListRecent(this.title,this.path,this.id,this.artist);
+class PlayListRecentAdd{
+  PlayListRecentAdd(this.title,this.path,this.id,this.artist);
 
   @HiveField(0)
   String? title;

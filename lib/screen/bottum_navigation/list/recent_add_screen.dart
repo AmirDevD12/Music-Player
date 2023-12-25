@@ -1,8 +1,6 @@
 import 'package:first_project/core/theme/theme_mode.dart';
 import 'package:first_project/locator.dart';
-import 'package:first_project/model/dataBase/add_recent_play/add_recent_play.dart';
-import 'package:first_project/model/dataBase/favorite_dataBase/favorite_song.dart';
-
+import 'package:first_project/model/dataBase/recent_play/add_recent_play.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:on_audio_query/on_audio_query.dart';

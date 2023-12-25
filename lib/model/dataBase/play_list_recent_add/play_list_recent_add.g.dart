@@ -1,22 +1,22 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'add_play_list_recent_add.dart';
+part of 'play_list_recent_add.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class AddTOPlayListRecentAdapter extends TypeAdapter<AddTOPlayListRecent> {
+class PlayListRecentAddAdapter extends TypeAdapter<PlayListRecentAdd> {
   @override
   final int typeId = 3;
 
   @override
-  AddTOPlayListRecent read(BinaryReader reader) {
+  PlayListRecentAdd read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return AddTOPlayListRecent(
+    return PlayListRecentAdd(
       fields[0] as String?,
       fields[1] as String?,
       fields[3] as int?,
@@ -25,7 +25,7 @@ class AddTOPlayListRecentAdapter extends TypeAdapter<AddTOPlayListRecent> {
   }
 
   @override
-  void write(BinaryWriter writer, AddTOPlayListRecent obj) {
+  void write(BinaryWriter writer, PlayListRecentAdd obj) {
     writer
       ..writeByte(4)
       ..writeByte(0)
@@ -44,7 +44,7 @@ class AddTOPlayListRecentAdapter extends TypeAdapter<AddTOPlayListRecent> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is AddTOPlayListRecentAdapter &&
+      other is PlayListRecentAddAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

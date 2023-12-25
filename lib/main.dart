@@ -11,10 +11,11 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'core/pageview_screen.dart';
 import 'locator.dart';
-import 'model/dataBase/add_play_list/add_play_list_recent_add.dart';
-import 'model/dataBase/add_recent_play/add_recent_play.dart';
+
 import 'model/dataBase/delete_song_dataBase/delete_song.dart';
 import 'model/dataBase/favorite_dataBase/favorite_song.dart';
+import 'model/dataBase/play_list_recent_add/play_list_recent_add.dart';
+import 'model/dataBase/recent_play/add_recent_play.dart';
 
 
 
@@ -24,9 +25,10 @@ void main() async {
   Hive.registerAdapter(FavoriteSongAdapter());
   Hive.registerAdapter(DeleteSongAdapter());
   Hive.registerAdapter(RecentPlayAdapter());
+  Hive.registerAdapter(PlayListRecentAddAdapter());
 await  Hive.openBox<FavoriteSong>("Favorite");
 await  Hive.openBox<DeleteSong>("Delete");
-await  Hive.openBox<AddTOPlayListRecent>("Recent add");
+await  Hive.openBox<PlayListRecentAdd>("Recent add");
 await  Hive.openBox<RecentPlay>("Recent play");
  setup();
   runApp(

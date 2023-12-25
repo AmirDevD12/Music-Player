@@ -6,10 +6,9 @@ import 'package:first_project/bloc/sort/sort_song_bloc.dart';
 import 'package:first_project/core/card_widget.dart';
 import 'package:first_project/core/playall_container.dart';
 import 'package:first_project/locator.dart';
-import 'package:first_project/model/dataBase/add_recent_play/add_recent_play.dart';
 import 'package:first_project/model/dataBase/delete_song_dataBase/delete_song.dart';
 import 'package:first_project/model/dataBase/favorite_dataBase/favorite_song.dart';
-import 'package:first_project/model/delete_model.dart';
+import 'package:first_project/model/dataBase/recent_play/add_recent_play.dart';
 import 'package:first_project/screen/playSong_page.dart';
 import 'package:first_project/core/theme/theme_mode.dart';
 import 'package:flutter/material.dart';
@@ -177,7 +176,7 @@ class ListMusic extends StatelessWidget {
                                                     GestureDetector(
                                                       onTap: (){
                                                         addPlayList(snapshot.data![index]);
-                                                        Navigator.push(
+                                                        Navigator.pushReplacement(
                                                             context,
                                                             MaterialPageRoute(
                                                                 builder: (context) =>

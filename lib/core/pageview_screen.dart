@@ -5,7 +5,7 @@ import 'package:first_project/core/pageview_widget.dart';
 import 'package:first_project/core/them_seitcher.dart';
 import 'package:first_project/locator.dart';
 import 'package:first_project/screen/album/albom_page.dart';
-import 'package:first_project/screen/bottum_navigation/favorite_screen.dart';
+import 'package:first_project/screen/bottum_navigation/show_song_playList_screen.dart';
 import 'package:first_project/screen/bottum_navigation/list_song_bottomnav.dart';
 import 'package:first_project/screen/bottum_navigation/search_bottum.dart';
 import 'package:first_project/screen/playSong_page.dart';
