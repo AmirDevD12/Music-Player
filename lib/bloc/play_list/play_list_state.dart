@@ -7,3 +7,5 @@ class PlayListInitial extends PlayListState {}
 class AddFromListState extends PlayListState{}
 class ShowBoxState extends PlayListState{}
 class SelectListState extends PlayListState{}
+class NewListState extends PlayListState{}
+

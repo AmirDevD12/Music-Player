@@ -36,7 +36,7 @@ class _ListSongBottomNavigationState extends State<ListSongBottomNavigation> {
 
   Map<String,bool> boxc={"Favorite":false,"Recent add":false,"Default list":false};
 
-  String title="";
+  String nameNew="";
 @override
   void dispose() {
     // TODO: implement dispose
@@ -51,6 +51,54 @@ class _ListSongBottomNavigationState extends State<ListSongBottomNavigation> {
       BlocProvider.of<PlayListBloc>(context).add(ShowBoxEvent());
     }
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: themeProvider.isDarkMode?Colors.deepPurpleAccent:Colors.blueGrey.shade300,
+          onPressed:(){
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return Expanded(
+                  child: AlertDialog(
+                    title: const Text('New Playlist'),
+                    content: TextField(
+                      onChanged: (value){
+                      nameNew=value;
+                      },
+                      decoration: const InputDecoration(labelText: "New Playlist",
+                        border: UnderlineInputBorder()
+                      ),
+                    ),
+                    actions: [
+                      ElevatedButton(
+                        onPressed: () {},
+                        child: const Text('CANCEL'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+
+                             setState(() {
+                               name.add(nameNew);
+                             });
+                        },
+                        child: const Text('ok'),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            );
+
+          },
+        child: SizedBox(
+            width: 30,
+            height: 30,
+            child: Image.asset(
+              'assets/icon/plus.png',
+              color: themeProvider.isDarkMode
+                  ? Colors.white
+                  : Colors.black,
+            )) ,
+      ),
       bottomNavigationBar:
       widget.show?BlocBuilder<PlayListBloc, PlayListState>(
         builder: (context, state) {
@@ -128,7 +176,7 @@ class _ListSongBottomNavigationState extends State<ListSongBottomNavigation> {
                             )),
                       ),
                     )
-                  : SizedBox(),
+                  : const SizedBox(),
               Expanded(
                 flex: 10,
                 child: ListView.builder(
@@ -160,7 +208,7 @@ class _ListSongBottomNavigationState extends State<ListSongBottomNavigation> {
 
                                           } else {
                                             boxc[name[index]]=false;
-                                            title="";
+
                                             print("Icon Not Checked :(");
                                           }
 
@@ -224,7 +272,7 @@ class _ListSongBottomNavigationState extends State<ListSongBottomNavigation> {
                                       width: 30,
                                       height: 30,
                                       child: Image.asset(
-                                        path[index],
+                                        index>=path.length?path[path.length-1]:path[index],
                                         color: themeProvider.isDarkMode
                                             ? Colors.white
                                             : Colors.black,

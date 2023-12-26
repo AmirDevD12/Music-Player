@@ -23,6 +23,9 @@ class PlayListBloc extends Bloc<PlayListEvent, PlayListState> {
       // TODO: implement event handle
       emit(SelectListState());
     });
-
+    on<NewListEvent>((event, emit) {
+      // TODO: implement event handle
+      emit(NewListState());
+    });
   }
 }
