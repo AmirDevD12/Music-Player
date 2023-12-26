@@ -14,6 +14,7 @@ import 'locator.dart';
 
 import 'model/dataBase/delete_song_dataBase/delete_song.dart';
 import 'model/dataBase/favorite_dataBase/favorite_song.dart';
+import 'model/dataBase/map_string_bool/map_playList.dart';
 import 'model/dataBase/play_list_recent_add/play_list_recent_add.dart';
 import 'model/dataBase/recent_play/add_recent_play.dart';
 
@@ -26,10 +27,12 @@ void main() async {
   Hive.registerAdapter(DeleteSongAdapter());
   Hive.registerAdapter(RecentPlayAdapter());
   Hive.registerAdapter(PlayListRecentAddAdapter());
+  Hive.registerAdapter(MapPlayListAdapter());
 await  Hive.openBox<FavoriteSong>("Favorite");
 await  Hive.openBox<DeleteSong>("Delete");
 await  Hive.openBox<PlayListRecentAdd>("Recent add");
 await  Hive.openBox<RecentPlay>("Recent play");
+await  Hive.openBox<MapPlayList>("Map");
  setup();
   runApp(
       MultiProvider(

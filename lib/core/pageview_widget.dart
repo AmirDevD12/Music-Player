@@ -29,7 +29,7 @@ List<String> ListIssue=<String>["Songs ","Artist","Album","Folder"];
       body: Column(mainAxisAlignment: MainAxisAlignment.start,
         children: [
           const SizedBox(height: 10,),
-          Expanded(flex: 2,
+          Expanded(flex: 1,
               child: Row(crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(

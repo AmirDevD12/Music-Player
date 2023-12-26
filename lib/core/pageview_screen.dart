@@ -3,6 +3,7 @@ import 'package:first_project/bloc/newSong/play_new_song_bloc.dart';
 import 'package:first_project/bloc/play_song_bloc.dart';
 import 'package:first_project/core/pageview_widget.dart';
 import 'package:first_project/core/them_seitcher.dart';
+import 'package:first_project/core/theme/theme_mode.dart';
 import 'package:first_project/locator.dart';
 import 'package:first_project/screen/album/albom_page.dart';
 import 'package:first_project/screen/bottum_navigation/show_song_playList_screen.dart';
@@ -13,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
+import 'package:provider/provider.dart';
 import 'bottomNavigation_widget.dart';
 import 'card_widget.dart';
 
@@ -35,12 +37,7 @@ class _MyHomePageState extends State<MyHomePage> {
   ];
 
 
- @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
 
-  }
   @override
   void initState() {
     // TODO: implement initState
@@ -50,6 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
   late SongModel songModel;
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       appBar: AppBar(
         actions: const [ThemeSwitcher()],
@@ -110,44 +108,50 @@ class _MyHomePageState extends State<MyHomePage> {
                 const SizedBox(height: 5,),
                 Expanded(
 
-                  child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      GestureDetector(
-                          onTap: () {
-                            controller.animateToPage(0,
-                                duration: const Duration(milliseconds: 10),
-                                curve: Curves.easeOut);
-                          },
-                          child: const CardWidget(
-                            text: 'My Music',path: "assets/icon/music(1).png",)),
-                      GestureDetector(
-                          onTap: () {
-                            controller.animateToPage(1,
-                                duration: const Duration(milliseconds: 10),
-                                curve: Curves.easeOut);
-                          },
-                          child: const CardWidget(
-                            text: 'search', path: "assets/icon/magnifying-glass.png",)),
-                      GestureDetector(
-                          onTap: () {
-                            controller.animateToPage(2,
-                                duration: const Duration(milliseconds: 10),
-                                curve: Curves.easeOut);
-                          }
-                          ,
-                          child: const CardWidget(text: 'List', path:"assets/icon/list(2).png",)),
-                      GestureDetector(
-                          onTap: () {
+                  child: Container(
+                    color: themeProvider.isDarkMode?const Color(0xff1a1b1d):Colors.deepPurple,
+                    child: Column(mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            GestureDetector(
+                                onTap: () {
+                                  controller.animateToPage(0,
+                                      duration: const Duration(milliseconds: 10),
+                                      curve: Curves.easeOut);
+                                },
+                                child: const CardWidget(
+                                  text: 'My Music',path: "assets/icon/music(1).png",)),
+                            GestureDetector(
+                                onTap: () {
+                                  controller.animateToPage(1,
+                                      duration: const Duration(milliseconds: 10),
+                                      curve: Curves.easeOut);
+                                },
+                                child: const CardWidget(
+                                  text: 'search', path: "assets/icon/magnifying-glass.png",)),
+                            GestureDetector(
+                                onTap: () {
+                                  controller.animateToPage(2,
+                                      duration: const Duration(milliseconds: 10),
+                                      curve: Curves.easeOut);
+                                }
+                                ,
+                                child: const CardWidget(text: 'List', path:"assets/icon/list(2).png",)),
+                            GestureDetector(
+                                onTap: () {
 
-                            controller.animateToPage(3,
-                                duration: const Duration(milliseconds: 10),
-                                curve: Curves.easeOut);
-                          }
-                          ,
-                          child: const CardWidget(
-                            text: 'Path',path:  "assets/icon/information-button.png",)),
-                    ],
+                                  controller.animateToPage(3,
+                                      duration: const Duration(milliseconds: 10),
+                                      curve: Curves.easeOut);
+                                }
+                                ,
+                                child: const CardWidget(
+                                  text: 'Path',path:  "assets/icon/information-button.png",)),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 )
               ],

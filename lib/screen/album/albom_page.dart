@@ -29,46 +29,49 @@ class _AlbumPageState extends State<AlbumPage> {
             (BuildContext context, AsyncSnapshot<List<SongModel>> snapshot) {
           if (snapshot.hasData) {
             return ListView.builder(
-              itemCount: snapshot.data?.length,
+              itemCount: snapshot.data?.length??0,
               itemBuilder: (BuildContext context, int index) {
-                return ListTile(
-                  trailing:
-                      const SizedBox(width: 35, child: PopupMenuButtonWidget()),
-                  title: Text(
-                    style: locator.get<MyThemes>().title(context),
-                    maxLines: 1,
-                    snapshot.data![index].album!,
+                return Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: ListTile(
+                    trailing:
+                        const SizedBox(width: 35, child: PopupMenuButtonWidget()),
+                    title: Text(
+                      style: locator.get<MyThemes>().title(context),
+                      maxLines: 1,
+                      snapshot.data![index].album!,
+                    ),
+                    subtitle: Text(
+                      style: locator.get<MyThemes>().subTitle(context),
+                      maxLines: 1,
+                      snapshot.data![index].artist!,
+                    ),
+                    leading: QueryArtworkWidget(
+                        artworkWidth: 60,
+                        artworkHeight: 60,
+                        artworkFit: BoxFit.cover,
+                        artworkBorder: const BorderRadius.all(Radius.circular(0)),
+                        id: snapshot.data![index].id,
+                        type: ArtworkType.AUDIO),
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MultiBlocProvider(
+                                    providers: [
+                                      BlocProvider(
+                                          create: (context) =>
+                                              locator.get<PlaySongBloc>()),
+                                      BlocProvider(
+                                          create: (context) => PlayNewSongBloc())
+                                    ],
+                                    child: PlayPage(
+                                      songModel: snapshot.data![index],
+                                      audioPlayer: locator.get<AudioPlayer>(), play: true,
+                                    ),
+                                  )));
+                    },
                   ),
-                  subtitle: Text(
-                    style: locator.get<MyThemes>().subTitle(context),
-                    maxLines: 1,
-                    snapshot.data![index].artist!,
-                  ),
-                  leading: QueryArtworkWidget(
-                      artworkWidth: 60,
-                      artworkHeight: 60,
-                      artworkFit: BoxFit.cover,
-                      artworkBorder: const BorderRadius.all(Radius.circular(0)),
-                      id: snapshot.data![index].id,
-                      type: ArtworkType.AUDIO),
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => MultiBlocProvider(
-                                  providers: [
-                                    BlocProvider(
-                                        create: (context) =>
-                                            locator.get<PlaySongBloc>()),
-                                    BlocProvider(
-                                        create: (context) => PlayNewSongBloc())
-                                  ],
-                                  child: PlayPage(
-                                    songModel: snapshot.data![index],
-                                    audioPlayer: locator.get<AudioPlayer>(), play: true,
-                                  ),
-                                )));
-                  },
                 );
               },
             );

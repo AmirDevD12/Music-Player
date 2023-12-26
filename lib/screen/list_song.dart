@@ -1,3 +1,4 @@
+import 'package:checkbox_formfield/checkbox_icon_formfield.dart';
 import 'package:first_project/bloc/favorite_song/favorite_bloc.dart';
 import 'package:first_project/bloc/newSong/play_new_song_bloc.dart';
 import 'package:first_project/bloc/play_list/play_list_bloc.dart';
@@ -43,10 +44,6 @@ class ListMusic extends StatelessWidget {
                 SizedBox(width: 110, height: 30, child: PlayAllContainer()),
                 PopupMenuButton(
                   icon: const Icon(Icons.sort,size: 30,),
-                  onSelected: (value) {
-                    print(value);
-                    // select=value;
-                  },
                   itemBuilder: (BuildContext bc) {
                     return [
                       PopupMenuItem(
@@ -108,7 +105,16 @@ class ListMusic extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: BlocBuilder<SortSongBloc, SortSongState>(
+            child: BlocBuilder<PlayListBloc, PlayListState>(
+              buildWhen: (previous,current){
+                if(current is NewListState){
+                  return true;
+                }else {
+                  return false;
+                }
+              },
+  builder: (context, state) {
+    return BlocBuilder<SortSongBloc, SortSongState>(
               builder: (context, state) {
                 SongSortType sort = SongSortType.TITLE;
                 if (state is SortByAddState) {
@@ -136,25 +142,33 @@ class ListMusic extends StatelessWidget {
                               final themeProvider =
                                   Provider.of<ThemeProvider>(context);
                               return ListTile(
-                                trailing: SizedBox(
+                                trailing: state is NewListState ?CheckboxIconFormField(
+                                disabledColor: Colors.black,
+                                context: context,
+                                iconSize: 30,
+                                padding: 10,
+                                onSaved: (bool? value) {},
+                                onChanged: (value) {
+                                  if (value) {
+                                    // boxc[name[index]]=true;
+                                  } else {
+                                    // boxc[name[index]]=false;
+                                  }
+
+                                },
+                              ):SizedBox(
                                   width: 36,
                                   child: InkWell(
                                     onTap: (){
                                       showModalBottomSheet<void>(
-                                        // context and builder are
-                                        // required properties in this widget
                                         context: context,
                                         builder: (BuildContext context) {
-                                          // we set up a container inside which
-                                          // we create center column and display text
-
-                                          // Returning SizedBox instead of a Container
                                           return Container(
+
                                             color: themeProvider.isDarkMode?Colors.black:Colors.white,
                                             width: double.infinity,
                                             height: 200,
                                             child: Column(
-
                                               children:  <Widget>[
                                                 const SizedBox(height: 10,),
                                                 Text(
@@ -288,7 +302,9 @@ class ListMusic extends StatelessWidget {
                   },
                 );
               },
-            ),
+            );
+  },
+),
           ),
         ],
       ),
