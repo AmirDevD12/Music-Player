@@ -5,6 +5,7 @@ import 'package:first_project/bloc/play_list/play_list_bloc.dart';
 import 'package:first_project/bloc/play_song_bloc.dart';
 import 'package:first_project/bloc/sort/sort_song_bloc.dart';
 import 'package:first_project/core/theme/theme_mode.dart';
+import 'package:first_project/screen/spalsh/splashScreeen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -58,18 +59,9 @@ class MyApp extends StatelessWidget {
             themeMode: themeProvider.themeMode,
             theme: MyThemes.lightTheme,
             darkTheme: MyThemes.darkTheme,
-            home: MultiBlocProvider(
-              providers: [
-                BlocProvider<PlaySongBloc>( create: (context) =>locator.get<PlaySongBloc>()),
-                BlocProvider<SortSongBloc>( create: (context) =>locator.get<SortSongBloc>()),
-                BlocProvider<PlayNewSongBloc>( create: (context) =>locator.get<PlayNewSongBloc>()),
-                BlocProvider<FavoriteBloc>( create: (context) =>locator.get<FavoriteBloc>()),
-                BlocProvider<PlayListBloc>( create: (context) =>locator.get<PlayListBloc>()),
-              ],
-              child: const MyHomePage(),)
+            home: const SplashScreen()
         );
       },
-
     );
   }
 }

@@ -68,43 +68,41 @@ class _ListSongBottomNavigationState extends State<ListSongBottomNavigation> {
           showDialog(
             context: context,
             builder: (BuildContext context) {
-              return Expanded(
-                child: AlertDialog(
-                  title: const Text('New Playlist'),
-                  content: TextField(
-                    onChanged: (value) {
-                      nameNew = value;
-                    },
-                    decoration: const InputDecoration(
-                        labelText: "New Playlist",
-                        border: UnderlineInputBorder()),
-                  ),
-                  actions: [
-                    ElevatedButton(
-                      onPressed: () {},
-                      child: const Text('CANCEL'),
-                    ),
-                    ElevatedButton(
-                      onPressed: () async {
-                        Box boxMap = await Hive.openBox<MapPlayList>("Map");
-                        MapPlayList mapPlayList = MapPlayList(nameNew, false);
-                        boxMap.add(mapPlayList);
-                        List<SongModel> songs = await locator
-                            .get<SongList>()
-                            .getSongs(SongSortType.TITLE);
-                        // ignore: use_build_context_synchronously
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SelectSongScreen(
-                                      name: nameNew,
-                                      songs: songs,
-                                    )));
-                      },
-                      child: const Text('ok'),
-                    ),
-                  ],
+              return AlertDialog(
+                title: const Text('New Playlist'),
+                content: TextField(
+                  onChanged: (value) {
+                    nameNew = value;
+                  },
+                  decoration: const InputDecoration(
+                      labelText: "New Playlist",
+                      border: UnderlineInputBorder()),
                 ),
+                actions: [
+                  ElevatedButton(
+                    onPressed: () {},
+                    child: const Text('CANCEL'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      Box boxMap = await Hive.openBox<MapPlayList>("Map");
+                      MapPlayList mapPlayList = MapPlayList(nameNew, false);
+                      boxMap.add(mapPlayList);
+                      List<SongModel> songs = await locator
+                          .get<SongList>()
+                          .getSongs(SongSortType.TITLE);
+                      // ignore: use_build_context_synchronously
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SelectSongScreen(
+                                    name: nameNew,
+                                    songs: songs,
+                                  )));
+                    },
+                    child: const Text('ok'),
+                  ),
+                ],
               );
             },
           );
