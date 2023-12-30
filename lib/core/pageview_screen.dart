@@ -32,7 +32,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final List<Widget> _list = <Widget>[
     const Center(child: PageViewSong()),
     const Center(child: SearchScreen()),
-    const Center(child: ListSongBottomNavigation(show: false,)),
+    const Center(child: ListSongBottomNavigation(show: false, songModel: null,)),
     const Center(child: AlbumPage()),
   ];
 

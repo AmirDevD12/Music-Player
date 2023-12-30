@@ -189,7 +189,7 @@ class ListMusic extends StatelessWidget {
                                                           text: 'search', path: "assets/icon/magnifying-glass.png",)),
                                                     GestureDetector(
                                                       onTap: (){
-                                                        addPlayList(snapshot.data![index]);
+                                                        // addPlayList(snapshot.data![index]);
                                                         Navigator.pushReplacement(
                                                             context,
                                                             MaterialPageRoute(
@@ -213,7 +213,7 @@ class ListMusic extends StatelessWidget {
                                                                               .get<PlayListBloc>(),
                                                                         ),
                                                                       ],
-                                                                      child: ListSongBottomNavigation(show: true,)
+                                                                      child: ListSongBottomNavigation(show: true, songModel: snapshot.data![index],)
                                                                     )));
 
                                                       },
@@ -332,10 +332,5 @@ class ListMusic extends StatelessWidget {
       RecentPlay recentPlay=RecentPlay(songModel.title, songModel.data, songModel.id, songModel.artist) ;
       await box.add(recentPlay);
     }
-  }
-  addPlayList(SongModel songModel) async {
-    var box = await Hive.openBox<FavoriteSong>("Favorite");
-    FavoriteSong favorite = FavoriteSong(songModel.title,songModel.data,songModel.id,songModel.artist!);
-    await  box.add(favorite);
   }
 }

@@ -42,9 +42,9 @@ class _PlayPageState extends State<PlayPage>
 
     checkFavorite(widget.songModel,context);
     if(widget.play){
-      PlayNewSong().newSong(widget.songModel.uri, widget.audioPlayer, context);
+      PlayNewSong().newSong(widget.songModel.uri, widget.audioPlayer, context,null);
     }else{
-      PlayNewSong().newSong(null, widget.audioPlayer, context);
+      PlayNewSong().newSong(null, widget.audioPlayer, context,null);
     }
 
     _animationController = AnimationController(
@@ -330,7 +330,7 @@ class _PlayPageState extends State<PlayPage>
                                     number - 1));
                             // ignore: use_build_context_synchronously
                             PlayNewSong().newSong(songs[number - 1].uri,
-                                widget.audioPlayer, context);
+                                widget.audioPlayer, context,null);
                           },
                           icon: Image.asset(
                             "assets/icon/music-player(1).png",
@@ -378,7 +378,7 @@ class _PlayPageState extends State<PlayPage>
                                 .get<SongList>()
                                 .getSongs(SongSortType.TITLE);
                             PlayNewSong().newSong(songs[number + 1].uri,
-                                widget.audioPlayer, context);
+                                widget.audioPlayer, context,null);
                             // newSong(songs[number + 1].uri);
                             if (!isPlaying) {
                               isPlaying = true;
@@ -481,6 +481,7 @@ class _PlayPageState extends State<PlayPage>
     var box = await Hive.openBox<FavoriteSong>("Favorite");
     FavoriteSong favorite = FavoriteSong(songModel.title,songModel.data,songModel.id,songModel.artist!);
     await  box.add(favorite);
+    // ignore: use_build_context_synchronously
     BlocProvider.of<FavoriteBloc>(context).add(FavoriteSongEvent(true));
   }
 

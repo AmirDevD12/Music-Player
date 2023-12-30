@@ -22,7 +22,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     OnAudioQuery().permissionsStatus();
     super.initState();
-    Future.delayed(const Duration(seconds: 5), () {
+    Future.delayed(const Duration(seconds: 1), () {
       Navigator.pushReplacement(context, MaterialPageRoute(builder:
       (context)=> MultiBlocProvider(
         providers: [

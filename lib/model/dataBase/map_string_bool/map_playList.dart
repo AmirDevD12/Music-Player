@@ -6,7 +6,7 @@ class MapPlayList{
   MapPlayList(this.title,this.check);
 
   @HiveField(0)
- final String? title;
+ final String title;
 
   @HiveField(1)
  final bool check;

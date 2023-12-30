@@ -116,7 +116,7 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
                             await SongList().getSongs(SongSortType.TITLE);
                         // ignore: use_build_context_synchronously
                         PlayNewSong().newSong(songs[number + 1].uri,
-                            locator.get<AudioPlayer>(), context);
+                            locator.get<AudioPlayer>(), context,null);
                         // newSong(songs[number + 1].uri);
                         if (!isPlaying) {
                           isPlaying = true;

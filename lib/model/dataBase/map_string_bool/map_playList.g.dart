@@ -17,7 +17,7 @@ class MapPlayListAdapter extends TypeAdapter<MapPlayList> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return MapPlayList(
-      fields[0] as String?,
+      fields[0] as String,
       fields[1] as bool,
     );
   }
