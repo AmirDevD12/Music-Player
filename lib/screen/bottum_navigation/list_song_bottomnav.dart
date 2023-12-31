@@ -17,8 +17,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:just_audio/just_audio.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
 import 'show_song_playList_screen.dart';
@@ -189,37 +187,77 @@ class _ListSongBottomNavigationState extends State<ListSongBottomNavigation> {
                                         },
                                       )
                                     : SizedBox(
-                                        height: 50,
-                                        width: 36,
-                                        child: PopupMenuButton(
-                                          iconSize: 200,
-                                          icon: Image.asset(
-                                            "assets/icon/dots.png",
-                                            width: 40,
-                                            height: 40,
-                                            color: themeProvider.isDarkMode
-                                                ? Colors.white
-                                                : Colors.black,
-                                          ),
-                                          itemBuilder: (BuildContext bc) {
-                                            return [
-                                              PopupMenuItem(
-                                                onTap: () {},
-                                                value: '/delete',
-                                                child: const Text("delete"),
-                                              ),
-                                              const PopupMenuItem(
-                                                value: '/share',
-                                                child: Text("Share"),
-                                              ),
-                                              const PopupMenuItem(
-                                                value: '/add',
-                                                child: Text("Add to playlist"),
-                                              )
-                                            ];
+                                  height: 50,
+                                  width: 36,
+                                  child: PopupMenuButton(
+                                    iconSize: 200,
+                                    icon: Image.asset(
+                                      "assets/icon/dots.png",
+                                      width: 40,
+                                      height: 40,
+                                      color: themeProvider.isDarkMode
+                                          ? Colors.white
+                                          : Colors.black,
+                                    ),
+                                    itemBuilder: (BuildContext bc) {
+                                      return [
+                                        PopupMenuItem(
+                                          onTap: () async {
+                                            Box boxNew = await Hive.openBox<FavoriteSong>(name[index]);
+                                            final playlist = ConcatenatingAudioSource(
+                                              useLazyPreparation: true,
+                                              shuffleOrder: DefaultShuffleOrder(),
+                                              children: [
+                                                for(int i=0;i<boxNew.length;i++)
+                                                  AudioSource.uri(Uri.parse(boxNew.getAt(i).path)),
+                                              ],
+                                            );
+                                            // ignore: use_build_context_synchronously
+                                            PlayNewSong().newSong(0, context, playlist,true);
                                           },
+                                          value: '/add',
+                                          child:
+                                          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              const Text("Add to queue",style: TextStyle(fontSize: 15,fontFamily: "ibm",fontWeight: FontWeight.bold),),
+                                              SizedBox(
+                                                  width: 30,
+
+                                                  child: Image.asset("assets/icon/add-to-playlist.png"))
+                                            ],
+                                          ),
                                         ),
-                                      );
+                                        PopupMenuItem(
+                                          onTap: () async {
+                                            Box boxNew = await Hive.openBox<FavoriteSong>(name[index]);
+                                            final playlist = ConcatenatingAudioSource(
+                                              useLazyPreparation: true,
+                                              shuffleOrder: DefaultShuffleOrder(),
+                                              children: [
+                                                for(int i=0;i<boxNew.length;i++)
+                                                  AudioSource.uri(Uri.parse(boxNew.getAt(i).path)),
+
+                                              ],
+                                            );
+                                            // ignore: use_build_context_synchronously
+                                            PlayNewSong().newSong(0, context, playlist,false);
+                                          },
+                                          value: '/add',
+                                          child:
+                                          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              const Text("play",style: TextStyle(fontSize: 15,fontFamily: "ibm",fontWeight: FontWeight.bold),),
+                                              SizedBox(
+                                                  width: 30,
+
+                                                  child: Image.asset("assets/icon/play-button.png"))
+                                            ],
+                                          ),
+                                        )
+                                      ];
+                                    },
+                                  ),
+                                );
                               },
                             ),
                             title: Text(
@@ -357,10 +395,18 @@ class _ListSongBottomNavigationState extends State<ListSongBottomNavigation> {
                                                 PopupMenuItem(
                                                   onTap: () {
                                                     box.deleteAt(index);
-                                                    Navigator.pop(context,true);
+
                                                   },
                                                   value: '/delete',
-                                                  child: const Text("delete"),
+                                                  child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                       const Text("delete",style: TextStyle(fontSize: 15,fontFamily: "ibm",fontWeight: FontWeight.bold),),
+                                                      SizedBox(
+                                                          width: 30,
+                                                          height: 30,
+                                                          child: Image.asset("assets/icon/delete.png"))
+                                                    ],
+                                                  ),
                                                 ),
                                                  PopupMenuItem(
                                                   onTap: (){
@@ -438,7 +484,15 @@ class _ListSongBottomNavigationState extends State<ListSongBottomNavigation> {
 
                                                   },
                                                   value: '/share',
-                                                  child: const Text("rename"),
+                                                  child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                       const Text("rename",style: TextStyle(fontSize: 15,fontFamily: "ibm",fontWeight: FontWeight.bold),),
+                                                      SizedBox(
+                                                          width: 30,
+
+                                                          child: Image.asset("assets/icon/edit.png"))
+                                                    ],
+                                                  ),
                                                 ),
                                                  PopupMenuItem(
                                                    onTap: () async {
@@ -449,16 +503,49 @@ class _ListSongBottomNavigationState extends State<ListSongBottomNavigation> {
                                                        children: [
                                                          for(int i=0;i<boxNew.length;i++)
                                                          AudioSource.uri(Uri.parse(boxNew.getAt(i).path)),
-                                                         // AudioSource.uri(Uri.parse('https://example.com/track2.mp3')),
-                                                         // AudioSource.uri(Uri.parse('https://example.com/track3.mp3')),
                                                        ],
                                                      );
                                                      // ignore: use_build_context_synchronously
-                                                     PlayNewSong().playPlayList(null, locator.get<AudioPlayer>(), context, playlist);
+                                                     PlayNewSong().newSong(0, context, playlist,true);
                                                    },
                                                   value: '/add',
                                                   child:
-                                                      Text("Next"),
+                                                      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                        children: [
+                                                           Text("Add to queue",style: TextStyle(fontSize: 15,fontFamily: "ibm",fontWeight: FontWeight.bold),),
+                                                          SizedBox(
+                                                              width: 30,
+
+                                                              child: Image.asset("assets/icon/add-to-playlist.png"))
+                                                        ],
+                                                      ),
+                                                ),
+                                                PopupMenuItem(
+                                                  onTap: () async {
+                                                    Box boxNew = await Hive.openBox<FavoriteSong>(box.getAt(index).title);
+                                                    final playlist = ConcatenatingAudioSource(
+                                                      useLazyPreparation: true,
+                                                      shuffleOrder: DefaultShuffleOrder(),
+                                                      children: [
+                                                        for(int i=0;i<boxNew.length;i++)
+                                                          AudioSource.uri(Uri.parse(boxNew.getAt(i).path)),
+
+                                                      ],
+                                                    );
+                                                    // ignore: use_build_context_synchronously
+                                                    PlayNewSong().newSong(0, context, playlist,false);
+                                                  },
+                                                  value: '/add',
+                                                  child:
+                                                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                       const Text("play",style: TextStyle(fontSize: 15,fontFamily: "ibm",fontWeight: FontWeight.bold),),
+                                                      SizedBox(
+                                                          width: 30,
+
+                                                          child: Image.asset("assets/icon/play-button.png"))
+                                                    ],
+                                                  ),
                                                 )
                                               ];
                                             },

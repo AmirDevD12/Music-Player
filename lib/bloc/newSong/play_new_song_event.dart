@@ -11,3 +11,4 @@ class NewSongEvent extends PlayNewSongEvent{
   NewSongEvent(this.id, this.name, this.artist,this.index);
 }
 class PauseAnimationEvent extends PlayNewSongEvent{}
+class ChangIconEvent extends PlayNewSongEvent{}

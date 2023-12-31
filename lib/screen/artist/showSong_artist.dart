@@ -63,24 +63,23 @@ class _ShowListArtistState extends State<ShowListArtist> {
                                 child: PopupMenuButtonWidget()),
                             title: Text(maxLines: 1,snapshot.data![index].title,style: locator.get<MyThemes>().title(context),),
                             subtitle: Text(maxLines: 1,snapshot.data![index].displayName,style: locator.get<MyThemes>().subTitle(context),),
-                            onTap: (){
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => MultiBlocProvider(
-                                        providers: [
-                                          BlocProvider(
-                                              create: (context) => locator.get<PlaySongBloc>()),
-                                          BlocProvider(
-                                              create: (context) => PlayNewSongBloc())
-                                        ],
-                                        child: PlayPage(
-                                          songModel: snapshot.data![index],
-                                          audioPlayer: locator.get<AudioPlayer>(), play: true,
-                                        ),
-                                      )));
-
-                            },
+                            // onTap: (){
+                            //   Navigator.push(
+                            //       context,
+                            //       MaterialPageRoute(
+                            //           builder: (context) => MultiBlocProvider(
+                            //             providers: [
+                            //               BlocProvider(
+                            //                   create: (context) => locator.get<PlaySongBloc>()),
+                            //               BlocProvider(
+                            //                   create: (context) => PlayNewSongBloc())
+                            //             ],
+                            //             child: PlayPage(
+                            //               songModel: snapshot.data![index], play: true,
+                            //             ),
+                            //           )));
+                            //
+                            // },
                           ),
                         );
                       },

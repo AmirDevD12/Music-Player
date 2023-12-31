@@ -16,6 +16,7 @@ class PlayNewSongBloc extends Bloc<PlayNewSongEvent, PlayNewSongState> {
     });
 
     on<PauseAnimationEvent>((event, emit){emit(PauseAnimationState());});
+    on<ChangIconEvent>((event, emit){emit(ChangIconState());});
 
   }
 }

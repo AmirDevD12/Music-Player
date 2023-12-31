@@ -138,7 +138,16 @@ class ListMusic extends StatelessWidget {
                           return ListView.builder(
                             itemCount: snapshot.data?.length,
                             itemBuilder: (BuildContext context, int index) {
-
+                              final playlist = ConcatenatingAudioSource(
+                                useLazyPreparation: true,
+                                shuffleOrder: DefaultShuffleOrder(),
+                                children: [
+                                  for(int i=0;i<snapshot.data!.length;i++)
+                                    AudioSource.uri(Uri.parse(snapshot.data![i].data)),
+                                  // AudioSource.uri(Uri.parse('https://example.com/track2.mp3')),
+                                  // AudioSource.uri(Uri.parse('https://example.com/track3.mp3')),
+                                ],
+                              );
                               final themeProvider =
                                   Provider.of<ThemeProvider>(context);
                               return ListTile(
@@ -253,8 +262,8 @@ class ListMusic extends StatelessWidget {
                                     id: snapshot.data![index].id,
                                     type: ArtworkType.AUDIO ),
                                 onTap: () async {
-                                  BlocProvider.of<PlaySongBloc>(context).add(
-                                      ShowEvent(snapshot.data![index], true));
+                                  // BlocProvider.of<PlaySongBloc>(context).add(
+                                  //     ShowEvent(snapshot.data![index], true));
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -277,18 +286,17 @@ class ListMusic extends StatelessWidget {
                                                 child: PlayPage(
                                                   songModel:
                                                       snapshot.data![index],
-                                                  audioPlayer: locator
-                                                      .get<AudioPlayer>(),
-                                                  play: true,
+
+                                                  play: true, concatenatingAudioSource: playlist, index: index,
                                                 ),
                                               )));
                                              addRecentPlay(snapshot.data![index]);
-                                  BlocProvider.of<PlayNewSongBloc>(context).add(
-                                      NewSongEvent(
-                                          snapshot.data![index].id,
-                                          snapshot.data![index].title,
-                                          snapshot.data![index].artist!,
-                                          index));
+                                  // BlocProvider.of<PlayNewSongBloc>(context).add(
+                                  //     NewSongEvent(
+                                  //         snapshot.data![index].id,
+                                  //         snapshot.data![index].title,
+                                  //         snapshot.data![index].artist!,
+                                  //         index));
                                 },
                               );
                             },

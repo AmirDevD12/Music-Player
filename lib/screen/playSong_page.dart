@@ -18,12 +18,15 @@ import '../bloc/play_song_bloc.dart';
 
 class PlayPage extends StatefulWidget {
   final SongModel songModel;
-  final AudioPlayer audioPlayer;
+  final ConcatenatingAudioSource? concatenatingAudioSource;
+  final int index;
   final bool play;
   const PlayPage({
     super.key,
     required this.songModel,
-    required this.audioPlayer, required this.play,
+    required this.play,
+    required this.concatenatingAudioSource,
+    required this.index,
   });
 
   @override
@@ -36,31 +39,37 @@ class _PlayPageState extends State<PlayPage>
   late Animation<double> _animation;
 
   bool isPlaying = true;
-  bool like=true;
+  bool like = true;
+  bool shuffle = false;
   @override
   void initState() {
-
-    checkFavorite(widget.songModel,context);
-    if(widget.play){
-      PlayNewSong().newSong(widget.songModel.uri, widget.audioPlayer, context,null);
-    }else{
-      PlayNewSong().newSong(null, widget.audioPlayer, context,null);
+    index = widget.index;
+    checkFavorite(widget.songModel, context);
+    if (widget.play) {
+      PlayNewSong().newSong(
+          widget.index, context, widget.concatenatingAudioSource, false);
+    } else {
+      PlayNewSong().newSong(
+          widget.index, context, widget.concatenatingAudioSource, false);
     }
 
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 30),
+      duration: const Duration(seconds: 50),
     )..repeat();
-    _animation = Tween<double>(begin: 0, end: 5).animate(
+    _animation = Tween<double>(begin: 0, end: 8).animate(
       CurvedAnimation(
         parent: _animationController,
-        curve: Curves.linear,
+        curve: Curves.slowMiddle,
       ),
     );
     ChangeAnimation().toggleAnimation(_animationController, isPlaying);
     BlocProvider.of<PlayNewSongBloc>(context).add(PauseAnimationEvent());
-    BlocProvider.of<PlayNewSongBloc>(context).add(
-        NewSongEvent(widget.songModel.id, widget.songModel.title,widget.songModel.artist!, 1));
+    BlocProvider.of<PlayNewSongBloc>(context).add(NewSongEvent(
+        widget.songModel.id,
+        widget.songModel.title,
+        widget.songModel.artist!,
+        widget.index));
   }
 
   @override
@@ -70,8 +79,8 @@ class _PlayPageState extends State<PlayPage>
     super.dispose();
   }
 
-  int number = 0;
   int id = 0;
+  late int index;
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
@@ -127,7 +136,8 @@ class _PlayPageState extends State<PlayPage>
                 children: [
                   BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
                     buildWhen: (privioce, current) {
-                      if (current is PauseAnimationState) {
+                      if (current is PauseAnimationState ||
+                          current is ChangIconState) {
                         return false;
                       } else {
                         return true;
@@ -162,11 +172,13 @@ class _PlayPageState extends State<PlayPage>
                 ],
               ),
 
-              Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
                     buildWhen: (privioce, current) {
-                      if (current is PauseAnimationState) {
+                      if (current is PauseAnimationState ||
+                          current is ChangIconState) {
                         return false;
                       } else {
                         return true;
@@ -190,7 +202,7 @@ class _PlayPageState extends State<PlayPage>
                                 : widget.songModel.title,
                           ),
                           subtitle: Text(
-                            style:locator.get<MyThemes>().subTitle(context),
+                            style: locator.get<MyThemes>().subTitle(context),
                             maxLines: 1,
                             state is NewSongState ||
                                     state is PauseAnimationState && id != 0
@@ -203,26 +215,27 @@ class _PlayPageState extends State<PlayPage>
                   ),
                   BlocBuilder<FavoriteBloc, FavoriteState>(
                     builder: (context, state) {
-                     if (state is FavoriteSongState) {
-
-                       if (state.like) {
-                         like=false;
-                       }else{like=true;}
-                     }
+                      if (state is FavoriteSongState) {
+                        if (state.like) {
+                          like = false;
+                        } else {
+                          like = true;
+                        }
+                      }
                       return IconButton(
                         onPressed: () async {
-                          like=!like;
+                          like = !like;
                           if (!like) {
-                            add(widget.songModel,context);
-                          }else{
-                            deleteFavorite(widget.songModel,context);
+                            add(widget.songModel, context);
+                          } else {
+                            deleteFavorite(widget.songModel, context);
                           }
                         },
                         icon: Image.asset(
-                          like?"assets/icon/like.png":"assets/icon/heart.png",
-                          color: like
-                              ? Colors.red
-                              : Colors.red,
+                          like
+                              ? "assets/icon/like.png"
+                              : "assets/icon/heart.png",
+                          color: like ? Colors.red : Colors.red,
                           width: 25,
                           height: 25,
                         ),
@@ -305,16 +318,24 @@ class _PlayPageState extends State<PlayPage>
                             : Colors.black,
                       )),
                   BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
+                    buildWhen: (privioc, current) {
+                      if (current is ChangIconState) {
+                        return false;
+                      } else {
+                        return true;
+                      }
+                    },
                     builder: (context, state) {
                       if (state is NewSongState) {
-                        number = state.index;
+                        index = state.index;
                       }
                       return IconButton(
                           onPressed: () async {
+                            index--;
                             List<SongModel> songs = await locator
                                 .get<SongList>()
                                 .getSongs(SongSortType.TITLE);
-
+                            locator.get<AudioPlayer>().seekToPrevious();
                             if (!isPlaying) {
                               isPlaying = true;
                             }
@@ -324,13 +345,10 @@ class _PlayPageState extends State<PlayPage>
                             // ignore: use_build_context_synchronously
                             BlocProvider.of<PlayNewSongBloc>(context).add(
                                 NewSongEvent(
-                                    songs[number - 1].id,
-                                    songs[number - 1].title,
-                                    songs[number - 1].displayName,
-                                    number - 1));
-                            // ignore: use_build_context_synchronously
-                            PlayNewSong().newSong(songs[number - 1].uri,
-                                widget.audioPlayer, context,null);
+                                    songs[index].id,
+                                    songs[index].title,
+                                    songs[index].displayName,
+                                    index));
                           },
                           icon: Image.asset(
                             "assets/icon/music-player(1).png",
@@ -347,9 +365,9 @@ class _PlayPageState extends State<PlayPage>
                       return IconButton(
                           onPressed: () async {
                             if (isPlaying) {
-                              widget.audioPlayer.pause();
+                              locator.get<AudioPlayer>().pause();
                             } else {
-                              widget.audioPlayer.play();
+                              locator.get<AudioPlayer>().play();
                             }
                             isPlaying = !isPlaying;
 
@@ -358,9 +376,11 @@ class _PlayPageState extends State<PlayPage>
                             ChangeAnimation().toggleAnimation(
                                 _animationController, isPlaying ? true : false);
                           },
-                          icon: Icon(
-                            isPlaying ? Icons.pause : Icons.play_arrow,
-                            size: 40,
+                          icon: Image.asset(
+                            isPlaying
+                                ? "assets/icon/pause.png"
+                                : "assets/icon/play-button-arrowhead.png",
+                            width: 40,
                             color: themeProvider.isDarkMode
                                 ? Colors.white
                                 : Colors.black,
@@ -368,17 +388,24 @@ class _PlayPageState extends State<PlayPage>
                     },
                   ),
                   BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
+                    buildWhen: (privioc, current) {
+                      if (current is ChangIconState) {
+                        return false;
+                      } else {
+                        return true;
+                      }
+                    },
                     builder: (context, state) {
                       if (state is NewSongState) {
-                        number = state.index;
+                        index = state.index;
                       }
                       return IconButton(
                           onPressed: () async {
+                            index++;
                             List<SongModel> songs = await locator
                                 .get<SongList>()
                                 .getSongs(SongSortType.TITLE);
-                            PlayNewSong().newSong(songs[number + 1].uri,
-                                widget.audioPlayer, context,null);
+                            locator.get<AudioPlayer>().seekToNext();
                             // newSong(songs[number + 1].uri);
                             if (!isPlaying) {
                               isPlaying = true;
@@ -387,10 +414,10 @@ class _PlayPageState extends State<PlayPage>
                                 _animationController, isPlaying ? true : false);
                             BlocProvider.of<PlayNewSongBloc>(context).add(
                                 NewSongEvent(
-                                    songs[number + 1].id,
-                                    songs[number + 1].title,
-                                    songs[number + 1].displayName,
-                                    number + 1));
+                                    songs[index].id,
+                                    songs[index].title,
+                                    songs[index].displayName,
+                                    index));
                           },
                           icon: Image.asset(
                             "assets/icon/music-player(3).png",
@@ -402,16 +429,28 @@ class _PlayPageState extends State<PlayPage>
                           ));
                     },
                   ),
-                  IconButton(
-                      onPressed: () {},
-                      icon: Image.asset(
-                        "assets/icon/repeat.png",
-                        color: themeProvider.isDarkMode
-                            ? Colors.white
-                            : Colors.black,
-                        width: 35,
-                        height: 35,
-                      )),
+                  BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
+                    builder: (context, state) {
+                      return IconButton(
+                          onPressed: () {
+                            shuffle = !shuffle;
+                            if (!shuffle) {
+                              locator.get<AudioPlayer>().shuffle();
+                            }
+                            BlocProvider.of<PlayNewSongBloc>(context)
+                                .add(ChangIconEvent());
+                          },
+                          icon: Image.asset(
+                            shuffle
+                                ? "assets/icon/shuffle.png"
+                                : "assets/icon/repeat.png",
+                            width: 30,
+                            color: themeProvider.isDarkMode
+                                ? Colors.white
+                                : Colors.black,
+                          ));
+                    },
+                  ),
                 ],
               ),
               const SizedBox(
@@ -473,23 +512,25 @@ class _PlayPageState extends State<PlayPage>
       ],
     )));
   }
+
   void changeSeconds(int seconds) {
     Duration duration = Duration(seconds: seconds);
-    widget.audioPlayer.seek(duration);
+    locator.get<AudioPlayer>().seek(duration);
   }
-  add(SongModel songModel,BuildContext context) async {
+
+  add(SongModel songModel, BuildContext context) async {
     var box = await Hive.openBox<FavoriteSong>("Favorite");
-    FavoriteSong favorite = FavoriteSong(songModel.title,songModel.data,songModel.id,songModel.artist!);
-    await  box.add(favorite);
+    FavoriteSong favorite = FavoriteSong(
+        songModel.title, songModel.data, songModel.id, songModel.artist!);
+    await box.add(favorite);
     // ignore: use_build_context_synchronously
     BlocProvider.of<FavoriteBloc>(context).add(FavoriteSongEvent(true));
   }
-
 }
 
-void deleteFavorite(SongModel songModel,BuildContext context) {
+void deleteFavorite(SongModel songModel, BuildContext context) {
   Box favorite = Hive.box<FavoriteSong>("Favorite");
-  for(int i=0; i<favorite.length;i++) {
+  for (int i = 0; i < favorite.length; i++) {
     final FavoriteSong favoriteSongs = favorite.getAt(i);
     if (favoriteSongs.path == songModel.data &&
         favoriteSongs.id == songModel.id) {
@@ -500,17 +541,19 @@ void deleteFavorite(SongModel songModel,BuildContext context) {
   }
 }
 
- checkFavorite(SongModel songModel,BuildContext context) {
+checkFavorite(SongModel songModel, BuildContext context) {
   Box favorite = Hive.box<FavoriteSong>("Favorite");
-  bool check=false;
-  for(int i=0; i<favorite.length;i++){
+  bool check = false;
+  for (int i = 0; i < favorite.length; i++) {
     final FavoriteSong favoriteSongs = favorite.getAt(i);
-    if (favoriteSongs.path==songModel.data&&favoriteSongs.id==songModel.id) {
-    BlocProvider.of<FavoriteBloc>(context).add(FavoriteSongEvent(true));
-    check=true;
-    return ;
+    if (favoriteSongs.path == songModel.data &&
+        favoriteSongs.id == songModel.id) {
+      BlocProvider.of<FavoriteBloc>(context).add(FavoriteSongEvent(true));
+      check = true;
+      return;
     }
     if (!check) {
-      BlocProvider.of<FavoriteBloc>(context).add(FavoriteSongEvent(false));}
+      BlocProvider.of<FavoriteBloc>(context).add(FavoriteSongEvent(false));
     }
+  }
 }

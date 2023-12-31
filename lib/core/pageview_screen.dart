@@ -31,7 +31,7 @@ class _MyHomePageState extends State<MyHomePage> {
   PageController controller = PageController();
   final List<Widget> _list = <Widget>[
     const Center(child: PageViewSong()),
-    const Center(child: SearchScreen()),
+     Center(child: SearchPage()),
     const Center(child: ListSongBottomNavigation(show: false, songModel: null,)),
     const Center(child: AlbumPage()),
   ];
@@ -72,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     if(state is ShowNavState){
                       songModel=state.songModel;
                     }
-                    return state is DurationState ||state is PausePlayState
+                    return state is DurationState ||state is PausePlayState||state is ShowNavState
                     ?GestureDetector(
                         onTap: (){
                           Navigator.push(
@@ -97,8 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                         child: PlayPage(
                                           songModel:
                                           songModel,
-                                          audioPlayer: locator
-                                              .get<AudioPlayer>(), play: false,
+                                          play: false, concatenatingAudioSource: null, index: 0,
                                         ),
                                       )));
                         },

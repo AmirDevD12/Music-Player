@@ -28,6 +28,7 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
   late AnimationController _animationMusic;
 
   late Animation<double> _animation;
+  late Animation<double> _animationSong;
   int id = 0;
   int number = 0;
   @override
@@ -37,16 +38,23 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
       vsync: this,
       duration: const Duration(seconds: 30),
     )..repeat();
+    _animationMusic = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1),
+    )..repeat();
     _animation = Tween<double>(begin: 0, end: 5).animate(
       CurvedAnimation(
         parent: _animationController,
         curve: Curves.linear,
       ),
     );
-    _animationMusic = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 1),
-    )..repeat();
+    _animationSong = Tween<double>(begin: 0, end: 5).animate(
+      CurvedAnimation(
+        parent: _animationMusic,
+        curve: Curves.linear,
+      ),
+    );
+
 
   }
 
@@ -79,6 +87,8 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
                       isPlaying = state.play;
                       ChangeAnimation().toggleAnimation(
                           _animationController, isPlaying ? true : false);
+                      ChangeAnimation().toggleAnimation(
+                          _animationMusic, isPlaying ? true : false);
                   }
                   return IconButton(
                       onPressed: () async {
@@ -115,8 +125,7 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
                         List<SongModel> songs =
                             await SongList().getSongs(SongSortType.TITLE);
                         // ignore: use_build_context_synchronously
-                        PlayNewSong().newSong(songs[number + 1].uri,
-                            locator.get<AudioPlayer>(), context,null);
+                        locator.get<AudioPlayer>().nextIndex;
                         // newSong(songs[number + 1].uri);
                         if (!isPlaying) {
                           isPlaying = true;
@@ -143,26 +152,38 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
           ),
           Row(
             children: [
-             Center(
+             BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
+  builder: (context, state) {
+    if (!locator.get<AudioPlayer>().playing) {
+      print("fvbhfvhbsvhsgsjhvgbvjhgbvjhgbfgh");
+      _animationMusic.stop();
+      _animationController.stop();
+    }
+    return Center(
                  child: Lottie.asset('assets/animation/Animation - 1702455265848.json',
                  controller: _animationMusic,
-                 ),),
+                 ),);
+  },
+),
             ],
           ),
           Row(
             children: [
               BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
-                buildWhen: (privioce, current) {
-                  if (current is PauseAnimationState) {
-                    return false;
-                  } else {
-                    return true;
-                  }
-                },
+                // buildWhen: (privioce, current) {
+                //   if (current is PauseAnimationState) {
+                //     return false;
+                //   } else {
+                //     return true;
+                //   }
+                // },
                 builder: (context, state) {
-                  if (state is NewSongState) {
-                    id = state.id;
+                  if (!locator.get<AudioPlayer>().playing) {
+                    print("fvbhfvhbsvhsgsjhvgbvjhgbvjhgbfgh");
+                    _animationMusic.stop();
+                    _animationController.stop();
                   }
+
                   return RotationTransition(
                       turns: _animation,
                       child: CircleAvatar(

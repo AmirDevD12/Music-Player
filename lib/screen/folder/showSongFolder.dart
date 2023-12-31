@@ -40,23 +40,23 @@ class ShowSongFolder extends StatelessWidget {
                       artworkFit: BoxFit.cover,
                       artworkBorder: const BorderRadius.all(Radius.circular(0)),
                       id: snapshot.data![index].id, type: ArtworkType.AUDIO),
-                  onTap: (){
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => MultiBlocProvider(
-                              providers: [
-                                BlocProvider(
-                                    create: (context) => locator.get<PlaySongBloc>()),
-                                BlocProvider(
-                                    create: (context) => locator.get<PlayNewSongBloc>())
-                              ],
-                              child: PlayPage(
-                                songModel: snapshot.data![index],
-                                audioPlayer: locator.get<AudioPlayer>(), play: true,
-                              ),
-                            )));
-                  },
+                  // onTap: (){
+                  //   Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(
+                  //           builder: (context) => MultiBlocProvider(
+                  //             providers: [
+                  //               BlocProvider(
+                  //                   create: (context) => locator.get<PlaySongBloc>()),
+                  //               BlocProvider(
+                  //                   create: (context) => locator.get<PlayNewSongBloc>())
+                  //             ],
+                  //             child: PlayPage(
+                  //               songModel: snapshot.data![index],
+                  //                play: true,
+                  //             ),
+                  //           )));
+                  // },
                 );
               },
             );
