@@ -30,7 +30,8 @@ void main() async {
   Hive.registerAdapter(PlayListRecentAddAdapter());
   Hive.registerAdapter(MapPlayListAdapter());
 await  Hive.openBox<FavoriteSong>("Favorite");
-await  Hive.openBox<DeleteSong>("Delete");
+await  Hive.openBox<DeleteSong>("Delete Folder");
+await  Hive.openBox<DeleteSong>("Delete Song");
 await  Hive.openBox<PlayListRecentAdd>("Recent add");
 await  Hive.openBox<RecentPlay>("Recent play");
 await  Hive.openBox<MapPlayList>("Map");

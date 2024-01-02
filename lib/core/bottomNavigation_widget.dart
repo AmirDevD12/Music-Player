@@ -1,6 +1,8 @@
 
 import 'package:first_project/bloc/newSong/play_new_song_bloc.dart';
 import 'package:first_project/bloc/play_song_bloc.dart';
+import 'package:first_project/bloc/sort/sort_song_bloc.dart';
+import 'package:first_project/bloc/sort/sort_song_bloc.dart';
 import 'package:first_project/locator.dart';
 import 'package:first_project/model/chengeAnimation.dart';
 import 'package:first_project/model/newSong.dart';
@@ -48,12 +50,7 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
         curve: Curves.linear,
       ),
     );
-    _animationSong = Tween<double>(begin: 0, end: 5).animate(
-      CurvedAnimation(
-        parent: _animationMusic,
-        curve: Curves.linear,
-      ),
-    );
+
 
 
   }
@@ -115,15 +112,23 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
                       ));
                 },
               ),
-              BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
+              BlocBuilder<SortSongBloc, SortSongState>(
+
+  builder: (context, state) {
+    SongSortType sortSong=SongSortType.TITLE;
+           if (state is SortByAddState) {
+             sortSong=state.songSortType;
+           }
+    return BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
                 builder: (context, state) {
                   if (state is NewSongState) {
                     number = state.index;
                   }
                   return IconButton(
                       onPressed: () async {
+                        number++;
                         List<SongModel> songs =
-                            await SongList().getSongs(SongSortType.TITLE);
+                            await SongList().getSongs(sortSong);
                         // ignore: use_build_context_synchronously
                         locator.get<AudioPlayer>().nextIndex;
                         // newSong(songs[number + 1].uri);
@@ -133,12 +138,12 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
                         // ignore: use_build_context_synchronously
                         ChangeAnimation().toggleAnimation(
                             _animationController, isPlaying ? true : false);
+                        locator.get<AudioPlayer>().seekToNext();
+
                         BlocProvider.of<PlayNewSongBloc>(context).add(
                             NewSongEvent(
-                                songs[number + 1].id,
-                                songs[number + 1].title,
-                                songs[number + 1].displayName,
-                                number + 1));
+                                songs[number],
+                                number));
                       },
                       icon: Image.asset(
                         "assets/icon/music-player(1).png",
@@ -147,18 +152,15 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
                         height: 30,
                       ));
                 },
-              ),
+              );
+  },
+),
             ],
           ),
           Row(
             children: [
              BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
   builder: (context, state) {
-    if (!locator.get<AudioPlayer>().playing) {
-      print("fvbhfvhbsvhsgsjhvgbvjhgbvjhgbfgh");
-      _animationMusic.stop();
-      _animationController.stop();
-    }
     return Center(
                  child: Lottie.asset('assets/animation/Animation - 1702455265848.json',
                  controller: _animationMusic,
@@ -170,18 +172,17 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
           Row(
             children: [
               BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
-                // buildWhen: (privioce, current) {
-                //   if (current is PauseAnimationState) {
-                //     return false;
-                //   } else {
-                //     return true;
-                //   }
-                // },
+                buildWhen: (privioce, current) {
+                  if (current is PauseAnimationState||current is ShowNavState) {
+                    return false;
+                  } else {
+                    return true;
+                  }
+                },
                 builder: (context, state) {
-                  if (!locator.get<AudioPlayer>().playing) {
-                    print("fvbhfvhbsvhsgsjhvgbvjhgbvjhgbfgh");
-                    _animationMusic.stop();
-                    _animationController.stop();
+
+                  if (state is NewSongState) {
+                    id=state.songModel.id;
                   }
 
                   return RotationTransition(

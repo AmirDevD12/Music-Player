@@ -31,7 +31,7 @@ class _SplashScreenState extends State<SplashScreen> {
           BlocProvider<PlayNewSongBloc>( create: (context) =>locator.get<PlayNewSongBloc>()),
           BlocProvider<FavoriteBloc>( create: (context) =>locator.get<FavoriteBloc>()),
           BlocProvider<PlayListBloc>( create: (context) =>locator.get<PlayListBloc>()),
-        ], child: const MyHomePage(),)));
+        ], child:  MyHomePage(),)));
     });
   }
 

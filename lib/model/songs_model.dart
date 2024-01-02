@@ -11,7 +11,7 @@ class SongList {
     if (!kIsWeb) {
       bool hasPermission = await OnAudioQuery().permissionsStatus();
       if (hasPermission) {
-        Box delete=Hive.box<DeleteSong>("Delete");
+        Box delete=Hive.box<DeleteSong>("Delete Song");
         List<SongModel> songsData = await OnAudioQuery().querySongs(sortType: songSortType??SongSortType.DATE_ADDED);
         for (int i=0; i<songsData.length;i++) {
           bool check=true;

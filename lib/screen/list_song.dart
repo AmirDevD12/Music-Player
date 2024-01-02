@@ -10,6 +10,7 @@ import 'package:first_project/locator.dart';
 import 'package:first_project/model/dataBase/delete_song_dataBase/delete_song.dart';
 import 'package:first_project/model/dataBase/favorite_dataBase/favorite_song.dart';
 import 'package:first_project/model/dataBase/recent_play/add_recent_play.dart';
+import 'package:first_project/model/delete_model.dart';
 import 'package:first_project/screen/playSong_page.dart';
 import 'package:first_project/core/theme/theme_mode.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +27,7 @@ class ListMusic extends StatelessWidget {
   SongSortType songSortType = SongSortType.TITLE;
 
   String select = "";
-  Box boxDelete = Hive.box<DeleteSong>("Delete");
+  Box boxDelete = Hive.box<DeleteSong>("Delete Song");
   int length = 0;
   ListMusic({super.key});
 
@@ -129,183 +130,234 @@ class ListMusic extends StatelessWidget {
                     }
                   },
                   builder: (context, state) {
-                    return FutureBuilder<List<SongModel>>(
-                      future:
+                    return ValueListenableBuilder(
+                      valueListenable: Hive.box<DeleteSong>("Delete Song").listenable(),
+                      builder: (BuildContext context, value, Widget? child) {
+                        return FutureBuilder<List<SongModel>>(
+                          future:
                           SongList().getSongs(sort),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<List<SongModel>> snapshot) {
-                        if (snapshot.hasData) {
-                          return ListView.builder(
-                            itemCount: snapshot.data?.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              final playlist = ConcatenatingAudioSource(
-                                useLazyPreparation: true,
-                                shuffleOrder: DefaultShuffleOrder(),
-                                children: [
-                                  for(int i=0;i<snapshot.data!.length;i++)
-                                    AudioSource.uri(Uri.parse(snapshot.data![i].data)),
-                                  // AudioSource.uri(Uri.parse('https://example.com/track2.mp3')),
-                                  // AudioSource.uri(Uri.parse('https://example.com/track3.mp3')),
-                                ],
-                              );
-                              final themeProvider =
+                          builder: (BuildContext context,
+                              AsyncSnapshot<List<SongModel>> snapshot) {
+                            if (snapshot.hasData) {
+                              return ListView.builder(
+                                itemCount: snapshot.data?.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  print(snapshot.data!.length);
+                                  final playlist = ConcatenatingAudioSource(
+                                    useLazyPreparation: true,
+                                    shuffleOrder: DefaultShuffleOrder(),
+                                    children: [
+                                      for(int i=0;i<snapshot.data!.length;i++)
+                                        AudioSource.uri(Uri.parse(snapshot.data![i].data)),
+                                    ],
+                                  );
+                                  final themeProvider =
                                   Provider.of<ThemeProvider>(context);
-                              return ListTile(
-                                trailing: state is NewListState ?CheckboxIconFormField(
-                                disabledColor: Colors.black,
-                                context: context,
-                                iconSize: 30,
-                                padding: 10,
-                                onSaved: (bool? value) {},
-                                onChanged: (value) {
-                                  if (value) {
-                                    // boxc[name[index]]=true;
-                                  } else {
-                                    // boxc[name[index]]=false;
-                                  }
+                                  return ListTile(
+                                    trailing: state is NewListState ?CheckboxIconFormField(
+                                      disabledColor: Colors.black,
+                                      context: context,
+                                      iconSize: 30,
+                                      padding: 10,
+                                      onSaved: (bool? value) {},
+                                      onChanged: (value) {
+                                        if (value) {
+                                          // boxc[name[index]]=true;
+                                        } else {
+                                          // boxc[name[index]]=false;
+                                        }
 
-                                },
-                              ):SizedBox(
-                                  width: 36,
-                                  child: InkWell(
-                                    onTap: (){
-                                      showModalBottomSheet<void>(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return Container(
+                                      },
+                                    ):SizedBox(
+                                      width: 36,
+                                      child: InkWell(
+                                        onTap: (){
+                                          showModalBottomSheet<void>(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return Container(
 
-                                            color: themeProvider.isDarkMode?Colors.black:Colors.white,
-                                            width: double.infinity,
-                                            height: 200,
-                                            child: Column(
-                                              children:  <Widget>[
-                                                const SizedBox(height: 10,),
-                                                Text(
-                                                  style:locator.get<MyThemes>().title(context) ,
-                                                  maxLines: 1,
-                                                  snapshot.data![index].title,
-                                                ),
-                                                const SizedBox(height: 20,),
-                                                Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                                  children: [
-                                                    GestureDetector(
-                                                        child: const CardWidget(
-                                                          text: 'My Music',path: "assets/icon/music(1).png",)),
-                                                    GestureDetector(
+                                                color: themeProvider.isDarkMode?Colors.black:Colors.white,
+                                                width: double.infinity,
+                                                height: 180,
+                                                child: Column(
+                                                  children:  <Widget>[
+                                                    const SizedBox(height: 10,),
+                                                    Text(
+                                                      style:locator.get<MyThemes>().title(context) ,
+                                                      maxLines: 1,
+                                                      snapshot.data![index].title,
+                                                    ),
+                                                    const SizedBox(height: 15,),
+                                                    Column(
+                                                      children: [
+                                                        Padding(
+                                                          padding: const EdgeInsets.all(10.0),
+                                                          child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                                            children: [
+                                                              Column(
+                                                                children: [
+                                                                  GestureDetector(
+                                                                      child: const CardWidget(
+                                                                        text: 'Play next',path: "assets/icon/music-player(1).png",)),
+                                                                  const SizedBox(height: 10,),
 
-                                                        child: const CardWidget(
-                                                          text: 'search', path: "assets/icon/magnifying-glass.png",)),
-                                                    GestureDetector(
-                                                      onTap: (){
-                                                        // addPlayList(snapshot.data![index]);
-                                                        Navigator.pushReplacement(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder: (context) =>
-                                                                    MultiBlocProvider(
-                                                                      providers: [
-                                                                        BlocProvider(
-                                                                            create: (context) =>
-                                                                                locator.get<
-                                                                                    PlaySongBloc>()),
-                                                                        BlocProvider(
-                                                                          create: (context) => locator
-                                                                              .get<PlayNewSongBloc>(),
-                                                                        ),
-                                                                        BlocProvider(
-                                                                          create: (context) => locator
-                                                                              .get<FavoriteBloc>(),
-                                                                        ),
-                                                                        BlocProvider(
-                                                                          create: (context) => locator
-                                                                              .get<PlayListBloc>(),
-                                                                        ),
-                                                                      ],
-                                                                      child: ListSongBottomNavigation(show: true, songModel: snapshot.data![index],)
-                                                                    )));
+                                                                  GestureDetector(
+                                                                      onTap: (){
+                                                                        // addPlayList(snapshot.data![index]);
+                                                                        Navigator.pushReplacement(
+                                                                            context,
+                                                                            MaterialPageRoute(
+                                                                                builder: (context) =>
+                                                                                    MultiBlocProvider(
+                                                                                        providers: [
+                                                                                          BlocProvider(
+                                                                                              create: (context) =>
+                                                                                                  locator.get<
+                                                                                                      PlaySongBloc>()),
+                                                                                          BlocProvider(
+                                                                                            create: (context) => locator
+                                                                                                .get<PlayNewSongBloc>(),
+                                                                                          ),
+                                                                                          BlocProvider(
+                                                                                            create: (context) => locator
+                                                                                                .get<FavoriteBloc>(),
+                                                                                          ),
+                                                                                          BlocProvider(
+                                                                                            create: (context) => locator
+                                                                                                .get<PlayListBloc>(),
+                                                                                          ),
+                                                                                        ],
+                                                                                        child: ListSongBottomNavigation(show: true, songModel: snapshot.data![index],)
+                                                                                    )));
 
-                                                      },
+                                                                      },
 
-                                                        child: const CardWidget(text: 'List', path:"assets/icon/list(2).png",)),
-                                                    GestureDetector(
-                                                        child: const CardWidget(
-                                                          text: 'Path',path:  "assets/icon/information-button.png",)),
+                                                                      child: const CardWidget(text: 'List', path:"assets/icon/list(2).png",)),
+
+                                                                ],
+                                                              ),
+                                                              const SizedBox(width: 20,),
+                                                              Column(
+                                                                children: [
+                                                                  GestureDetector(
+                                                                      child: const CardWidget(
+                                                                        text: 'Info',path:  "assets/icon/information-button.png",)),                                                              const SizedBox(height: 10,),
+
+                                                                  const SizedBox(height: 10,),
+
+                                                                  GestureDetector(
+                                                                      child: const CardWidget(
+                                                                        text: 'Share',path:  "assets/icon/information-button.png",)),
+
+                                                                ],
+                                                              ),
+                                                              const SizedBox(width: 20,),
+                                                              Column(
+                                                                children: [
+                                                                  GestureDetector(
+                                                                      child: const CardWidget(
+                                                                        text: 'Favorite',path:  "assets/icon/like.png",)),                                                              const SizedBox(height: 10,),
+                                                                  const SizedBox(height: 10,),
+
+
+                                                                  GestureDetector(
+                                                                      onTap: (){
+                                                                        DeleteSongFile().getDeleteSong(snapshot.data![index]);
+                                                                        deleteSong(snapshot.data![index].data);
+                                                                        Navigator.pop(context);
+                                                                      },
+                                                                      child: const CardWidget(
+                                                                        text: 'Delete', path: "assets/icon/delete.png",)),
+                                                                ],
+                                                              )
+                                                            ],
+                                                          ),
+                                                        )
+
+
+
+                                                      ],
+                                                    ),
+
                                                   ],
-                                                )
-                                              ],
-                                            ),
+                                                ),
+                                              );
+                                            },
                                           );
                                         },
-                                      );
-                                    },
-                                    child: Image.asset("assets/icon/dots.png",width: 25,height: 25,color: themeProvider.isDarkMode?
-                                      Colors.white:Colors.black,),
-                                  ),
-                                ),
-                                title: Text(
-                                  style:locator.get<MyThemes>().title(context) ,
-                                  maxLines: 1,
-                                  snapshot.data![index].title,
-                                ),
-                                subtitle: Text(
-                                  style: locator.get<MyThemes>().subTitle(context),
-                                  maxLines: 1,
-                                  snapshot.data![index].displayName,
-                                ),
-                                leading: QueryArtworkWidget(
-                                    artworkWidth: 60,
-                                    artworkHeight: 60,
-                                    artworkFit: BoxFit.cover,
-                                    artworkBorder: const BorderRadius.all(
-                                        Radius.circular(5)),
-                                    id: snapshot.data![index].id,
-                                    type: ArtworkType.AUDIO ),
-                                onTap: () async {
-                                  // BlocProvider.of<PlaySongBloc>(context).add(
-                                  //     ShowEvent(snapshot.data![index], true));
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              MultiBlocProvider(
-                                                providers: [
-                                                  BlocProvider(
-                                                      create: (context) =>
-                                                          locator.get<
-                                                              PlaySongBloc>()),
-                                                  BlocProvider(
-                                                    create: (context) => locator
-                                                        .get<PlayNewSongBloc>(),
-                                                  ),
-                                                  BlocProvider(
-                                                    create: (context) => locator
-                                                        .get<FavoriteBloc>(),
-                                                  ),
-                                                ],
-                                                child: PlayPage(
-                                                  songModel:
+                                        child: Image.asset("assets/icon/dots.png",width: 25,height: 25,color: themeProvider.isDarkMode?
+                                        Colors.white:Colors.black,),
+                                      ),
+                                    ),
+                                    title: Text(
+                                      style:locator.get<MyThemes>().title(context) ,
+                                      maxLines: 1,
+                                      snapshot.data![index].title,
+                                    ),
+                                    subtitle: Text(
+                                      style: locator.get<MyThemes>().subTitle(context),
+                                      maxLines: 1,
+                                      snapshot.data![index].displayName,
+                                    ),
+                                    leading: QueryArtworkWidget(
+                                        artworkWidth: 60,
+                                        artworkHeight: 60,
+                                        artworkFit: BoxFit.cover,
+                                        artworkBorder: const BorderRadius.all(
+                                            Radius.circular(5)),
+                                        id: snapshot.data![index].id,
+                                        type: ArtworkType.AUDIO ),
+                                    onTap: () async {
+                                      // BlocProvider.of<PlaySongBloc>(context).add(
+                                      //     ShowEvent(snapshot.data![index], true));
+                                      List<SongModel>songs=await SongList().getSongs(sort);
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  MultiBlocProvider(
+                                                    providers: [
+                                                      BlocProvider(
+                                                          create: (context) =>
+                                                              locator.get<
+                                                                  PlaySongBloc>()),
+                                                      BlocProvider(
+                                                        create: (context) => locator
+                                                            .get<PlayNewSongBloc>(),
+                                                      ),
+                                                      BlocProvider(
+                                                        create: (context) => locator
+                                                            .get<FavoriteBloc>(),
+                                                      ),
+                                                      BlocProvider(
+                                                        create: (context) => locator
+                                                            .get<SortSongBloc>(),
+                                                      ),
+                                                    ],
+                                                    child: PlayPage(
+                                                      songModel:
                                                       snapshot.data![index],
-
-                                                  play: true, concatenatingAudioSource: playlist, index: index,
-                                                ),
-                                              )));
-                                             addRecentPlay(snapshot.data![index]);
-                                  // BlocProvider.of<PlayNewSongBloc>(context).add(
-                                  //     NewSongEvent(
-                                  //         snapshot.data![index].id,
-                                  //         snapshot.data![index].title,
-                                  //         snapshot.data![index].artist!,
-                                  //         index));
+                                                      play: true, concatenatingAudioSource: playlist, index: index, songs: songs,
+                                                    ),
+                                                  )));
+                                      addRecentPlay(snapshot.data![index]);
+                                      BlocProvider.of<PlayNewSongBloc>(context).add(
+                                          NewSongEvent(
+                                              snapshot.data![index],
+                                              index));
+                                    },
+                                  );
                                 },
                               );
-                            },
-                          );
-                        } else if (snapshot.hasError) {
-                          return Text('Error: ${snapshot.error}');
-                        }
-                        return const Center(child: CircularProgressIndicator());
+                            } else if (snapshot.hasError) {
+                              return Text('Error: ${snapshot.error}');
+                            }
+                            return const Center(child: CircularProgressIndicator());
+                          },
+                        );
                       },
+
                     );
                   },
                 );
@@ -319,8 +371,8 @@ class ListMusic extends StatelessWidget {
     );
   }
 
-  add(String path) async {
-    var box = await Hive.openBox<DeleteSong>("Delete");
+  deleteSong(String path) async {
+    var box = await Hive.openBox<DeleteSong>("Delete Song");
     DeleteSong deleteSong = DeleteSong(path);
     await box.add(deleteSong);
   }

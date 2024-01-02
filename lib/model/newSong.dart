@@ -28,6 +28,7 @@ class PlayNewSong {
     try {
       if (concatenatingAudioSources!=null) {
         if (!queue) {
+          print(concatenatingAudioSources.children);
           locator.get<AudioPlayer>().setAudioSource(concatenatingAudioSources!, initialIndex: index, initialPosition: Duration.zero);
         }
         locator.get<AudioPlayer>().play();
@@ -50,6 +51,21 @@ class PlayNewSong {
           ));
         });
       }
+      locator.get<AudioPlayer>().durationStream.listen((event) {
+        duration = event!;
+        context.read<PlaySongBloc>().add(DurationEvent(
+          duration,
+          position,
+        ));
+      });
+      locator.get<AudioPlayer>().positionStream.listen((event) async {
+        position = event;
+
+        context.read<PlaySongBloc>().add(DurationEvent(
+          duration,
+          position,
+        ));
+      });
     } catch(e) {print(e);}
 
   }

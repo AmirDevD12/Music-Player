@@ -5,12 +5,9 @@ abstract class PlayNewSongState {}
 
 class PlayNewSongInitial extends PlayNewSongState {}
 class NewSongState extends PlayNewSongState{
-  final int id;
-  final String name;
-  final String artist;
-  final int index;
-
-  NewSongState(this.id, this.name, this.artist,this.index);
+ final SongModel songModel;
+ final int index;
+  NewSongState(this.songModel, this.index);
 }
 class PauseAnimationState extends PlayNewSongState{}
 class ChangIconState extends PlayNewSongState{}

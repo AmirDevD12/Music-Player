@@ -1,6 +1,8 @@
 
+import 'package:first_project/bloc/favorite_song/favorite_bloc.dart';
 import 'package:first_project/bloc/newSong/play_new_song_bloc.dart';
 import 'package:first_project/bloc/play_song_bloc.dart';
+import 'package:first_project/bloc/sort/sort_song_bloc.dart';
 import 'package:first_project/core/playall_container.dart';
 import 'package:first_project/core/popup.dart';
 import 'package:first_project/core/theme/theme_mode.dart';
@@ -21,23 +23,13 @@ class ShowListArtist extends StatefulWidget {
 }
 
 class _ShowListArtistState extends State<ShowListArtist> {
-
-
-  final OnAudioQuery onAudioQuery = OnAudioQuery();
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
         appBar: AppBar(
-
-
           title: Text(widget.nameArtist,),
         ),
         body:Column(
-
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
@@ -55,6 +47,14 @@ class _ShowListArtistState extends State<ShowListArtist> {
                     return ListView.builder(
                       itemCount: snapshot.data?.length ?? 0,
                       itemBuilder: (context, index) {
+                        final playlist = ConcatenatingAudioSource(
+                          useLazyPreparation: true,
+                          shuffleOrder: DefaultShuffleOrder(),
+                          children: [
+                            for(int i=0;i<snapshot.data!.length;i++)
+                              AudioSource.uri(Uri.parse(snapshot.data![i].data)),
+                          ],
+                        );
                         return Padding(
                           padding: const EdgeInsets.only(left: 20),
                           child: ListTile(
@@ -63,23 +63,36 @@ class _ShowListArtistState extends State<ShowListArtist> {
                                 child: PopupMenuButtonWidget()),
                             title: Text(maxLines: 1,snapshot.data![index].title,style: locator.get<MyThemes>().title(context),),
                             subtitle: Text(maxLines: 1,snapshot.data![index].displayName,style: locator.get<MyThemes>().subTitle(context),),
-                            // onTap: (){
-                            //   Navigator.push(
-                            //       context,
-                            //       MaterialPageRoute(
-                            //           builder: (context) => MultiBlocProvider(
-                            //             providers: [
-                            //               BlocProvider(
-                            //                   create: (context) => locator.get<PlaySongBloc>()),
-                            //               BlocProvider(
-                            //                   create: (context) => PlayNewSongBloc())
-                            //             ],
-                            //             child: PlayPage(
-                            //               songModel: snapshot.data![index], play: true,
-                            //             ),
-                            //           )));
-                            //
-                            // },
+                            onTap: () async {
+                              List<SongModel> songs=await locator.get<ListArtist>().getLisArtist(widget.nameArtist);
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => MultiBlocProvider(
+                                        providers: [
+                                          BlocProvider(
+                                              create: (context) =>
+                                                  locator.get<
+                                                      PlaySongBloc>()),
+                                          BlocProvider(
+                                            create: (context) => locator
+                                                .get<PlayNewSongBloc>(),
+                                          ),
+                                          BlocProvider(
+                                            create: (context) => locator
+                                                .get<FavoriteBloc>(),
+                                          ),
+                                          BlocProvider(
+                                            create: (context) => locator
+                                                .get<SortSongBloc>(),
+                                          ),
+                                        ],
+                                        child: PlayPage(
+                                          songModel: snapshot.data![index], play: false, concatenatingAudioSource: playlist , index: index, songs: songs,
+                                        ),
+                                      )));
+
+                            },
                           ),
                         );
                       },
