@@ -8,7 +8,6 @@ import 'package:first_project/core/card_widget.dart';
 import 'package:first_project/core/playall_container.dart';
 import 'package:first_project/locator.dart';
 import 'package:first_project/model/dataBase/delete_song_dataBase/delete_song.dart';
-import 'package:first_project/model/dataBase/favorite_dataBase/favorite_song.dart';
 import 'package:first_project/model/dataBase/recent_play/add_recent_play.dart';
 import 'package:first_project/model/delete_model.dart';
 import 'package:first_project/screen/playSong_page.dart';
@@ -29,6 +28,7 @@ class ListMusic extends StatelessWidget {
   String select = "";
   Box boxDelete = Hive.box<DeleteSong>("Delete Song");
   int length = 0;
+  SongSortType sort = SongSortType.TITLE;
   ListMusic({super.key});
 
   @override
@@ -117,7 +117,7 @@ class ListMusic extends StatelessWidget {
   builder: (context, state) {
     return BlocBuilder<SortSongBloc, SortSongState>(
               builder: (context, state) {
-                SongSortType sort = SongSortType.TITLE;
+
                 if (state is SortByAddState) {
                   sort = state.songSortType;
                 }
@@ -312,6 +312,8 @@ class ListMusic extends StatelessWidget {
                                       // BlocProvider.of<PlaySongBloc>(context).add(
                                       //     ShowEvent(snapshot.data![index], true));
                                       List<SongModel>songs=await SongList().getSongs(sort);
+                                      print(songs[index].id);
+                                      print(snapshot.data![index].id);
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -336,16 +338,11 @@ class ListMusic extends StatelessWidget {
                                                       ),
                                                     ],
                                                     child: PlayPage(
-                                                      songModel:
-                                                      snapshot.data![index],
                                                       play: true, concatenatingAudioSource: playlist, index: index, songs: songs,
                                                     ),
                                                   )));
                                       addRecentPlay(snapshot.data![index]);
-                                      BlocProvider.of<PlayNewSongBloc>(context).add(
-                                          NewSongEvent(
-                                              snapshot.data![index],
-                                              index));
+
                                     },
                                   );
                                 },

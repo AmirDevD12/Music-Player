@@ -3,9 +3,9 @@ part of 'play_new_song_bloc.dart';
 @immutable
 abstract class PlayNewSongEvent {}
 class NewSongEvent extends PlayNewSongEvent{
-final SongModel songModel;
 final int index;
-  NewSongEvent(this.songModel, this.index);
+final List<SongModel> listSong;
+  NewSongEvent( this.index, this.listSong);
 }
 class PauseAnimationEvent extends PlayNewSongEvent{}
 class ChangIconEvent extends PlayNewSongEvent{}

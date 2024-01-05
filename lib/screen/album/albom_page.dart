@@ -38,12 +38,12 @@ class _AlbumPageState extends State<AlbumPage> {
                           title: Text(
                             style: locator.get<MyThemes>().title(context),
                             maxLines: 1,
-                            snapshot.data![index].album!,
+                            snapshot.data![index].album??snapshot.data![index].displayName,
                           ),
                           subtitle: Text(
                             style: locator.get<MyThemes>().subTitle(context),
                             maxLines: 1,
-                            snapshot.data![index].artist!,
+                            snapshot.data![index].artist??snapshot.data![index].title,
                           ),
                           leading: QueryArtworkWidget(
                               artworkWidth: 60,

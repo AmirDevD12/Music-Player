@@ -6,6 +6,7 @@ import 'package:first_project/core/pageview_widget.dart';
 import 'package:first_project/core/them_seitcher.dart';
 import 'package:first_project/core/theme/theme_mode.dart';
 import 'package:first_project/locator.dart';
+
 import 'package:first_project/model/songs_model.dart';
 import 'package:first_project/screen/album/albom_page.dart';
 import 'package:first_project/screen/bottum_navigation/show_song_playList_screen.dart';
@@ -46,10 +47,13 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
      OnAudioQuery().permissionsStatus();
   }
+
   late SongModel songModel;
   int  index=0;
+  late  List<SongModel> listSong;
   @override
   Widget build(BuildContext context) {
+
     final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       appBar: AppBar(
@@ -60,9 +64,8 @@ class _MyHomePageState extends State<MyHomePage> {
         buildWhen: (privioc, current) {
           if (current is NewSongState) {
               index=current.index;
-              songModel=current.songModel;
-              print(current.songModel);
-
+              songModel=current.listSong[index];
+              listSong=current.listSong;
             return true;
           } else {
             return false;
@@ -79,7 +82,8 @@ class _MyHomePageState extends State<MyHomePage> {
         },
         builder: (context, state) {
           if(state is ShowNavState){
-            songModel=state.songModel;
+            print("amirrrrr");
+            listSong=state.listSong;
           }
           return SizedBox(
             width: double.infinity,
@@ -89,6 +93,7 @@ class _MyHomePageState extends State<MyHomePage> {
                      state is DurationState ||state is PausePlayState||state is ShowNavState
                     ?GestureDetector(
                         onTap: (){
+
                           Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -113,13 +118,11 @@ class _MyHomePageState extends State<MyHomePage> {
                                           ),
                                         ],
                                         child: PlayPage(
-                                          songModel:
-                                          songModel,
-                                          play: true, concatenatingAudioSource: null, index:index, songs: null,
+                                          play: true, concatenatingAudioSource: null, index:index, songs:listSong ,
                                         ),
                                       )));
                         },
-                        child: const BottomNavigationBarScreen()):const SizedBox(),
+                        child: BottomNavigationBarScreen(listSong: listSong,)):const SizedBox(),
 
                 const SizedBox(height: 5,),
                 Expanded(

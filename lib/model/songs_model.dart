@@ -28,12 +28,9 @@ class SongList {
           }
         }
       } else {
-
         await OnAudioQuery().permissionsRequest();
       }
     }
     return songs;
   }
-
-
 }

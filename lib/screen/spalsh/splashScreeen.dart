@@ -7,7 +7,7 @@ import 'package:first_project/core/pageview_screen.dart';
 import 'package:first_project/locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
+
 import 'package:on_audio_query/on_audio_query.dart';
 
 class SplashScreen extends StatefulWidget {

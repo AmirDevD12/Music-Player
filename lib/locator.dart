@@ -4,6 +4,7 @@ import 'package:first_project/bloc/play_list/play_list_bloc.dart';
 import 'package:first_project/bloc/sort/sort_song_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:on_audio_query/on_audio_query.dart';
 import 'bloc/newSong/play_new_song_bloc.dart';
 import 'bloc/play_song_bloc.dart';
 import 'core/theme/theme_mode.dart';
@@ -21,7 +22,7 @@ import 'model/songs_model.dart';
 
 final locator= GetIt.instance;
 
-void setup() {
+Future<void> setup() async {
   GetIt.I.registerSingleton<AudioPlayer>(AudioPlayer());
   GetIt.I.registerSingleton<PlaySongBloc>(PlaySongBloc());
   GetIt.I.registerSingleton<SortSongBloc>(SortSongBloc());

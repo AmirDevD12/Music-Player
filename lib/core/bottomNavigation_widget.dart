@@ -2,10 +2,8 @@
 import 'package:first_project/bloc/newSong/play_new_song_bloc.dart';
 import 'package:first_project/bloc/play_song_bloc.dart';
 import 'package:first_project/bloc/sort/sort_song_bloc.dart';
-import 'package:first_project/bloc/sort/sort_song_bloc.dart';
 import 'package:first_project/locator.dart';
 import 'package:first_project/model/chengeAnimation.dart';
-import 'package:first_project/model/newSong.dart';
 import 'package:first_project/model/songs_model.dart';
 import 'package:first_project/core/theme/theme_mode.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +14,8 @@ import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
 
 class BottomNavigationBarScreen extends StatefulWidget {
-  const BottomNavigationBarScreen({super.key,});
+  final List<SongModel> listSong;
+  const BottomNavigationBarScreen({super.key, required this.listSong,});
 
   @override
   State<BottomNavigationBarScreen> createState() =>
@@ -142,8 +141,7 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
 
                         BlocProvider.of<PlayNewSongBloc>(context).add(
                             NewSongEvent(
-                                songs[number],
-                                number));
+                                number,widget.listSong));
                       },
                       icon: Image.asset(
                         "assets/icon/music-player(1).png",
@@ -182,7 +180,7 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
                 builder: (context, state) {
 
                   if (state is NewSongState) {
-                    id=state.songModel.id;
+                    id=state.listSong[number].id;
                   }
 
                   return RotationTransition(
