@@ -8,7 +8,8 @@ class NewSongState extends PlayNewSongState{
 
  final int index;
  final List<SongModel> listSong;
-  NewSongState( this.index, this.listSong);
+ final SongModel song;
+  NewSongState( this.index, this.listSong, this.song);
 }
 class PauseAnimationState extends PlayNewSongState{}
 class ChangIconState extends PlayNewSongState{}

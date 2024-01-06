@@ -141,7 +141,7 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
 
                         BlocProvider.of<PlayNewSongBloc>(context).add(
                             NewSongEvent(
-                                number,widget.listSong));
+                                number,widget.listSong,widget.listSong[number]));
                       },
                       icon: Image.asset(
                         "assets/icon/music-player(1).png",

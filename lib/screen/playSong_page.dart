@@ -19,11 +19,12 @@ class PlayPage extends StatefulWidget {
   final int index;
   final bool play;
   final  List<SongModel> songs;
+  final SongModel song;
   const PlayPage({
     super.key,
     required this.play,
     required this.concatenatingAudioSource,
-    required this.index, required this.songs,
+    required this.index, required this.songs, required this.song,
   });
 
   @override
@@ -40,8 +41,10 @@ class _PlayPageState extends State<PlayPage>
   bool shuffle = false;
   late List<SongModel> songs;
   late int index;
+  int number=0;
   @override
   void initState() {
+    number=widget.index;
     print(widget.index);
     index = widget.index;
     checkFavorite(widget.songs[index], context);
@@ -64,8 +67,9 @@ class _PlayPageState extends State<PlayPage>
       ),
     );
     ChangeAnimation().toggleAnimation(_animationController, isPlaying);
+    BlocProvider.of<PlayNewSongBloc>(context).add(NewSongEvent(
+        widget.index,widget.songs,widget.songs[index]));
     BlocProvider.of<PlayNewSongBloc>(context).add(PauseAnimationEvent());
-
     print(widget.index);
   }
 
@@ -81,8 +85,7 @@ class _PlayPageState extends State<PlayPage>
 
   @override
   Widget build(BuildContext context) {
-  BlocProvider.of<PlayNewSongBloc>(context).add(NewSongEvent(
-  widget.index,widget.songs));
+
     final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
         body: SingleChildScrollView(
@@ -146,6 +149,8 @@ class _PlayPageState extends State<PlayPage>
                     builder: (context, state) {
                       if (state is NewSongState) {
                         id = state.listSong[index].id;
+                        print(index);
+                        print(widget.index);
                       }
                       return RotationTransition(
                           turns: _animation,
@@ -159,11 +164,11 @@ class _PlayPageState extends State<PlayPage>
                                       Radius.circular(100)),
                                   artworkWidth: 200,
                                   artworkHeight: 200,
-                                  id: state is NewSongState ||
+                                  id:
                                           state is PauseAnimationState &&
                                               id != 0
-                                      ? id
-                                      : widget.songs[widget.index].id,
+                                      ? widget.song.id
+                                      : id,
                                   type: ArtworkType.AUDIO),
                             ),
                           ));
@@ -196,12 +201,13 @@ class _PlayPageState extends State<PlayPage>
                           title: Text(
                             style: locator.get<MyThemes>().title(context),
                             maxLines: 1,
-                            title
+                              state is PauseAnimationState?
+                              widget.songs[widget.index].artist??"":widget.songs[index].title
                           ),
                           subtitle: Text(
                             style: locator.get<MyThemes>().subTitle(context),
                             maxLines: 1,
-                              widget.songs[index].artist??""
+                              widget.songs[widget.index].artist??""
                           ),
                         ),
                       );
@@ -343,7 +349,7 @@ class _PlayPageState extends State<PlayPage>
                             BlocProvider.of<PlayNewSongBloc>(context).add(
                                 NewSongEvent(
 
-                                    index,widget.songs));
+                                    index,widget.songs,widget.songs[index]));
                           },
                           icon: Image.asset(
                             "assets/icon/music-player(1).png",
@@ -415,7 +421,7 @@ class _PlayPageState extends State<PlayPage>
                             BlocProvider.of<PlayNewSongBloc>(context).add(
                                 NewSongEvent(
 
-                                    index,widget.songs));
+                                    index,widget.songs,widget.songs[index]));
                           },
                           icon: Image.asset(
                             "assets/icon/music-player(3).png",

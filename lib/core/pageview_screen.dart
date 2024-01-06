@@ -50,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   late SongModel songModel;
   int  index=0;
-  late  List<SongModel> listSong;
+  List<SongModel> listSong=[];
   @override
   Widget build(BuildContext context) {
 
@@ -65,7 +65,6 @@ class _MyHomePageState extends State<MyHomePage> {
           if (current is NewSongState) {
               index=current.index;
               songModel=current.listSong[index];
-              listSong=current.listSong;
             return true;
           } else {
             return false;
@@ -118,7 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                           ),
                                         ],
                                         child: PlayPage(
-                                          play: true, concatenatingAudioSource: null, index:index, songs:listSong ,
+                                          play: true, concatenatingAudioSource: null, index:index, songs:listSong, song:listSong[index],
                                         ),
                                       )));
                         },

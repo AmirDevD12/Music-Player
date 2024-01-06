@@ -9,22 +9,6 @@ class PlayNewSong {
 
     Duration duration = const Duration();
     Duration position = const Duration();
-       // if(uri==null){
-       //   audioPlayer.durationStream.listen((event) {
-       //     duration = event!;
-       //     context.read<PlaySongBloc>().add(DurationEvent(
-       //       duration,
-       //       position,
-       //     ));
-       //   });
-       //   audioPlayer.positionStream.listen((event) {
-       //     position = event;
-       //     context.read<PlaySongBloc>().add(DurationEvent(
-       //       duration,
-       //       position,
-       //     ));
-       //   });
-       // }
     try {
       if (concatenatingAudioSources!=null) {
         if (!queue) {
@@ -69,14 +53,4 @@ class PlayNewSong {
     } catch(e) {print(e);}
 
   }
-  // playPlayList(String? uri,BuildContext context,ConcatenatingAudioSource? concatenatingAudioSource) async {
-  //   await locator.get<AudioPlayer>().setAudioSource(concatenatingAudioSource!, initialIndex: 0, initialPosition: Duration.zero);
-  //   locator.get<AudioPlayer>().play();
-  //
-  //   // await locator.get<AudioPlayer>().;                     // Skip to the next item
-  //   await locator.get<AudioPlayer>().seekToPrevious();                 // Skip to the previous item
-  //   await locator.get<AudioPlayer>().seek(Duration.zero, index: 2);    // Skip to the start of track3.mp3
-  //   await locator.get<AudioPlayer>().setLoopMode(LoopMode.all);        // Set playlist to loop (off|all|one)
-  //   await locator.get<AudioPlayer>().setShuffleModeEnabled(true);
-  // }
 }

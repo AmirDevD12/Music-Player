@@ -314,6 +314,7 @@ class ListMusic extends StatelessWidget {
                                       List<SongModel>songs=await SongList().getSongs(sort);
                                       print(songs[index].id);
                                       print(snapshot.data![index].id);
+                                      // ignore: use_build_context_synchronously
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -338,7 +339,7 @@ class ListMusic extends StatelessWidget {
                                                       ),
                                                     ],
                                                     child: PlayPage(
-                                                      play: true, concatenatingAudioSource: playlist, index: index, songs: songs,
+                                                      play: true, concatenatingAudioSource: playlist, index: index, songs: songs, song: snapshot.data![index],
                                                     ),
                                                   )));
                                       addRecentPlay(snapshot.data![index]);
