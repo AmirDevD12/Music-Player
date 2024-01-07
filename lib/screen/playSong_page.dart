@@ -67,9 +67,9 @@ class _PlayPageState extends State<PlayPage>
       ),
     );
     ChangeAnimation().toggleAnimation(_animationController, isPlaying);
-    BlocProvider.of<PlayNewSongBloc>(context).add(NewSongEvent(
-        widget.index,widget.songs,widget.songs[index]));
-    BlocProvider.of<PlayNewSongBloc>(context).add(PauseAnimationEvent());
+    // BlocProvider.of<PlayNewSongBloc>(context).add(NewSongEvent(
+    //     widget.index,widget.songs,widget.songs[index]));
+    // BlocProvider.of<PlayNewSongBloc>(context).add(PauseAnimationEvent());
     print(widget.index);
   }
 
@@ -105,7 +105,16 @@ class _PlayPageState extends State<PlayPage>
                     width: 25,
                     height: 25,
                   )),
-              BlocBuilder<PlaySongBloc, PlaySongState>(
+              BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
+                buildWhen: (privioce,current){
+                  if(current is NewSongState) {
+                    return true;
+                  }else {
+                    return false;
+                  }
+                },
+  builder: (context, state) {
+    return BlocBuilder<PlaySongBloc, PlaySongState>(
                 buildWhen: (privioce, current) {
                   if (current is PausePlayState) {
                     return true;
@@ -115,9 +124,13 @@ class _PlayPageState extends State<PlayPage>
                 },
                 builder: (context, state) {
                   return IconButton(
-                      onPressed: () {
-                        BlocProvider.of<PlaySongBloc>(context)
-                            .add(ShowEvent( isPlaying,widget.songs));
+                      onPressed: () {if(index==widget.index){
+                        BlocProvider.of<PlayNewSongBloc>(context).add(NewSongEvent(
+                          widget.index,widget.songs,widget.song));}
+                          BlocProvider.of<PlaySongBloc>(context)
+                              .add(ShowEvent( isPlaying,widget.songs));
+
+
                         _animationController.dispose();
                         Navigator.pop(context);
                       },
@@ -126,7 +139,9 @@ class _PlayPageState extends State<PlayPage>
                         size: 40,
                       ));
                 },
-              ),
+              );
+  },
+),
             ],
           ),
         ),
@@ -165,8 +180,7 @@ class _PlayPageState extends State<PlayPage>
                                   artworkWidth: 200,
                                   artworkHeight: 200,
                                   id:
-                                          state is PauseAnimationState &&
-                                              id != 0
+                                          state is PlayNewSongInitial
                                       ? widget.song.id
                                       : id,
                                   type: ArtworkType.AUDIO),
@@ -201,13 +215,14 @@ class _PlayPageState extends State<PlayPage>
                           title: Text(
                             style: locator.get<MyThemes>().title(context),
                             maxLines: 1,
-                              state is PauseAnimationState?
-                              widget.songs[widget.index].artist??"":widget.songs[index].title
+                              state is PlayNewSongInitial?
+                              widget.song.title??"":title
                           ),
                           subtitle: Text(
                             style: locator.get<MyThemes>().subTitle(context),
                             maxLines: 1,
-                              widget.songs[widget.index].artist??""
+                              state is PlayNewSongInitial?
+                              widget.song.artist??"":disName
                           ),
                         ),
                       );
@@ -462,56 +477,6 @@ class _PlayPageState extends State<PlayPage>
               const SizedBox(
                 height: 20,
               ),
-
-              // FutureBuilder<List<SongModel>>(
-              //   future: SongList().getSongs(),
-              //   builder: (BuildContext context,
-              //       AsyncSnapshot<List<SongModel>> snapshot) {
-              //     if (snapshot.hasData) {
-              //       return ListView.builder(
-              //         shrinkWrap: true,
-              //         physics:const NeverScrollableScrollPhysics() ,
-              //         itemCount: snapshot.data?.length,
-              //         itemBuilder: (BuildContext context, int index) {
-              //           return ListTile(
-              //             title: Text(maxLines: 1,snapshot.data![index].title,
-              //               style: const TextStyle(
-              //                   color: Colors.white,
-              //                   fontSize: 20,
-              //                   fontWeight: FontWeight.bold),),
-              //             subtitle:
-              //             Text(maxLines: 1,snapshot.data![index].displayName,
-              //               style: const TextStyle(
-              //
-              //                   fontSize: 17,
-              //                   fontWeight: FontWeight.bold),),
-              //             leading: QueryArtworkWidget(
-              //                 id: snapshot.data![index].id,
-              //                 type: ArtworkType.AUDIO),
-              //             onTap: () {
-              //               if (_isAnimating!=false) {
-              //                 _toggleAnimation();
-              //                 isPlaying=true;
-              //               }
-              //               PlayNewSong().newSong(snapshot.data![index].uri, widget.audioPlayer, context);
-              //               // newSong(snapshot.data![index].uri);
-              //               BlocProvider.of<PlayNewSongBloc>(context).add(
-              //                   NewSongEvent(
-              //                       snapshot.data![index].id,
-              //                       snapshot.data![index].title,
-              //                       snapshot.data![index].displayName,
-              //                       index));
-              //
-              //             },
-              //           );
-              //         },
-              //       );
-              //     } else if (snapshot.hasError) {
-              //       return Text('Error: ${snapshot.error}');
-              //     }
-              //     return const CircularProgressIndicator();
-              //   },
-              // ),
             ],
           ),
         )

@@ -343,6 +343,7 @@ class ListMusic extends StatelessWidget {
                                                     ),
                                                   )));
                                       addRecentPlay(snapshot.data![index]);
+                                      // BlocProvider.of<PlayNewSongBloc>(context).add(PlayNewSongEvent());
 
                                     },
                                   );

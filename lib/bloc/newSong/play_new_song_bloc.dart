@@ -11,6 +11,7 @@ class PlayNewSongBloc extends Bloc<PlayNewSongEvent, PlayNewSongState> {
   PlayNewSongBloc() : super(PlayNewSongInitial()) {
     on<PlayNewSongEvent>((event, emit) {
       // TODO: implement event handler
+      emit(PlayNewSongInitial());
     });
     on<NewSongEvent>((event, emit){
       emit (NewSongState(event.index,event.listSong,event.song));
