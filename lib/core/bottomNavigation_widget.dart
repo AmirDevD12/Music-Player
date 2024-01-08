@@ -31,9 +31,11 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
 
 
   int? number = 0;
+  int? index=0;
   @override
   void initState() {
     number=locator.get<AudioPlayer>().currentIndex;
+    index=locator.get<AudioPlayer>().currentIndex;
     // TODO: implement initState
     _animationController = AnimationController(
       vsync: this,
@@ -86,13 +88,7 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
                       ChangeAnimation().toggleAnimation(
                           _animationMusic, locator.get<AudioPlayer>().playing ? true : false);
                   }
-                  if (state is DurationState) {
 
-                    if (number!=locator.get<AudioPlayer>().currentIndex) {
-                      number=locator.get<AudioPlayer>().currentIndex;
-                      BlocProvider. of<PlayNewSongBloc>(context).add(NewSongEvent(number!,));
-                    }
-                  }
                   return IconButton(
                       onPressed: () async {
                         if (locator.get<AudioPlayer>().playing) {
@@ -120,32 +116,30 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
               BlocBuilder<SortSongBloc, SortSongState>(
 
   builder: (context, state) {
-    SongSortType sortSong=SongSortType.TITLE;
+
            if (state is SortByAddState) {
-             sortSong=state.songSortType;
+
            }
     return BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
                 builder: (context, state) {
-                  if (state is NewSongState) {
-                    number = state.index;
-                  }
                   return IconButton(
                       onPressed: () async {
+                        try{
+                          locator.get<AudioPlayer>().seekToNext();
+                          ChangeAnimation().toggleAnimation(
+                              _animationController,
+                              locator.get<AudioPlayer>().playing
+                                  ? true
+                                  : false);
+                          BlocProvider.of<PlayNewSongBloc>(context).add(
+                              NewSongEvent(locator
+                                  .get<AudioPlayer>()
+                                  .currentIndex!));
+                        }
+                        catch(e){
 
-                        List<SongModel> songs =
-                            await SongList().getSongs(sortSong);
-                        // ignore: use_build_context_synchronously
-                        locator.get<AudioPlayer>().nextIndex;
-                        // newSong(songs[number + 1].uri);
+                        }
 
-                        // ignore: use_build_context_synchronously
-                        ChangeAnimation().toggleAnimation(
-                            _animationController, locator.get<AudioPlayer>().playing ? true : false);
-                        locator.get<AudioPlayer>().seekToNext();
-
-                        BlocProvider.of<PlayNewSongBloc>(context).add(
-                            NewSongEvent(
-                                locator.get<AudioPlayer>().currentIndex!));
                       },
                       icon: Image.asset(
                         "assets/icon/music-player(1).png",
@@ -182,6 +176,7 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
                   }
                 },
                 builder: (context, state) {
+                  print(locator.get<AudioPlayer>().currentIndex);
                   return RotationTransition(
                       turns: _animation,
                       child: CircleAvatar(

@@ -25,7 +25,7 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPage extends State<SearchPage> {
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
   static String nameText = "";
   @override
   Widget build(BuildContext context) {
@@ -51,7 +51,7 @@ class _SearchPage extends State<SearchPage> {
             onChanged: (value) {
               nameText = value;
 
-              setState(() {});
+             BlocProvider.of<SortSongBloc>(context).add(SearchEvent());
             },
           ),
         ),
@@ -64,18 +64,11 @@ class _SearchPage extends State<SearchPage> {
               builder: (BuildContext context,
                   AsyncSnapshot<List<SongModel>> snapshot) {
                 if (snapshot.hasData) {
-                  return ListView.builder(
+                  return BlocBuilder<SortSongBloc, SortSongState>(
+  builder: (context, state) {
+    return ListView.builder(
                     itemCount: snapshot.data?.length,
                     itemBuilder: (BuildContext context, int index) {
-                      final playlist = ConcatenatingAudioSource(
-                        useLazyPreparation: true,
-                        shuffleOrder: DefaultShuffleOrder(),
-                        children: [
-                          for (int i = 0; i < snapshot.data!.length; i++)
-                            AudioSource.uri(Uri.parse(snapshot.data![i].data)),
-                        ],
-                      );
-
                       if (_searchController.text.isNotEmpty &&
                               snapshot.data![index].title
                                   .toLowerCase()
@@ -277,6 +270,8 @@ class _SearchPage extends State<SearchPage> {
                       return const SizedBox();
                     },
                   );
+  },
+);
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 }

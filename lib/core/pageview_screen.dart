@@ -63,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
       bottomNavigationBar: BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
         buildWhen: (privioc, current) {
           if (current is NewSongState) {
-              index=current.index;
+
 
             return true;
           } else {
