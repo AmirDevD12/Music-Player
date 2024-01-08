@@ -24,16 +24,16 @@ class BottomNavigationBarScreen extends StatefulWidget {
 
 class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
     with TickerProviderStateMixin {
-  bool isPlaying = true;
+
   late AnimationController _animationController;
   late AnimationController _animationMusic;
-
   late Animation<double> _animation;
-  late Animation<double> _animationSong;
-  int id = 0;
-  int number = 0;
+
+
+  int? number = 0;
   @override
   void initState() {
+    number=locator.get<AudioPlayer>().currentIndex;
     // TODO: implement initState
     _animationController = AnimationController(
       vsync: this,
@@ -80,29 +80,35 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
               BlocBuilder<PlaySongBloc, PlaySongState>(
                 builder: (context, state) {
                   if (state is ShowNavState) {
-                      isPlaying = state.play;
+
                       ChangeAnimation().toggleAnimation(
-                          _animationController, isPlaying ? true : false);
+                          _animationController, locator.get<AudioPlayer>().playing ? true : false);
                       ChangeAnimation().toggleAnimation(
-                          _animationMusic, isPlaying ? true : false);
+                          _animationMusic, locator.get<AudioPlayer>().playing ? true : false);
+                  }
+                  if (state is DurationState) {
+
+                    if (number!=locator.get<AudioPlayer>().currentIndex) {
+                      number=locator.get<AudioPlayer>().currentIndex;
+                      BlocProvider. of<PlayNewSongBloc>(context).add(NewSongEvent(number!,));
+                    }
                   }
                   return IconButton(
                       onPressed: () async {
-                        if (isPlaying) {
+                        if (locator.get<AudioPlayer>().playing) {
                           locator.get<AudioPlayer>().stop();
                         } else {
                           locator.get<AudioPlayer>().play();
                         }
-                        isPlaying = !isPlaying;
                         BlocProvider.of<PlaySongBloc>(context)
                             .add(PausePlayEvent());
                         ChangeAnimation().toggleAnimation(
-                            _animationController, isPlaying ? true : false);
+                            _animationController, locator.get<AudioPlayer>().playing ? true : false);
                         ChangeAnimation().toggleAnimation(
-                            _animationMusic, isPlaying ? true : false);
+                            _animationMusic, locator.get<AudioPlayer>().playing ? true : false);
                       },
                       icon: Image.asset(
-                        !isPlaying
+                       !locator.get<AudioPlayer>().playing
                             ? "assets/icon/play-button-arrowhead.png"
                             : "assets/icon/pause.png",
                         color: Colors.white,
@@ -125,23 +131,21 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
                   }
                   return IconButton(
                       onPressed: () async {
-                        number++;
+
                         List<SongModel> songs =
                             await SongList().getSongs(sortSong);
                         // ignore: use_build_context_synchronously
                         locator.get<AudioPlayer>().nextIndex;
                         // newSong(songs[number + 1].uri);
-                        if (!isPlaying) {
-                          isPlaying = true;
-                        }
+
                         // ignore: use_build_context_synchronously
                         ChangeAnimation().toggleAnimation(
-                            _animationController, isPlaying ? true : false);
+                            _animationController, locator.get<AudioPlayer>().playing ? true : false);
                         locator.get<AudioPlayer>().seekToNext();
 
                         BlocProvider.of<PlayNewSongBloc>(context).add(
                             NewSongEvent(
-                                number,widget.listSong,widget.listSong[number]));
+                                locator.get<AudioPlayer>().currentIndex!));
                       },
                       icon: Image.asset(
                         "assets/icon/music-player(1).png",
@@ -178,11 +182,6 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
                   }
                 },
                 builder: (context, state) {
-
-                  if (state is NewSongState) {
-                    id=state.listSong[number].id;
-                  }
-
                   return RotationTransition(
                       turns: _animation,
                       child: CircleAvatar(
@@ -195,7 +194,7 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
                                   const BorderRadius.all(Radius.circular(100)),
                               artworkWidth: 50,
                               artworkHeight: 50,
-                              id: id,
+                              id: widget.listSong[locator.get<AudioPlayer>().currentIndex!].id,
                               type: ArtworkType.AUDIO),
                         ),
                       ));

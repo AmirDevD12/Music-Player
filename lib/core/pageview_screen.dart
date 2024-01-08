@@ -64,7 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
         buildWhen: (privioc, current) {
           if (current is NewSongState) {
               index=current.index;
-              songModel=current.listSong[index];
+
             return true;
           } else {
             return false;

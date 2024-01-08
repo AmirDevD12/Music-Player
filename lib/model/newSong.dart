@@ -1,3 +1,4 @@
+import 'package:first_project/bloc/newSong/play_new_song_bloc.dart';
 import 'package:first_project/bloc/play_song_bloc.dart';
 import 'package:first_project/locator.dart';
 import 'package:flutter/cupertino.dart';
@@ -12,8 +13,7 @@ class PlayNewSong {
     try {
       if (concatenatingAudioSources!=null) {
         if (!queue) {
-          print(concatenatingAudioSources.children);
-          locator.get<AudioPlayer>().setAudioSource(concatenatingAudioSources!, initialIndex: index, initialPosition: Duration.zero);
+          locator.get<AudioPlayer>().setAudioSource(concatenatingAudioSources, initialIndex: index, initialPosition: Duration.zero);
         }
         locator.get<AudioPlayer>().play();
         locator.get<AudioPlayer>().durationStream.listen((event) {
@@ -26,7 +26,8 @@ class PlayNewSong {
         locator.get<AudioPlayer>().positionStream.listen((event) async {
           position = event;
           if (position>=duration&&queue) {
-            locator.get<AudioPlayer>().setAudioSource(concatenatingAudioSources!, initialIndex: index, initialPosition: Duration.zero);
+      print("fsfsfsfffffffffff");
+            locator.get<AudioPlayer>().setAudioSource(concatenatingAudioSources, initialIndex: index, initialPosition: Duration.zero);
             locator.get<AudioPlayer>().play();
           }
           context.read<PlaySongBloc>().add(DurationEvent(

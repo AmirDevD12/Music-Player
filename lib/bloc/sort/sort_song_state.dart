@@ -4,8 +4,9 @@ part of 'sort_song_bloc.dart';
 abstract class SortSongState {}
 
 class SortSongInitial extends SortSongState {}
+class SearchState extends SortSongState {}
 class SortByAddState extends SortSongState{
   final SongSortType songSortType;
-
   SortByAddState(this.songSortType);
 }
+

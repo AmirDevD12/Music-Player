@@ -12,6 +12,9 @@ class SortSongBloc extends Bloc<SortSongEvent, SortSongState> {
     on<SortByAddEvent>((event, emit) {
         emit(SortByAddState(event.songSortType));
     });
+    on<SearchEvent>((event, emit) {
+      emit(SearchState());
+    });
 
   }
 }

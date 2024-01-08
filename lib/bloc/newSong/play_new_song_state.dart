@@ -7,9 +7,9 @@ class PlayNewSongInitial extends PlayNewSongState {}
 class NewSongState extends PlayNewSongState{
 
  final int index;
- final List<SongModel> listSong;
- final SongModel song;
-  NewSongState( this.index, this.listSong, this.song);
+
+
+  NewSongState( this.index,);
 }
 class PauseAnimationState extends PlayNewSongState{}
 class ChangIconState extends PlayNewSongState{}

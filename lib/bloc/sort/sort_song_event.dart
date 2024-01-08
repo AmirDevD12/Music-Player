@@ -7,3 +7,4 @@ class SortByAddEvent extends SortSongEvent{
 
   SortByAddEvent(this.songSortType);
 }
+class SearchEvent extends SortSongEvent{}
