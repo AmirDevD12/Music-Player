@@ -87,7 +87,7 @@ class _ShowListArtistState extends State<ShowListArtist> {
                                                 .get<SortSongBloc>(),
                                           ),
                                         ],
-                                        child: PlayPage(play: false, concatenatingAudioSource: playlist , index: index, songs: songs, song: songs[index],
+                                        child: PlayPage(play: false, concatenatingAudioSource: playlist , index: index, songs: songs,
                                         ),
                                       )));
 

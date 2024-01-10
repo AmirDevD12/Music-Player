@@ -1,3 +1,4 @@
+
 import 'package:checkbox_formfield/checkbox_icon_formfield.dart';
 import 'package:first_project/bloc/favorite_song/favorite_bloc.dart';
 import 'package:first_project/bloc/newSong/play_new_song_bloc.dart';
@@ -29,6 +30,7 @@ class ListMusic extends StatelessWidget {
   Box boxDelete = Hive.box<DeleteSong>("Delete Song");
   int length = 0;
   SongSortType sort = SongSortType.TITLE;
+
   ListMusic({super.key});
 
   @override
@@ -140,6 +142,7 @@ class ListMusic extends StatelessWidget {
                               AsyncSnapshot<List<SongModel>> snapshot) {
                             if (snapshot.hasData) {
                               return ListView.builder(
+
                                 itemCount: snapshot.data?.length,
                                 itemBuilder: (BuildContext context, int index) {
                                   print(snapshot.data!.length);
@@ -247,8 +250,10 @@ class ListMusic extends StatelessWidget {
                                                                   const SizedBox(height: 10,),
 
                                                                   GestureDetector(
+                                                                    onTap: (){
+                                                                    },
                                                                       child: const CardWidget(
-                                                                        text: 'Share',path:  "assets/icon/information-button.png",)),
+                                                                        text: 'Share',path:  "assets/icon/share.png",)),
 
                                                                 ],
                                                               ),
@@ -309,11 +314,7 @@ class ListMusic extends StatelessWidget {
                                         id: snapshot.data![index].id,
                                         type: ArtworkType.AUDIO ),
                                     onTap: () async {
-                                      // BlocProvider.of<PlaySongBloc>(context).add(
-                                      //     ShowEvent(snapshot.data![index], true));
                                       List<SongModel>songs=await SongList().getSongs(sort);
-                                      print(songs[index].id);
-                                      print(snapshot.data![index].id);
                                       // ignore: use_build_context_synchronously
                                       Navigator.push(
                                           context,
@@ -339,7 +340,7 @@ class ListMusic extends StatelessWidget {
                                                       ),
                                                     ],
                                                     child: PlayPage(
-                                                      play: true, concatenatingAudioSource: playlist, index: index, songs: songs, song: snapshot.data![index],
+                                                      play: true, concatenatingAudioSource: playlist, index: index, songs: songs,
                                                     ),
                                                   )));
                                       addRecentPlay(snapshot.data![index]);

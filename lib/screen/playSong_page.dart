@@ -19,14 +19,14 @@ class PlayPage extends StatefulWidget {
   final int index;
   final bool play;
   final List<SongModel> songs;
-  final SongModel song;
+
   const PlayPage({
     super.key,
     required this.play,
     required this.concatenatingAudioSource,
     required this.index,
     required this.songs,
-    required this.song,
+
   });
 
   @override
@@ -170,11 +170,16 @@ class _PlayPageState extends State<PlayPage>
                                       Radius.circular(100)),
                                   artworkWidth: 200,
                                   artworkHeight: 200,
-                                  id: widget
+                                  id:widget
+                                      .songs[locator
+                                      .get<AudioPlayer>()
+                                      .currentIndex!]
+                                      .albumId!=null? widget
                                       .songs[locator
                                           .get<AudioPlayer>()
                                           .currentIndex!]
-                                      .id,
+                                      .id:
+                                  25,
                                   type: ArtworkType.AUDIO),
                             ),
                           ));
