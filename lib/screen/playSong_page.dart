@@ -12,6 +12,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
+
 import '../bloc/play_song_bloc.dart';
 
 class PlayPage extends StatefulWidget {
@@ -84,19 +85,10 @@ class _PlayPageState extends State<PlayPage>
             child: Column(
       children: [
         Padding(
-          padding: const EdgeInsets.only(top: 20),
+          padding: const EdgeInsets.only(top: 40),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              IconButton(
-                  onPressed: () {},
-                  icon: Image.asset(
-                    "assets/icon/dots.png",
-                    color:
-                        themeProvider.isDarkMode ? Colors.white : Colors.black,
-                    width: 25,
-                    height: 25,
-                  )),
               BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
                 buildWhen: (privioce, current) {
                   if (current is NewSongState) {
@@ -138,6 +130,43 @@ class _PlayPageState extends State<PlayPage>
                   );
                 },
               ),
+              const Text("New Song",style: TextStyle(fontSize: 25,fontFamily: "ibm",fontWeight: FontWeight.bold),),
+              BlocBuilder<FavoriteBloc, FavoriteState>(
+                builder: (context, state) {
+                  if (state is FavoriteSongState) {
+                    if (state.like) {
+                      like = false;
+                    } else {
+                      like = true;
+                    }
+                  }
+                  return IconButton(
+                    onPressed: () async {
+                      like = !like;
+                      if (!like) {
+                        add(
+                            widget.songs[
+                            locator.get<AudioPlayer>().currentIndex!],
+                            context);
+                      } else {
+                        deleteFavorite(
+                            widget.songs[
+                            locator.get<AudioPlayer>().currentIndex!],
+                            context);
+                      }
+                    },
+                    icon: Image.asset(
+                      like
+                          ? "assets/icon/like.png"
+                          : "assets/icon/heart.png",
+                      color: like ? Colors.red : Colors.red,
+                      width: 25,
+                      height: 25,
+                    ),
+                  );
+                },
+              )
+
             ],
           ),
         ),
@@ -161,15 +190,14 @@ class _PlayPageState extends State<PlayPage>
                       return RotationTransition(
                           turns: _animation,
                           child: CircleAvatar(
-                            backgroundImage: const AssetImage(
-                                "assets/icon/vinyl-record.png"),
-                            radius: 120,
+                            backgroundColor:Colors.white ,
+                            radius: 130,
                             child: Center(
                               child: QueryArtworkWidget(
                                   artworkBorder: const BorderRadius.all(
-                                      Radius.circular(100)),
-                                  artworkWidth: 200,
-                                  artworkHeight: 200,
+                                      Radius.circular(120)),
+                                  artworkWidth: 252,
+                                  artworkHeight: 252,
                                   id: widget
                                       .songs[locator
                                           .get<AudioPlayer>()
@@ -183,7 +211,7 @@ class _PlayPageState extends State<PlayPage>
                 ],
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+
                 children: [
                   BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
                     buildWhen: (privioce, current) {
@@ -217,41 +245,7 @@ class _PlayPageState extends State<PlayPage>
                       );
                     },
                   ),
-                  BlocBuilder<FavoriteBloc, FavoriteState>(
-                    builder: (context, state) {
-                      if (state is FavoriteSongState) {
-                        if (state.like) {
-                          like = false;
-                        } else {
-                          like = true;
-                        }
-                      }
-                      return IconButton(
-                        onPressed: () async {
-                          like = !like;
-                          if (!like) {
-                            add(
-                                widget.songs[
-                                    locator.get<AudioPlayer>().currentIndex!],
-                                context);
-                          } else {
-                            deleteFavorite(
-                                widget.songs[
-                                    locator.get<AudioPlayer>().currentIndex!],
-                                context);
-                          }
-                        },
-                        icon: Image.asset(
-                          like
-                              ? "assets/icon/like.png"
-                              : "assets/icon/heart.png",
-                          color: like ? Colors.red : Colors.red,
-                          width: 25,
-                          height: 25,
-                        ),
-                      );
-                    },
-                  )
+
                 ],
               ),
               Row(
@@ -265,7 +259,6 @@ class _PlayPageState extends State<PlayPage>
                         position = state.start;
                         duration = state.finish;
                         if (next != locator.get<AudioPlayer>().currentIndex) {
-                          print(locator.get<AudioPlayer>().nextIndex);
                           next = locator.get<AudioPlayer>().currentIndex;
                           BlocProvider.of<PlayNewSongBloc>(context)
                               .add(NewSongEvent(next!));
@@ -273,11 +266,11 @@ class _PlayPageState extends State<PlayPage>
                       }
                       return Slider(
                         activeColor: themeProvider.isDarkMode
-                            ? Colors.deepPurple
-                            : const Color(0xff1a1b1d),
+                            ? const Color(0xffff435e)
+                            : const Color(0xffff435e),
                         inactiveColor: themeProvider.isDarkMode
                             ? Colors.white
-                            : Colors.black12,
+                            : const Color(0xffd4d5d7),
                         value: duration.inSeconds.toDouble(),
                         max: position.inSeconds.toDouble(),
                         min: const Duration(milliseconds: 0)
@@ -330,7 +323,7 @@ class _PlayPageState extends State<PlayPage>
                         size: 40,
                         color: themeProvider.isDarkMode
                             ? Colors.white
-                            : Colors.black,
+                            : Color(0xff8f969d),
                       )),
                   BlocBuilder<SortSongBloc, SortSongState>(
                     builder: (context, state) {
@@ -348,30 +341,38 @@ class _PlayPageState extends State<PlayPage>
                           }
                         },
                         builder: (context, state) {
-                          return IconButton(
-                              onPressed: () async {
-                                locator.get<AudioPlayer>().seekToPrevious();
+                          return Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                                color: themeProvider.isDarkMode?const Color(0xffff435e):Color(0xfff5d9e3),
+                                borderRadius: BorderRadius.all(Radius.circular(10))
+                            ),
+                            child: IconButton(
+                                onPressed: () async {
+                                  locator.get<AudioPlayer>().seekToPrevious();
 
-                                ChangeAnimation().toggleAnimation(
-                                    _animationController,
-                                    locator.get<AudioPlayer>().playing
-                                        ? true
-                                        : false);
+                                  ChangeAnimation().toggleAnimation(
+                                      _animationController,
+                                      locator.get<AudioPlayer>().playing
+                                          ? true
+                                          : false);
 
-                                // ignore: use_build_context_synchronously
-                                BlocProvider.of<PlayNewSongBloc>(context).add(
-                                    NewSongEvent(locator
-                                        .get<AudioPlayer>()
-                                        .currentIndex!));
-                              },
-                              icon: Image.asset(
-                                "assets/icon/music-player(1).png",
-                                color: themeProvider.isDarkMode
-                                    ? Colors.white
-                                    : Colors.black,
-                                width: 35,
-                                height: 35,
-                              ));
+                                  // ignore: use_build_context_synchronously
+                                  BlocProvider.of<PlayNewSongBloc>(context).add(
+                                      NewSongEvent(locator
+                                          .get<AudioPlayer>()
+                                          .currentIndex!));
+                                },
+                                icon: Image.asset(
+                                  "assets/icon/music-player(1).png",
+                                  color: themeProvider.isDarkMode
+                                      ? Colors.white
+                                      : Color(0xffff435e),
+                                  width: 35,
+                                  height: 35,
+                                )),
+                          );
                         },
                       );
                     },
@@ -395,11 +396,12 @@ class _PlayPageState extends State<PlayPage>
                           icon: Image.asset(
                             isPlaying
                                 ? "assets/icon/pause.png"
-                                : "assets/icon/play-button-arrowhead.png",
-                            width: 40,
+                                : "assets/icon/play-button.png",
+                            width: 50,
+
                             color: themeProvider.isDarkMode
                                 ? Colors.white
-                                : Colors.black,
+                                : const Color(0xffff435e),
                           ));
                     },
                   ),
@@ -420,27 +422,35 @@ class _PlayPageState extends State<PlayPage>
                         },
                         builder: (context, state) {
                           if (state is NewSongState) {}
-                          return IconButton(
-                              onPressed: () async {
-                                locator.get<AudioPlayer>().seekToNext();
-                                ChangeAnimation().toggleAnimation(
-                                    _animationController,
-                                    locator.get<AudioPlayer>().playing
-                                        ? true
-                                        : false);
-                                BlocProvider.of<PlayNewSongBloc>(context).add(
-                                    NewSongEvent(locator
-                                        .get<AudioPlayer>()
-                                        .currentIndex!));
-                              },
-                              icon: Image.asset(
-                                "assets/icon/music-player(3).png",
-                                color: themeProvider.isDarkMode
-                                    ? Colors.white
-                                    : Colors.black,
-                                width: 35,
-                                height: 35,
-                              ));
+                          return Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color:themeProvider.isDarkMode?const Color(0xffff435e): Color(0xfff5d9e3),
+                              borderRadius: BorderRadius.all(Radius.circular(10))
+                            ),
+                            child: IconButton(
+                                onPressed: () async {
+                                  locator.get<AudioPlayer>().seekToNext();
+                                  ChangeAnimation().toggleAnimation(
+                                      _animationController,
+                                      locator.get<AudioPlayer>().playing
+                                          ? true
+                                          : false);
+                                  BlocProvider.of<PlayNewSongBloc>(context).add(
+                                      NewSongEvent(locator
+                                          .get<AudioPlayer>()
+                                          .currentIndex!));
+                                },
+                                icon: Image.asset(
+                                  "assets/icon/music-player(3).png",
+                                  color: themeProvider.isDarkMode
+                                      ? Colors.white
+                                      : const Color(0xffff435e),
+                                  width: 35,
+                                  height: 35,
+                                )),
+                          );
                         },
                       );
                     },
@@ -463,7 +473,7 @@ class _PlayPageState extends State<PlayPage>
                             width: 30,
                             color: themeProvider.isDarkMode
                                 ? Colors.white
-                                : Colors.black,
+                                : Color(0xff8f969d),
                           ));
                     },
                   ),
@@ -474,7 +484,8 @@ class _PlayPageState extends State<PlayPage>
               ),
             ],
           ),
-        )
+        ),
+
       ],
     )));
   }

@@ -33,7 +33,10 @@ class ListMusic extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider =
+    Provider.of<ThemeProvider>(context);
     return Scaffold(
+      backgroundColor: themeProvider.isDarkMode?const Color(0xff1a1b1d):const Color(0xfff3f6fb),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
@@ -151,8 +154,7 @@ class ListMusic extends StatelessWidget {
                                         AudioSource.uri(Uri.parse(snapshot.data![i].data)),
                                     ],
                                   );
-                                  final themeProvider =
-                                  Provider.of<ThemeProvider>(context);
+
                                   return ListTile(
                                     trailing: state is NewListState ?CheckboxIconFormField(
                                       disabledColor: Colors.black,

@@ -127,7 +127,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 Expanded(
 
                   child: Container(
-                    color: themeProvider.isDarkMode?const Color(0xff1a1b1d):Colors.deepPurple,
+                    color: themeProvider.isDarkMode?const Color(0xff1a1b1d):Colors.white,
                     child: Column(mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
