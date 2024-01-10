@@ -1,9 +1,16 @@
 
+import 'package:first_project/bloc/favorite_song/favorite_bloc.dart';
+import 'package:first_project/bloc/newSong/play_new_song_bloc.dart';
+import 'package:first_project/bloc/play_song_bloc.dart';
+import 'package:first_project/bloc/sort/sort_song_bloc.dart';
 import 'package:first_project/core/popup.dart';
 import 'package:first_project/core/theme/theme_mode.dart';
 import 'package:first_project/locator.dart';
 import 'package:first_project/model/songs_model.dart';
+import 'package:first_project/screen/playSong_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 class AlbumPage extends StatefulWidget {
@@ -28,8 +35,17 @@ class _AlbumPageState extends State<AlbumPage> {
                   (BuildContext context, AsyncSnapshot<List<SongModel>> snapshot) {
                 if (snapshot.hasData) {
                   return ListView.builder(
+
                     itemCount: snapshot.data?.length??0,
                     itemBuilder: (BuildContext context, int index) {
+                      final playlist = ConcatenatingAudioSource(
+                        useLazyPreparation: true,
+                        shuffleOrder: DefaultShuffleOrder(),
+                        children: [
+                          for(int i=0;i<snapshot.data!.length;i++)
+                            AudioSource.uri(Uri.parse(snapshot.data![i].data)),
+                        ],
+                      );
                       return Padding(
                         padding: const EdgeInsets.only(left: 10),
                         child: ListTile(
@@ -52,24 +68,37 @@ class _AlbumPageState extends State<AlbumPage> {
                               artworkBorder: const BorderRadius.all(Radius.circular(0)),
                               id: snapshot.data![index].id,
                               type: ArtworkType.AUDIO),
-                          // onTap: () {
-                          //   Navigator.push(
-                          //       context,
-                          //       MaterialPageRoute(
-                          //           builder: (context) => MultiBlocProvider(
-                          //                 providers: [
-                          //                   BlocProvider(
-                          //                       create: (context) =>
-                          //                           locator.get<PlaySongBloc>()),
-                          //                   BlocProvider(
-                          //                       create: (context) => PlayNewSongBloc())
-                          //                 ],
-                          //                 child: PlayPage(
-                          //                   songModel: snapshot.data![index],
-                          //                    play: true,
-                          //                 ),
-                          //               )));
-                          // },
+                          onTap: () async {
+                            List<SongModel> songs=await SongList().getSongs(SongSortType.ALBUM);
+                            // ignore: use_build_context_synchronously
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => MultiBlocProvider(
+                                          providers: [
+                                            BlocProvider(
+                                                create: (context) =>
+                                                    locator.get<
+                                                        PlaySongBloc>()),
+                                            BlocProvider(
+                                              create: (context) => locator
+                                                  .get<PlayNewSongBloc>(),
+                                            ),
+                                            BlocProvider(
+                                              create: (context) => locator
+                                                  .get<FavoriteBloc>(),
+                                            ),
+                                            BlocProvider(
+                                              create: (context) => locator
+                                                  .get<SortSongBloc>(),
+                                            ),
+                                          ],
+                                          child: PlayPage(
+
+                                             play: true, concatenatingAudioSource: playlist, index: index, songs:songs ,
+                                          ),
+                                        )));
+                          },
                         ),
                       );
                     },

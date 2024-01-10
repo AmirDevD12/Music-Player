@@ -3,20 +3,26 @@ import 'package:on_audio_query/on_audio_query.dart';
 
 class SongCountArtist {
   Future<Map<String, int>> getSongCountByArtist() async {
-    Map<String, int>? songCountByArtist = {};
+    Map<String, int> songCountByArtist = {};
     List<SongModel> songs = [];
     songs = await SongList().getSongs(SongSortType.TITLE);
-    int sum=0;
     for (SongModel song in songs) {
-      if (song.artist != null) {
-        if (songCountByArtist.containsKey(song.artist!)) {
-
-          sum++;
-          songCountByArtist[song.artist!] = sum;
-        } else {
-          songCountByArtist[song.artist!] = 1;
-          sum=1;
-        }
+      bool check=false;
+      if (song.artist!=null) {
+        if (songCountByArtist.isNotEmpty) {
+          for(int i=0;i<songCountByArtist.length;i++){
+            if (song.artist==songCountByArtist.keys.elementAt(i)) {
+              int s=songCountByArtist.values.elementAt(i);
+              s++;
+              songCountByArtist[song.artist!]=s;
+              check=true;
+              break ;
+            }
+          }
+          if (!check) {
+            songCountByArtist[song.artist!]=1;
+          }
+        }else{ songCountByArtist[song.artist!]=1;}
       }
     }
 

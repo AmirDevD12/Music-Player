@@ -117,7 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                           ),
                                         ],
                                         child: PlayPage(
-                                          play: true, concatenatingAudioSource: null, index:index, songs:listSong, song:listSong[index],
+                                          play: true, concatenatingAudioSource: null, index:index, songs:listSong,
                                         ),
                                       )));
                         },

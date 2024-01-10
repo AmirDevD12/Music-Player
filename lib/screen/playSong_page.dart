@@ -12,7 +12,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
-
 import '../bloc/play_song_bloc.dart';
 
 class PlayPage extends StatefulWidget {
@@ -20,14 +19,14 @@ class PlayPage extends StatefulWidget {
   final int index;
   final bool play;
   final List<SongModel> songs;
-  final SongModel song;
+
   const PlayPage({
     super.key,
     required this.play,
     required this.concatenatingAudioSource,
     required this.index,
     required this.songs,
-    required this.song,
+
   });
 
   @override
@@ -85,10 +84,19 @@ class _PlayPageState extends State<PlayPage>
             child: Column(
       children: [
         Padding(
-          padding: const EdgeInsets.only(top: 40),
+          padding: const EdgeInsets.only(top: 20),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              IconButton(
+                  onPressed: () {},
+                  icon: Image.asset(
+                    "assets/icon/dots.png",
+                    color:
+                        themeProvider.isDarkMode ? Colors.white : Colors.black,
+                    width: 25,
+                    height: 25,
+                  )),
               BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
                 buildWhen: (privioce, current) {
                   if (current is NewSongState) {
@@ -130,43 +138,6 @@ class _PlayPageState extends State<PlayPage>
                   );
                 },
               ),
-              const Text("New Song",style: TextStyle(fontSize: 25,fontFamily: "ibm",fontWeight: FontWeight.bold),),
-              BlocBuilder<FavoriteBloc, FavoriteState>(
-                builder: (context, state) {
-                  if (state is FavoriteSongState) {
-                    if (state.like) {
-                      like = false;
-                    } else {
-                      like = true;
-                    }
-                  }
-                  return IconButton(
-                    onPressed: () async {
-                      like = !like;
-                      if (!like) {
-                        add(
-                            widget.songs[
-                            locator.get<AudioPlayer>().currentIndex!],
-                            context);
-                      } else {
-                        deleteFavorite(
-                            widget.songs[
-                            locator.get<AudioPlayer>().currentIndex!],
-                            context);
-                      }
-                    },
-                    icon: Image.asset(
-                      like
-                          ? "assets/icon/like.png"
-                          : "assets/icon/heart.png",
-                      color: like ? Colors.red : Colors.red,
-                      width: 25,
-                      height: 25,
-                    ),
-                  );
-                },
-              )
-
             ],
           ),
         ),
