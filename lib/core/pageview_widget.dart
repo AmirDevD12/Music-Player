@@ -18,7 +18,7 @@ class _PageViewSong extends State<PageViewSong> {
      Center(child:ListMusic() ),
     const Center(child: Artist()),
     const Center(child: AlbumPage()),
-    Center(child: AlbumList()),
+    Center(child: FolderList()),
   ];
 
 static const List<String> ListIssue=<String>["Songs ","Artist","Album","Folder"];

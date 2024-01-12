@@ -253,22 +253,31 @@ class _PlayPageState extends State<PlayPage>
                     builder: (context, state) {
                       return Expanded(
                         child: ListTile(
-                          title: Text(
-                              style: locator.get<MyThemes>().title(context),
-                              maxLines: 1,
-                             isFavorite==false? widget
-                                  .songs[
-                                      locator.get<AudioPlayer>().currentIndex!]
-                                  .title:favorite.getAt(locator.get<AudioPlayer>().currentIndex!).title.toString()??""),
-                          subtitle: Text(
-                              style: locator.get<MyThemes>().subTitle(context),
-                              maxLines: 1,
-                              isFavorite==false?  widget
-                                      .songs[locator
-                                          .get<AudioPlayer>()
-                                          .currentIndex!]
-                                      .artist ??
-                                  "":favorite.getAt(locator.get<AudioPlayer>().currentIndex!).artist.toString()??""),
+                          title: Row(mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                  style: locator.get<MyThemes>().title(context),
+                                  maxLines: 1,
+                                 isFavorite==false? widget
+                                      .songs[
+                                          locator.get<AudioPlayer>().currentIndex!]
+                                      .title:favorite.getAt(locator.get<AudioPlayer>().currentIndex!).title.toString()??""),
+                            ],
+                          ),
+                          subtitle: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                  style: locator.get<MyThemes>().subTitle(context),
+                                  maxLines: 1,
+                                  isFavorite==false?  widget
+                                          .songs[locator
+                                              .get<AudioPlayer>()
+                                              .currentIndex!]
+                                          .artist ??
+                                      "":favorite.getAt(locator.get<AudioPlayer>().currentIndex!).artist.toString()??""),
+                            ],
+                          ),
                         ),
                       );
                     },
@@ -347,7 +356,10 @@ class _PlayPageState extends State<PlayPage>
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Duration durationSeek=Duration(seconds: 10);
+                        locator.get<AudioPlayer>().setShuffleModeEnabled(false);
+                      },
                       icon: Icon(
                         Icons.add_circle_outline,
                         size: 40,
@@ -490,9 +502,7 @@ class _PlayPageState extends State<PlayPage>
                       return IconButton(
                           onPressed: () {
                             shuffle = !shuffle;
-                            if (!shuffle) {
-                              locator.get<AudioPlayer>().shuffle();
-                            }
+                            locator.get<AudioPlayer>().setShuffleModeEnabled(shuffle==false?false:true);
                             BlocProvider.of<PlayNewSongBloc>(context)
                                 .add(ChangIconEvent());
                           },
@@ -512,6 +522,11 @@ class _PlayPageState extends State<PlayPage>
               const SizedBox(
                 height: 20,
               ),
+            Row(
+              children: [
+                Text("Favorite Song",style: TextStyle(fontWeight: FontWeight.bold,fontFamily: "ibm",fontSize: 20),),
+              ],
+            ),
             ValueListenableBuilder(
               valueListenable:favorite.listenable(),
               builder: (context, Box box, child) {
@@ -520,11 +535,10 @@ class _PlayPageState extends State<PlayPage>
                       child: Padding(
                         padding: EdgeInsets.all(50.0),
                         child: Text(
-                          'هیچ لیستی وجود ندارد',
+                          'Song not found',
                           style: TextStyle(
                             fontSize: 28.0,
                             fontWeight: FontWeight.bold,
-                            color: Colors.red,
                           ),
                         ),
                       ));

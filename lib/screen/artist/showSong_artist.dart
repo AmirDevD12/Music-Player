@@ -32,13 +32,6 @@ class _ShowListArtistState extends State<ShowListArtist> {
         body:Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 28),
-              child: SizedBox(
-                  width: 110,
-                  height: 30,
-                  child: PlayAllContainer()),
-            ),
             Expanded(
               child: FutureBuilder<List<SongModel>>(
                 future: locator.get<ListArtist>().getLisArtist(widget.nameArtist),

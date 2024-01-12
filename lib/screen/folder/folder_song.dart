@@ -5,7 +5,7 @@ import 'package:first_project/model/addres_folder.dart';
 import 'package:first_project/screen/folder/showSongFolder.dart';
 import 'package:flutter/material.dart';
 
-class AlbumList extends StatelessWidget {
+class FolderList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
@@ -18,7 +18,7 @@ class AlbumList extends StatelessWidget {
             itemCount: snapshot.data?.length ,
             itemBuilder: (context, index) {
               for(int i=0; i<=snapshot.data!.length-1;i++){
-                List<String> parts = snapshot.data![index].split('/');
+                List<String> parts = snapshot.data![i].split('/');
                 String fileName = parts[parts.length-1];
                   file.add(fileName);
               }

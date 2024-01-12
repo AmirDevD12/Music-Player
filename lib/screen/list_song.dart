@@ -32,7 +32,8 @@ class ListMusic extends StatelessWidget {
   SongSortType sort = SongSortType.TITLE;
 
   ListMusic({super.key});
-
+final TextStyle sun=TextStyle(color: Colors.black,fontSize: 20,fontFamily: "ibm",fontWeight: FontWeight.bold);
+final TextStyle moon=TextStyle(color: Colors.white,fontSize: 20,fontFamily: "ibm",fontWeight: FontWeight.bold);
   @override
   Widget build(BuildContext context) {
     final themeProvider =
@@ -49,6 +50,7 @@ class ListMusic extends StatelessWidget {
               children: [
                 const SizedBox(width: 110, height: 30, child: PlayAllContainer()),
                 PopupMenuButton(
+                  color: themeProvider.isDarkMode? Colors.white:Colors.black,
                   icon: const Icon(Icons.sort,size: 30,),
                   itemBuilder: (BuildContext bc) {
                     return [
@@ -58,11 +60,12 @@ class ListMusic extends StatelessWidget {
                           BlocProvider.of<SortSongBloc>(context).add(SortByAddEvent(songSortType));
                         },
                         value: '/time',
-                        child: const Row(
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
                               "Based on add time",
+                              style: themeProvider.isDarkMode?sun:moon,
                             ),
                             SizedBox(width: 10,),
 
@@ -75,12 +78,12 @@ class ListMusic extends StatelessWidget {
                           BlocProvider.of<SortSongBloc>(context).add(SortByAddEvent(songSortType));
                         },
                         value: '/name',
-                        child: const Row(
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
                               "Based on name",
-
+                              style: themeProvider.isDarkMode?sun:moon,
                             ),SizedBox(width: 10,),
 
                           ],
@@ -92,12 +95,12 @@ class ListMusic extends StatelessWidget {
                           BlocProvider.of<SortSongBloc>(context).add(SortByAddEvent(songSortType));
                         },
                         value: '/artist',
-                        child: const Row(
+                        child:  Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
                               "Based on artist",
-
+                              style: themeProvider.isDarkMode?sun:moon,
                             ),SizedBox(width: 10,),
 
                           ],

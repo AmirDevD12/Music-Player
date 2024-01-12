@@ -126,63 +126,67 @@ class _MyHomePageState extends State<MyHomePage> {
                 const SizedBox(height: 5,),
                 Expanded(
 
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: const Color(0xff1a1b1d),
-                        borderRadius: const BorderRadius.all(Radius.circular(10)),
-                        border: Border.all(color:themeProvider.isDarkMode? const Color(0xfff5d9e3):const Color(0xffff435e),width: 2),
-                      boxShadow: [
-                        BoxShadow(
-                          color:themeProvider.isDarkMode? Colors.grey:Colors.red ,
-                          offset: const Offset(4,4),
-                          blurRadius: 5,
-                          spreadRadius: 5,
-                        )
-                      ]
-                    ),
-                    height: 50,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: Container(
+                     width: MediaQuery.of(context).size.width-50,
+                      decoration: BoxDecoration(
+                          color: const Color(0xff1a1b1d),
+                          borderRadius: const BorderRadius.all(Radius.circular(10)),
+                          border: Border.all(color:themeProvider.isDarkMode? const Color(0xfff5d9e3):const Color(0xffff435e),width: 2),
+                        boxShadow: [
+                          BoxShadow(
+                            color:themeProvider.isDarkMode? Colors.grey:Colors.red ,
 
-                    child: Column(mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            GestureDetector(
-                                onTap: () {
-                                  controller.animateToPage(0,
-                                      duration: const Duration(milliseconds: 10),
-                                      curve: Curves.easeOut);
-                                },
-                                child: const CardWidget(
-                                  text: 'My Music',path: "assets/icon/music(1).png",)),
-                            GestureDetector(
-                                onTap: () {
-                                  controller.animateToPage(1,
-                                      duration: const Duration(milliseconds: 10),
-                                      curve: Curves.easeOut);
-                                },
-                                child: const CardWidget(
-                                  text: 'search', path: "assets/icon/magnifying-glass.png",)),
-                            GestureDetector(
-                                onTap: () {
-                                  controller.animateToPage(2,
-                                      duration: const Duration(milliseconds: 10),
-                                      curve: Curves.easeOut);
-                                }
-                                ,
-                                child: const CardWidget(text: 'List', path:"assets/icon/list(2).png",)),
-                            GestureDetector(
-                                onTap: () {
+                            blurRadius: 10,
+                            spreadRadius: 5,
+                          )
+                        ]
+                      ),
+                      height: 50,
 
-                                  controller.animateToPage(3,
-                                      duration: const Duration(milliseconds: 10),
-                                      curve: Curves.easeOut);
-                                }
-                                ,
-                                child: const CardWidget(
-                                  text: 'Path',path:  "assets/icon/information-button.png",)),
-                          ],
-                        ),
-                      ],
+                      child: Column(mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              GestureDetector(
+                                  onTap: () {
+                                    controller.animateToPage(0,
+                                        duration: const Duration(milliseconds: 10),
+                                        curve: Curves.easeOut);
+                                  },
+                                  child: const CardWidget(
+                                    text: 'My Music',path: "assets/icon/music(1).png",)),
+                              GestureDetector(
+                                  onTap: () {
+                                    controller.animateToPage(1,
+                                        duration: const Duration(milliseconds: 10),
+                                        curve: Curves.easeOut);
+                                  },
+                                  child: const CardWidget(
+                                    text: 'search', path: "assets/icon/magnifying-glass.png",)),
+                              GestureDetector(
+                                  onTap: () {
+                                    controller.animateToPage(2,
+                                        duration: const Duration(milliseconds: 10),
+                                        curve: Curves.easeOut);
+                                  }
+                                  ,
+                                  child: const CardWidget(text: 'List', path:"assets/icon/list(2).png",)),
+                              GestureDetector(
+                                  onTap: () {
+
+                                    controller.animateToPage(3,
+                                        duration: const Duration(milliseconds: 10),
+                                        curve: Curves.easeOut);
+                                  }
+                                  ,
+                                  child: const CardWidget(
+                                    text: 'Path',path:  "assets/icon/information-button.png",)),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 )
