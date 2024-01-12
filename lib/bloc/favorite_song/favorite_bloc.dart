@@ -15,5 +15,9 @@ class FavoriteBloc extends Bloc<FavoriteEvent, FavoriteState> {
       // TODO: implement event handler
       emit(FavoriteSongState(event.like));
     });
+    on<PlayFavoriteEvent>((event, emit) {
+      // TODO: implement event handler
+      emit(PlayFavoriteState());
+    });
   }
 }

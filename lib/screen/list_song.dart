@@ -47,7 +47,7 @@ class ListMusic extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                SizedBox(width: 110, height: 30, child: PlayAllContainer()),
+                const SizedBox(width: 110, height: 30, child: PlayAllContainer()),
                 PopupMenuButton(
                   icon: const Icon(Icons.sort,size: 30,),
                   itemBuilder: (BuildContext bc) {
@@ -308,6 +308,7 @@ class ListMusic extends StatelessWidget {
                                       snapshot.data![index].displayName,
                                     ),
                                     leading: QueryArtworkWidget(
+                                        nullArtworkWidget: Image.asset("assets/icon/vinyl-record.png"),
                                         artworkWidth: 60,
                                         artworkHeight: 60,
                                         artworkFit: BoxFit.cover,
@@ -339,6 +340,10 @@ class ListMusic extends StatelessWidget {
                                                       BlocProvider(
                                                         create: (context) => locator
                                                             .get<SortSongBloc>(),
+                                                      ),
+                                                      BlocProvider(
+                                                        create: (context) => locator
+                                                            .get<FavoriteBloc>(),
                                                       ),
                                                     ],
                                                     child: PlayPage(

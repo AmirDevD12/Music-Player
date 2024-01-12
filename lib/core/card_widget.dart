@@ -11,18 +11,24 @@ class CardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeProvider =
   Provider.of<ThemeProvider>(context);
-    return   Column(
-      children: [
-        Image.asset(
-          path,
-          color: themeProvider.isDarkMode
-              ? Colors.white
-              : Colors.black,
-          width: 25,
-          height: 25,
-        ),
-        Text(text,style: MyThemes().title(context),)
-      ],
+    return   Container(
+      width: 40,
+      height: 40,
+      decoration: const BoxDecoration(
+          color:  Color(0xffff435e),
+          borderRadius: BorderRadius.all(Radius.circular(10))
+      ),
+      child: Column(mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(
+            path,
+            color: Colors.white,
+            width: 25,
+            height: 25,
+          ),
+
+        ],
+      ),
     );
   }
 }

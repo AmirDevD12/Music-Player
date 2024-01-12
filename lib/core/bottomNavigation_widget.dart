@@ -185,6 +185,7 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
                         radius: 30,
                         child: Center(
                           child: QueryArtworkWidget(
+                              nullArtworkWidget: Image.asset("assets/icon/vinyl-record.png"),
                               artworkBorder:
                                   const BorderRadius.all(Radius.circular(100)),
                               artworkWidth: 50,

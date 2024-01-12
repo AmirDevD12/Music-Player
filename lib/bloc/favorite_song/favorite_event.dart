@@ -6,3 +6,6 @@ class FavoriteSongEvent extends FavoriteEvent{
  final bool like;
  FavoriteSongEvent(this.like);
 }
+class PlayFavoriteEvent extends FavoriteEvent{
+
+}

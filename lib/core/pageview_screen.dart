@@ -127,7 +127,21 @@ class _MyHomePageState extends State<MyHomePage> {
                 Expanded(
 
                   child: Container(
-                    color: themeProvider.isDarkMode?const Color(0xff1a1b1d):Colors.white,
+                    decoration: BoxDecoration(
+                        color: const Color(0xff1a1b1d),
+                        borderRadius: const BorderRadius.all(Radius.circular(10)),
+                        border: Border.all(color:themeProvider.isDarkMode? const Color(0xfff5d9e3):const Color(0xffff435e),width: 2),
+                      boxShadow: [
+                        BoxShadow(
+                          color:themeProvider.isDarkMode? Colors.grey:Colors.red ,
+                          offset: const Offset(4,4),
+                          blurRadius: 5,
+                          spreadRadius: 5,
+                        )
+                      ]
+                    ),
+                    height: 50,
+
                     child: Column(mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Row(mainAxisAlignment: MainAxisAlignment.spaceAround,

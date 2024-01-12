@@ -8,3 +8,6 @@ class FavoriteSongState extends FavoriteState {
  final bool like;
  FavoriteSongState(this.like);
 }
+class PlayFavoriteState extends FavoriteState {
+
+}

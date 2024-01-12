@@ -75,7 +75,8 @@ class _PlayPageState extends State<PlayPage>
     Navigator.pop(context);
     super.dispose();
   }
-
+  Box favorite = Hive.box<FavoriteSong>("Favorite");
+  bool isFavorite=false;
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
@@ -84,19 +85,10 @@ class _PlayPageState extends State<PlayPage>
             child: Column(
       children: [
         Padding(
-          padding: const EdgeInsets.only(top: 20),
+          padding: const EdgeInsets.only(top: 30,bottom: 10),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              IconButton(
-                  onPressed: () {},
-                  icon: Image.asset(
-                    "assets/icon/dots.png",
-                    color:
-                        themeProvider.isDarkMode ? Colors.white : Colors.black,
-                    width: 25,
-                    height: 25,
-                  )),
               BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
                 buildWhen: (privioce, current) {
                   if (current is NewSongState) {
@@ -138,6 +130,43 @@ class _PlayPageState extends State<PlayPage>
                   );
                 },
               ),
+              const Text("New Song",style: TextStyle(fontSize: 25,fontFamily: "ibm",fontWeight: FontWeight.bold),),
+              BlocBuilder<FavoriteBloc, FavoriteState>(
+                builder: (context, state) {
+                  if (state is FavoriteSongState) {
+                    if (state.like) {
+                      like = false;
+                    } else {
+                      like = true;
+                    }
+                  }
+                  return IconButton(
+                    onPressed: () async {
+                      like = !like;
+                      if (!like) {
+                        add(
+                            widget.songs[
+                            locator.get<AudioPlayer>().currentIndex!],
+                            context);
+                      } else {
+                        deleteFavorite(
+                            widget.songs[
+                            locator.get<AudioPlayer>().currentIndex!],
+                            context);
+                      }
+                    },
+                    icon: Image.asset(
+                      like
+                          ? "assets/icon/like.png"
+                          : "assets/icon/heart.png",
+                      color: like ? Colors.red : Colors.red,
+                      width: 25,
+                      height: 25,
+                    ),
+                  );
+                },
+              )
+
             ],
           ),
         ),
@@ -148,7 +177,13 @@ class _PlayPageState extends State<PlayPage>
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
+                  BlocBuilder<FavoriteBloc, FavoriteState>(
+                    buildWhen:(priviuse,current){
+                      if(current is PlayFavoriteState){return true;}
+                      else{return false;}
+                    },
+  builder: (context, state) {
+    return BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
                     buildWhen: (privioce, current) {
                       if (current is PauseAnimationState ||
                           current is ChangIconState) {
@@ -160,31 +195,53 @@ class _PlayPageState extends State<PlayPage>
                     builder: (context, state) {
                       return RotationTransition(
                           turns: _animation,
-                          child: CircleAvatar(
-                            backgroundColor:Colors.white ,
-                            radius: 130,
-                            child: Center(
-                              child: QueryArtworkWidget(
-                                  artworkBorder: const BorderRadius.all(
-                                      Radius.circular(120)),
-                                  artworkWidth: 252,
-                                  artworkHeight: 252,
-                                  id: widget
-                                      .songs[locator
-                                          .get<AudioPlayer>()
-                                          .currentIndex!]
-                                      .id,
-                                  type: ArtworkType.AUDIO),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: const BorderRadius.all(Radius.circular(130)),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color:themeProvider.isDarkMode? Colors.grey:const Color(0xff1a1b1d) ,
+                                    blurRadius: 15,
+                                    spreadRadius: 2,
+                                  )
+                                ]
+                            ),
+                            child: CircleAvatar(
+                              backgroundColor:Colors.white ,
+                              radius: 120,
+                              child: Center(
+                                child: QueryArtworkWidget(
+                               nullArtworkWidget: Image.asset("assets/icon/vinyl-record.png"),
+                                  keepOldArtwork: true,
+                                    artworkBorder: const BorderRadius.all(
+                                        Radius.circular(120)),
+                                    artworkWidth: 252,
+                                    artworkHeight: 252,
+                                    id:isFavorite==false? widget
+                                        .songs[locator
+                                            .get<AudioPlayer>()
+                                            .currentIndex!]
+                                        .id:favorite.getAt(locator.get<AudioPlayer>().currentIndex!).id,
+                                    type: ArtworkType.AUDIO),
+                              ),
                             ),
                           ));
                     },
-                  )
+                  );
+  },
+)
                 ],
               ),
               Row(
 
                 children: [
-                  BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
+                  BlocBuilder<FavoriteBloc, FavoriteState>(
+                    buildWhen:(priviuse,current){
+                      if(current is PlayFavoriteState){return true;}
+                      else{return false;}
+                    },
+  builder: (context, state) {
+    return BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
                     buildWhen: (privioce, current) {
                       if (current is PauseAnimationState ||
                           current is ChangIconState) {
@@ -199,23 +256,25 @@ class _PlayPageState extends State<PlayPage>
                           title: Text(
                               style: locator.get<MyThemes>().title(context),
                               maxLines: 1,
-                              widget
+                             isFavorite==false? widget
                                   .songs[
                                       locator.get<AudioPlayer>().currentIndex!]
-                                  .title),
+                                  .title:favorite.getAt(locator.get<AudioPlayer>().currentIndex!).title.toString()??""),
                           subtitle: Text(
                               style: locator.get<MyThemes>().subTitle(context),
                               maxLines: 1,
-                              widget
+                              isFavorite==false?  widget
                                       .songs[locator
                                           .get<AudioPlayer>()
                                           .currentIndex!]
                                       .artist ??
-                                  ""),
+                                  "":favorite.getAt(locator.get<AudioPlayer>().currentIndex!).artist.toString()??""),
                         ),
                       );
                     },
-                  ),
+                  );
+  },
+),
 
                 ],
               ),
@@ -317,7 +376,7 @@ class _PlayPageState extends State<PlayPage>
                             height: 40,
                             decoration: BoxDecoration(
                                 color: themeProvider.isDarkMode?const Color(0xffff435e):Color(0xfff5d9e3),
-                                borderRadius: BorderRadius.all(Radius.circular(10))
+                                borderRadius: const BorderRadius.all(Radius.circular(10))
                             ),
                             child: IconButton(
                                 onPressed: () async {
@@ -398,7 +457,7 @@ class _PlayPageState extends State<PlayPage>
                             height: 40,
                             decoration: BoxDecoration(
                               color:themeProvider.isDarkMode?const Color(0xffff435e): Color(0xfff5d9e3),
-                              borderRadius: BorderRadius.all(Radius.circular(10))
+                              borderRadius: const BorderRadius.all(Radius.circular(10))
                             ),
                             child: IconButton(
                                 onPressed: () async {
@@ -444,7 +503,7 @@ class _PlayPageState extends State<PlayPage>
                             width: 30,
                             color: themeProvider.isDarkMode
                                 ? Colors.white
-                                : Color(0xff8f969d),
+                                : const Color(0xff8f969d),
                           ));
                     },
                   ),
@@ -453,6 +512,100 @@ class _PlayPageState extends State<PlayPage>
               const SizedBox(
                 height: 20,
               ),
+            ValueListenableBuilder(
+              valueListenable:favorite.listenable(),
+              builder: (context, Box box, child) {
+                if (box.values.isEmpty) {
+                  return const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(50.0),
+                        child: Text(
+                          'هیچ لیستی وجود ندارد',
+                          style: TextStyle(
+                            fontSize: 28.0,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.red,
+                          ),
+                        ),
+                      ));
+                } else {
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: box.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      final playlist = ConcatenatingAudioSource(
+                        useLazyPreparation: true,
+                        shuffleOrder: DefaultShuffleOrder(),
+                        children: [
+                          for(int i=0;i<box.length!;i++)
+                            AudioSource.uri(Uri.parse(box.getAt(i).path)),
+                        ],
+                      );
+                      final themeProvider =
+                      Provider.of<ThemeProvider>(context);
+                      return ListTile(
+                        trailing: SizedBox(
+                          width: 36,
+                          child: PopupMenuButton(
+                            iconSize: 200,
+                            icon: Image.asset(
+                              "assets/icon/dots.png",
+                              width: 40,
+                              height: 40,
+                              color: themeProvider.isDarkMode
+                                  ? Colors.white
+                                  : Colors.black,
+                            ),
+                            itemBuilder: (BuildContext bc) {
+                              return [
+                                PopupMenuItem(
+                                  onTap: () {
+                                  },
+                                  value: '/delete',
+                                  child: Text("delete"),
+                                ),
+                                const PopupMenuItem(
+                                  value: '/share',
+                                  child: Text("Share"),
+                                ),
+                                const PopupMenuItem(
+                                  value: '/add',
+                                  child: Text("Add to playlist"),
+                                )
+                              ];
+                            },
+                          ),
+                        ),
+                        title: Text(
+                          favorite.getAt(index).title!,
+                          style: locator.get<MyThemes>().title(context),
+                          maxLines: 1,
+                        ),
+                        subtitle: Text(
+                          favorite.getAt(index).artist!,
+                          style: locator.get<MyThemes>().subTitle(context),
+                          maxLines: 1,
+                        ),
+                        leading: QueryArtworkWidget(
+                            artworkWidth: 60,
+                            artworkHeight: 60,
+                            artworkFit: BoxFit.cover,
+                            artworkBorder: const BorderRadius.all(
+                                Radius.circular(5)),
+                            id: favorite.getAt(index).id!,
+                            type: ArtworkType.AUDIO),
+                        onTap: () async {
+                          PlayNewSong().newSong(
+                              index, context,playlist , false);
+                          isFavorite=true;
+                          BlocProvider.of<FavoriteBloc>(context).add(PlayFavoriteEvent());
+                        },
+                      );
+                    },
+                  );
+                }
+              },
+            )
             ],
           ),
         ),

@@ -11,6 +11,7 @@ class SongList {
   Future<List<SongModel>> getSongs(SongSortType? songSortType) async {
     List<SongModel> songs = [];
     if (!kIsWeb) {
+
       bool hasPermission = await OnAudioQuery().permissionsStatus();
       if (hasPermission) {
         Box delete=Hive.box<DeleteSong>("Delete Song");
