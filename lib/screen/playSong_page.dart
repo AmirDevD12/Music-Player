@@ -74,6 +74,7 @@ class _PlayPageState extends State<PlayPage>
     _animationController.dispose();
     Navigator.pop(context);
     super.dispose();
+    favorite.close();
   }
   Box favorite = Hive.box<FavoriteSong>("Favorite");
   bool isFavorite=false;
@@ -119,7 +120,7 @@ class _PlayPageState extends State<PlayPage>
                             BlocProvider.of<PlaySongBloc>(context)
                                 .add(ShowEvent(isPlaying, widget.songs));
 
-                            _animationController.dispose();
+
                             Navigator.pop(context);
                           },
                           icon: const Icon(
@@ -365,11 +366,11 @@ class _PlayPageState extends State<PlayPage>
                         size: 40,
                         color: themeProvider.isDarkMode
                             ? Colors.white
-                            : Color(0xff8f969d),
+                            : const Color(0xff8f969d),
                       )),
                   BlocBuilder<SortSongBloc, SortSongState>(
                     builder: (context, state) {
-                      SongSortType sortSong = SongSortType.TITLE;
+                      SongSortType sortSong = SongSortType.DATE_ADDED;
                       if (state is SortByAddState) {
                         sortSong = state.songSortType;
                       }
@@ -387,7 +388,7 @@ class _PlayPageState extends State<PlayPage>
                             width: 40,
                             height: 40,
                             decoration: BoxDecoration(
-                                color: themeProvider.isDarkMode?const Color(0xffff435e):Color(0xfff5d9e3),
+                                color: themeProvider.isDarkMode?const Color(0xffff435e):const Color(0xfff5d9e3),
                                 borderRadius: const BorderRadius.all(Radius.circular(10))
                             ),
                             child: IconButton(
@@ -410,7 +411,7 @@ class _PlayPageState extends State<PlayPage>
                                   "assets/icon/music-player(1).png",
                                   color: themeProvider.isDarkMode
                                       ? Colors.white
-                                      : Color(0xffff435e),
+                                      : const Color(0xffff435e),
                                   width: 35,
                                   height: 35,
                                 )),
@@ -449,7 +450,7 @@ class _PlayPageState extends State<PlayPage>
                   ),
                   BlocBuilder<SortSongBloc, SortSongState>(
                     builder: (context, state) {
-                      SongSortType sortSong = SongSortType.TITLE;
+                      SongSortType sortSong = SongSortType.DATE_ADDED;
                       if (state is SortByAddState) {
                         sortSong = state.songSortType;
                       }
@@ -468,7 +469,7 @@ class _PlayPageState extends State<PlayPage>
                             width: 40,
                             height: 40,
                             decoration: BoxDecoration(
-                              color:themeProvider.isDarkMode?const Color(0xffff435e): Color(0xfff5d9e3),
+                              color:themeProvider.isDarkMode?const Color(0xffff435e): const Color(0xfff5d9e3),
                               borderRadius: const BorderRadius.all(Radius.circular(10))
                             ),
                             child: IconButton(
@@ -522,7 +523,7 @@ class _PlayPageState extends State<PlayPage>
               const SizedBox(
                 height: 20,
               ),
-            Row(
+            const Row(
               children: [
                 Text("Favorite Song",style: TextStyle(fontWeight: FontWeight.bold,fontFamily: "ibm",fontSize: 20),),
               ],
@@ -576,7 +577,7 @@ class _PlayPageState extends State<PlayPage>
                                   onTap: () {
                                   },
                                   value: '/delete',
-                                  child: Text("delete"),
+                                  child: const Text("delete"),
                                 ),
                                 const PopupMenuItem(
                                   value: '/share',

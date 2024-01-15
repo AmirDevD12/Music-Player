@@ -94,7 +94,7 @@ class _ListSongBottomNavigationState extends State<ListSongBottomNavigation> {
                       boxMap.add(mapPlayList);
                       List<SongModel> songs = await locator
                           .get<SongList>()
-                          .getSongs(SongSortType.TITLE);
+                          .getSongs(SongSortType.DATE_ADDED);
                       // ignore: use_build_context_synchronously
                       Navigator.pushReplacement(
                           context,

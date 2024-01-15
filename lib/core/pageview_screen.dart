@@ -15,23 +15,19 @@ import 'package:first_project/screen/bottum_navigation/search_bottum.dart';
 import 'package:first_project/screen/playSong_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
 import 'bottomNavigation_widget.dart';
 import 'card_widget.dart';
 
 
-class MyHomePage extends StatefulWidget {
+class MyHomePage extends StatelessWidget {
 
    MyHomePage({super.key, });
 
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-
   PageController controller = PageController();
+
   final List<Widget> _list = <Widget>[
     const Center(child: PageViewSong()),
      Center(child: SearchPage()),
@@ -39,22 +35,12 @@ class _MyHomePageState extends State<MyHomePage> {
     const Center(child: AlbumPage()),
   ];
 
-
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-     OnAudioQuery().permissionsStatus();
-  }
-
-  late SongModel songModel;
-  int  index=0;
   List<SongModel> listSong=[];
+
   @override
   Widget build(BuildContext context) {
 
-    final themeProvider = Provider.of<ThemeProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         actions: const [ThemeSwitcher()],
@@ -63,8 +49,6 @@ class _MyHomePageState extends State<MyHomePage> {
       bottomNavigationBar: BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
         buildWhen: (privioc, current) {
           if (current is NewSongState) {
-
-
             return true;
           } else {
             return false;
@@ -81,12 +65,12 @@ class _MyHomePageState extends State<MyHomePage> {
         },
         builder: (context, state) {
           if(state is ShowNavState){
-            print("amirrrrr");
+
             listSong=state.listSong;
           }
           return SizedBox(
             width: double.infinity,
-            height: state is PlaySongInitial?60:120,
+            height: state is DurationState ||state is PausePlayState||state is ShowNavState?120:60,
             child: Column(mainAxisAlignment: MainAxisAlignment.end,
               children: [
                      state is DurationState ||state is PausePlayState||state is ShowNavState
@@ -117,7 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                           ),
                                         ],
                                         child: PlayPage(
-                                          play: true, concatenatingAudioSource: null, index:index, songs:listSong,
+                                          play: true, concatenatingAudioSource: null, index:locator.get<AudioPlayer>().currentIndex!, songs:listSong,
                                         ),
                                       )));
                         },
@@ -126,68 +110,43 @@ class _MyHomePageState extends State<MyHomePage> {
                 const SizedBox(height: 5,),
                 Expanded(
 
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    child: Container(
-                     width: MediaQuery.of(context).size.width-50,
-                      decoration: BoxDecoration(
-                          color: const Color(0xff1a1b1d),
-                          borderRadius: const BorderRadius.all(Radius.circular(10)),
-                          border: Border.all(color:themeProvider.isDarkMode? const Color(0xfff5d9e3):const Color(0xffff435e),width: 2),
-                        boxShadow: [
-                          BoxShadow(
-                            color:themeProvider.isDarkMode? Colors.grey:Colors.red ,
+                  child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      GestureDetector(
+                          onTap: () {
+                            controller.animateToPage(0,
+                                duration: const Duration(milliseconds: 10),
+                                curve: Curves.easeOut);
+                          },
+                          child: const CardWidget(
+                            text: 'My Music',path: "assets/icon/music(1).png",)),
+                      GestureDetector(
+                          onTap: () {
+                            controller.animateToPage(1,
+                                duration: const Duration(milliseconds: 10),
+                                curve: Curves.easeOut);
+                          },
+                          child: const CardWidget(
+                            text: 'search', path: "assets/icon/magnifying-glass.png",)),
+                      GestureDetector(
+                          onTap: () {
+                            controller.animateToPage(2,
+                                duration: const Duration(milliseconds: 10),
+                                curve: Curves.easeOut);
+                          }
+                          ,
+                          child: const CardWidget(text: 'List', path:"assets/icon/list(2).png",)),
+                      GestureDetector(
+                          onTap: () {
 
-                            blurRadius: 10,
-                            spreadRadius: 5,
-                          )
-                        ]
-                      ),
-                      height: 50,
-
-                      child: Column(mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              GestureDetector(
-                                  onTap: () {
-                                    controller.animateToPage(0,
-                                        duration: const Duration(milliseconds: 10),
-                                        curve: Curves.easeOut);
-                                  },
-                                  child: const CardWidget(
-                                    text: 'My Music',path: "assets/icon/music(1).png",)),
-                              GestureDetector(
-                                  onTap: () {
-                                    controller.animateToPage(1,
-                                        duration: const Duration(milliseconds: 10),
-                                        curve: Curves.easeOut);
-                                  },
-                                  child: const CardWidget(
-                                    text: 'search', path: "assets/icon/magnifying-glass.png",)),
-                              GestureDetector(
-                                  onTap: () {
-                                    controller.animateToPage(2,
-                                        duration: const Duration(milliseconds: 10),
-                                        curve: Curves.easeOut);
-                                  }
-                                  ,
-                                  child: const CardWidget(text: 'List', path:"assets/icon/list(2).png",)),
-                              GestureDetector(
-                                  onTap: () {
-
-                                    controller.animateToPage(3,
-                                        duration: const Duration(milliseconds: 10),
-                                        curve: Curves.easeOut);
-                                  }
-                                  ,
-                                  child: const CardWidget(
-                                    text: 'Path',path:  "assets/icon/information-button.png",)),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
+                            controller.animateToPage(3,
+                                duration: const Duration(milliseconds: 10),
+                                curve: Curves.easeOut);
+                          }
+                          ,
+                          child: const CardWidget(
+                            text: 'Path',path:  "assets/icon/information-button.png",)),
+                    ],
                   ),
                 )
               ],

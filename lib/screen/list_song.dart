@@ -1,4 +1,3 @@
-
 import 'package:checkbox_formfield/checkbox_icon_formfield.dart';
 import 'package:first_project/bloc/favorite_song/favorite_bloc.dart';
 import 'package:first_project/bloc/newSong/play_new_song_bloc.dart';
@@ -6,7 +5,6 @@ import 'package:first_project/bloc/play_list/play_list_bloc.dart';
 import 'package:first_project/bloc/play_song_bloc.dart';
 import 'package:first_project/bloc/sort/sort_song_bloc.dart';
 import 'package:first_project/core/card_widget.dart';
-import 'package:first_project/core/playall_container.dart';
 import 'package:first_project/locator.dart';
 import 'package:first_project/model/dataBase/delete_song_dataBase/delete_song.dart';
 import 'package:first_project/model/dataBase/recent_play/add_recent_play.dart';
@@ -24,22 +22,19 @@ import '../model/songs_model.dart';
 import 'bottum_navigation/list_song_bottomnav.dart';
 
 class ListMusic extends StatelessWidget {
-  SongSortType songSortType = SongSortType.TITLE;
 
   String select = "";
   Box boxDelete = Hive.box<DeleteSong>("Delete Song");
-  int length = 0;
-  SongSortType sort = SongSortType.TITLE;
+
+  SongSortType sort = SongSortType.DATE_ADDED;
 
   ListMusic({super.key});
-final TextStyle sun=TextStyle(color: Colors.black,fontSize: 20,fontFamily: "ibm",fontWeight: FontWeight.bold);
-final TextStyle moon=TextStyle(color: Colors.white,fontSize: 20,fontFamily: "ibm",fontWeight: FontWeight.bold);
+
   @override
   Widget build(BuildContext context) {
-    final themeProvider =
-    Provider.of<ThemeProvider>(context);
+    final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
-      backgroundColor: themeProvider.isDarkMode?const Color(0xff1a1b1d):const Color(0xfff3f6fb),
+      backgroundColor: themeProvider.isDarkMode ? Colors.black : Colors.white,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
@@ -48,16 +43,72 @@ final TextStyle moon=TextStyle(color: Colors.white,fontSize: 20,fontFamily: "ibm
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const SizedBox(width: 110, height: 30, child: PlayAllContainer()),
+                BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
+                  buildWhen: (privioc, current) {
+                    if (current is NewSongState) {
+                      return true;
+                    } else {
+                      return false;
+                    }
+                  },
+                  builder: (context, state) {
+                    return BlocBuilder<PlaySongBloc, PlaySongState>(
+                      builder: (context, state) {
+                        return FutureBuilder<List<SongModel>>(
+                          future: SongList().getSongs(sort),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<List<SongModel>> snapshot) {
+                            if (snapshot.hasData) {
+                              return state is DurationState ||
+                                      state is PausePlayState ||
+                                      state is ShowNavState
+                                  ? Padding(
+                                      padding: const EdgeInsets.only(left: 10),
+                                      child: SizedBox(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width -
+                                              100,
+                                          child: Text(
+                                            snapshot
+                                                    .data![locator
+                                                            .get<AudioPlayer>()
+                                                            .currentIndex ??
+                                                        0]
+                                                    .artist ??
+                                                "Not found",
+                                            style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 20,
+                                                fontFamily: "ibm",
+                                                fontWeight: FontWeight.bold),
+                                            maxLines: 1,
+                                          )),
+                                    )
+                                  : const SizedBox();
+                            } else if (snapshot.hasError) {
+                              return const Text('Song not played');
+                            }
+                            return const Text('Song not played');
+                          },
+                        );
+                      },
+                    );
+                  },
+                ),
                 PopupMenuButton(
-                  color: themeProvider.isDarkMode? Colors.white:Colors.black,
-                  icon: const Icon(Icons.sort,size: 30,),
+                  color: themeProvider.isDarkMode ? Colors.white : Colors.black,
+                  icon: const Icon(
+                    Icons.sort,
+                    size: 30,
+                  ),
                   itemBuilder: (BuildContext bc) {
                     return [
                       PopupMenuItem(
-                        onTap: (){
-                          var songSortType=SongSortType.DATE_ADDED;
-                          BlocProvider.of<SortSongBloc>(context).add(SortByAddEvent(songSortType));
+                        onTap: () {
+                          var songSortType = SongSortType.DATE_ADDED;
+                          BlocProvider.of<SortSongBloc>(context)
+                              .add(SortByAddEvent(songSortType));
                         },
                         value: '/time',
                         child: Row(
@@ -65,17 +116,27 @@ final TextStyle moon=TextStyle(color: Colors.white,fontSize: 20,fontFamily: "ibm
                           children: [
                             Text(
                               "Based on add time",
-                              style: themeProvider.isDarkMode?sun:moon,
+                              style: themeProvider.isDarkMode
+                                  ? const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 20,
+                                      fontFamily: "ibm")
+                                  : const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                      fontFamily: "ibm"),
                             ),
-                            SizedBox(width: 10,),
-
+                            const SizedBox(
+                              width: 10,
+                            ),
                           ],
                         ),
                       ),
                       PopupMenuItem(
-                        onTap: (){
-                          var songSortType=SongSortType.TITLE;
-                          BlocProvider.of<SortSongBloc>(context).add(SortByAddEvent(songSortType));
+                        onTap: () {
+                          var songSortType = SongSortType.DATE_ADDED;
+                          BlocProvider.of<SortSongBloc>(context)
+                              .add(SortByAddEvent(songSortType));
                         },
                         value: '/name',
                         child: Row(
@@ -83,30 +144,50 @@ final TextStyle moon=TextStyle(color: Colors.white,fontSize: 20,fontFamily: "ibm
                           children: [
                             Text(
                               "Based on name",
-                              style: themeProvider.isDarkMode?sun:moon,
-                            ),SizedBox(width: 10,),
-
+                              style: themeProvider.isDarkMode
+                                  ? const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 20,
+                                      fontFamily: "ibm")
+                                  : const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                      fontFamily: "ibm"),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
                           ],
                         ),
                       ),
                       PopupMenuItem(
-                        onTap: (){
-                          var songSortType=SongSortType.ARTIST;
-                          BlocProvider.of<SortSongBloc>(context).add(SortByAddEvent(songSortType));
+                        onTap: () {
+                          var songSortType = SongSortType.ARTIST;
+                          BlocProvider.of<SortSongBloc>(context)
+                              .add(SortByAddEvent(songSortType));
                         },
                         value: '/artist',
-                        child:  Row(
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
                               "Based on artist",
-                              style: themeProvider.isDarkMode?sun:moon,
-                            ),SizedBox(width: 10,),
-
+                              style: themeProvider.isDarkMode
+                                  ? const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 20,
+                                      fontFamily: "ibm")
+                                  : const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                      fontFamily: "ibm"),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
                           ],
                         ),
                       ),
-
                     ];
                   },
                 )
@@ -115,266 +196,348 @@ final TextStyle moon=TextStyle(color: Colors.white,fontSize: 20,fontFamily: "ibm
           ),
           Expanded(
             child: BlocBuilder<PlayListBloc, PlayListState>(
-              buildWhen: (previous,current){
-                if(current is NewListState){
+              buildWhen: (previous, current) {
+                if (current is NewListState) {
                   return true;
-                }else {
+                } else {
                   return false;
                 }
               },
-  builder: (context, state) {
-    return BlocBuilder<SortSongBloc, SortSongState>(
               builder: (context, state) {
-
-                if (state is SortByAddState) {
-                  sort = state.songSortType;
-                }
-                return BlocBuilder<PlaySongBloc, PlaySongState>(
-                  buildWhen: (perivioce, current) {
-                    if (current is DeleteSongState) {
-                      return true;
-                    } else {
-                      return false;
-                    }
-                  },
+                return BlocBuilder<SortSongBloc, SortSongState>(
                   builder: (context, state) {
-                    return ValueListenableBuilder(
-                      valueListenable: Hive.box<DeleteSong>("Delete Song").listenable(),
-                      builder: (BuildContext context, value, Widget? child) {
-                        return FutureBuilder<List<SongModel>>(
-                          future:
-                          SongList().getSongs(sort),
-                          builder: (BuildContext context,
-                              AsyncSnapshot<List<SongModel>> snapshot) {
-                            if (snapshot.hasData) {
-                              return ListView.builder(
+                    if (state is SortByAddState) {
+                      sort = state.songSortType;
+                    }
+                    return BlocBuilder<PlaySongBloc, PlaySongState>(
+                      buildWhen: (perivioce, current) {
+                        if (current is DeleteSongState) {
+                          return true;
+                        } else {
+                          return false;
+                        }
+                      },
+                      builder: (context, state) {
+                        return ValueListenableBuilder(
+                          valueListenable:
+                              Hive.box<DeleteSong>("Delete Song").listenable(),
+                          builder:
+                              (BuildContext context, value, Widget? child) {
+                            return FutureBuilder<List<SongModel>>(
+                              future: SongList().getSongs(sort),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<List<SongModel>> snapshot) {
+                                if (snapshot.hasData) {
+                                  return ListView.builder(
+                                    itemCount: snapshot.data?.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      print(snapshot.data!.length);
+                                      final playlist = ConcatenatingAudioSource(
+                                        useLazyPreparation: true,
+                                        shuffleOrder: DefaultShuffleOrder(),
+                                        children: [
+                                          for (int i = 0;
+                                              i < snapshot.data!.length;
+                                              i++)
+                                            AudioSource.uri(Uri.parse(
+                                                snapshot.data![i].data)),
+                                        ],
+                                      );
 
-                                itemCount: snapshot.data?.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  print(snapshot.data!.length);
-                                  final playlist = ConcatenatingAudioSource(
-                                    useLazyPreparation: true,
-                                    shuffleOrder: DefaultShuffleOrder(),
-                                    children: [
-                                      for(int i=0;i<snapshot.data!.length;i++)
-                                        AudioSource.uri(Uri.parse(snapshot.data![i].data)),
-                                    ],
-                                  );
-
-                                  return ListTile(
-                                    trailing: state is NewListState ?CheckboxIconFormField(
-                                      disabledColor: Colors.black,
-                                      context: context,
-                                      iconSize: 30,
-                                      padding: 10,
-                                      onSaved: (bool? value) {},
-                                      onChanged: (value) {
-                                        if (value) {
-                                          // boxc[name[index]]=true;
-                                        } else {
-                                          // boxc[name[index]]=false;
-                                        }
-
-                                      },
-                                    ):SizedBox(
-                                      width: 36,
-                                      child: InkWell(
-                                        onTap: (){
-                                          showModalBottomSheet<void>(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return Container(
-
-                                                color: themeProvider.isDarkMode?Colors.black:Colors.white,
-                                                width: double.infinity,
-                                                height: 180,
-                                                child: Column(
-                                                  children:  <Widget>[
-                                                    const SizedBox(height: 10,),
-                                                    Text(
-                                                      style:locator.get<MyThemes>().title(context) ,
-                                                      maxLines: 1,
-                                                      snapshot.data![index].title,
+                                      return Column(
+                                        children: [
+                                          Container(
+                                            color: themeProvider.isDarkMode
+                                                ? const Color(0xff1a1b1d)
+                                                : locator
+                                                    .get<MyThemes>()
+                                                    .cContainerSong,
+                                            child: ListTile(
+                                              trailing: state is NewListState
+                                                  ? CheckboxIconFormField(
+                                                      disabledColor:
+                                                          Colors.black,
+                                                      context: context,
+                                                      iconSize: 30,
+                                                      padding: 10,
+                                                      onSaved: (bool? value) {},
+                                                      onChanged: (value) {
+                                                        if (value) {
+                                                          // boxc[name[index]]=true;
+                                                        } else {
+                                                          // boxc[name[index]]=false;
+                                                        }
+                                                      },
+                                                    )
+                                                  : SizedBox(
+                                                      width: 36,
+                                                      child: InkWell(
+                                                        onTap: () {
+                                                          showModalBottomSheet<
+                                                              void>(
+                                                            context: context,
+                                                            builder:
+                                                                (BuildContext
+                                                                    context) {
+                                                              return Container(
+                                                                color: themeProvider
+                                                                        .isDarkMode
+                                                                    ? Colors
+                                                                        .black
+                                                                    : Colors
+                                                                        .white,
+                                                                width: double
+                                                                    .infinity,
+                                                                height: 180,
+                                                                child: Column(
+                                                                  children: <Widget>[
+                                                                    const SizedBox(
+                                                                      height:
+                                                                          10,
+                                                                    ),
+                                                                    Text(
+                                                                      style: locator
+                                                                          .get<
+                                                                              MyThemes>()
+                                                                          .title(
+                                                                              context),
+                                                                      maxLines:
+                                                                          1,
+                                                                      snapshot
+                                                                          .data![
+                                                                              index]
+                                                                          .title,
+                                                                    ),
+                                                                    const SizedBox(
+                                                                      height:
+                                                                          15,
+                                                                    ),
+                                                                    Column(
+                                                                      children: [
+                                                                        Padding(
+                                                                          padding: const EdgeInsets
+                                                                              .all(
+                                                                              10.0),
+                                                                          child:
+                                                                              Row(
+                                                                            mainAxisAlignment:
+                                                                                MainAxisAlignment.spaceAround,
+                                                                            children: [
+                                                                              Column(
+                                                                                children: [
+                                                                                  GestureDetector(
+                                                                                      child: const CardWidget(
+                                                                                    text: 'Play next',
+                                                                                    path: "assets/icon/music-player(1).png",
+                                                                                  )),
+                                                                                  const SizedBox(
+                                                                                    height: 10,
+                                                                                  ),
+                                                                                  GestureDetector(
+                                                                                      onTap: () {
+                                                                                        // addPlayList(snapshot.data![index]);
+                                                                                        Navigator.pushReplacement(
+                                                                                            context,
+                                                                                            MaterialPageRoute(
+                                                                                                builder: (context) => MultiBlocProvider(
+                                                                                                        providers: [
+                                                                                                          BlocProvider(create: (context) => locator.get<PlaySongBloc>()),
+                                                                                                          BlocProvider(
+                                                                                                            create: (context) => locator.get<PlayNewSongBloc>(),
+                                                                                                          ),
+                                                                                                          BlocProvider(
+                                                                                                            create: (context) => locator.get<FavoriteBloc>(),
+                                                                                                          ),
+                                                                                                          BlocProvider(
+                                                                                                            create: (context) => locator.get<PlayListBloc>(),
+                                                                                                          ),
+                                                                                                        ],
+                                                                                                        child: ListSongBottomNavigation(
+                                                                                                          show: true,
+                                                                                                          songModel: snapshot.data![index],
+                                                                                                        ))));
+                                                                                      },
+                                                                                      child: const CardWidget(
+                                                                                        text: 'List',
+                                                                                        path: "assets/icon/list(2).png",
+                                                                                      )),
+                                                                                ],
+                                                                              ),
+                                                                              const SizedBox(
+                                                                                width: 20,
+                                                                              ),
+                                                                              Column(
+                                                                                children: [
+                                                                                  GestureDetector(
+                                                                                      child: const CardWidget(
+                                                                                    text: 'Info',
+                                                                                    path: "assets/icon/information-button.png",
+                                                                                  )),
+                                                                                  const SizedBox(
+                                                                                    height: 10,
+                                                                                  ),
+                                                                                  const SizedBox(
+                                                                                    height: 10,
+                                                                                  ),
+                                                                                  GestureDetector(
+                                                                                      onTap: () {},
+                                                                                      child: const CardWidget(
+                                                                                        text: 'Share',
+                                                                                        path: "assets/icon/share.png",
+                                                                                      )),
+                                                                                ],
+                                                                              ),
+                                                                              const SizedBox(
+                                                                                width: 20,
+                                                                              ),
+                                                                              Column(
+                                                                                children: [
+                                                                                  GestureDetector(
+                                                                                      child: const CardWidget(
+                                                                                    text: 'Favorite',
+                                                                                    path: "assets/icon/like.png",
+                                                                                  )),
+                                                                                  const SizedBox(
+                                                                                    height: 10,
+                                                                                  ),
+                                                                                  const SizedBox(
+                                                                                    height: 10,
+                                                                                  ),
+                                                                                  GestureDetector(
+                                                                                      onTap: () {
+                                                                                        DeleteSongFile().getDeleteSong(snapshot.data![index]);
+                                                                                        deleteSong(snapshot.data![index].data);
+                                                                                        Navigator.pop(context);
+                                                                                      },
+                                                                                      child: const CardWidget(
+                                                                                        text: 'Delete',
+                                                                                        path: "assets/icon/delete.png",
+                                                                                      )),
+                                                                                ],
+                                                                              )
+                                                                            ],
+                                                                          ),
+                                                                        )
+                                                                      ],
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              );
+                                                            },
+                                                          );
+                                                        },
+                                                        child: Image.asset(
+                                                          "assets/icon/dots.png",
+                                                          width: 25,
+                                                          height: 25,
+                                                          color: themeProvider
+                                                                  .isDarkMode
+                                                              ? Colors.white
+                                                              : Colors.black,
+                                                        ),
+                                                      ),
                                                     ),
-                                                    const SizedBox(height: 15,),
-                                                    Column(
-                                                      children: [
-                                                        Padding(
-                                                          padding: const EdgeInsets.all(10.0),
-                                                          child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                                            children: [
-                                                              Column(
-                                                                children: [
-                                                                  GestureDetector(
-                                                                      child: const CardWidget(
-                                                                        text: 'Play next',path: "assets/icon/music-player(1).png",)),
-                                                                  const SizedBox(height: 10,),
+                                              title: Text(
+                                                style: locator
+                                                    .get<MyThemes>()
+                                                    .title(context),
+                                                maxLines: 1,
+                                                snapshot.data![index].title,
+                                              ),
+                                              subtitle: Text(
+                                                style: locator
+                                                    .get<MyThemes>()
+                                                    .subTitle(context),
+                                                maxLines: 1,
+                                                snapshot
+                                                    .data![index].displayName,
+                                              ),
+                                              leading: QueryArtworkWidget(
+                                                  nullArtworkWidget: Image.asset(
+                                                      "assets/icon/vinyl-record.png"),
+                                                  artworkWidth: 60,
+                                                  artworkHeight: 60,
+                                                  artworkFit: BoxFit.cover,
+                                                  artworkBorder:
+                                                      const BorderRadius.all(
+                                                          Radius.circular(5)),
+                                                  id: snapshot.data![index].id,
+                                                  type: ArtworkType.AUDIO),
+                                              onTap: () async {
+                                                List<SongModel> songs = [];
 
-                                                                  GestureDetector(
-                                                                      onTap: (){
-                                                                        // addPlayList(snapshot.data![index]);
-                                                                        Navigator.pushReplacement(
-                                                                            context,
-                                                                            MaterialPageRoute(
-                                                                                builder: (context) =>
-                                                                                    MultiBlocProvider(
-                                                                                        providers: [
-                                                                                          BlocProvider(
-                                                                                              create: (context) =>
-                                                                                                  locator.get<
-                                                                                                      PlaySongBloc>()),
-                                                                                          BlocProvider(
-                                                                                            create: (context) => locator
-                                                                                                .get<PlayNewSongBloc>(),
-                                                                                          ),
-                                                                                          BlocProvider(
-                                                                                            create: (context) => locator
-                                                                                                .get<FavoriteBloc>(),
-                                                                                          ),
-                                                                                          BlocProvider(
-                                                                                            create: (context) => locator
-                                                                                                .get<PlayListBloc>(),
-                                                                                          ),
-                                                                                        ],
-                                                                                        child: ListSongBottomNavigation(show: true, songModel: snapshot.data![index],)
-                                                                                    )));
+                                                if (snapshot.hasData) {
+                                                  songs = snapshot.data!;
+                                                }
 
-                                                                      },
-
-                                                                      child: const CardWidget(text: 'List', path:"assets/icon/list(2).png",)),
-
-                                                                ],
+                                                addRecentPlay(
+                                                    snapshot.data![index]);
+                                                // ignore: use_build_context_synchronously
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            MultiBlocProvider(
+                                                              providers: [
+                                                                BlocProvider(
+                                                                    create: (context) =>
+                                                                        locator.get<
+                                                                            PlaySongBloc>()),
+                                                                BlocProvider(
+                                                                  create: (context) =>
+                                                                      locator.get<
+                                                                          PlayNewSongBloc>(),
+                                                                ),
+                                                                BlocProvider(
+                                                                  create: (context) =>
+                                                                      locator.get<
+                                                                          FavoriteBloc>(),
+                                                                ),
+                                                                BlocProvider(
+                                                                  create: (context) =>
+                                                                      locator.get<
+                                                                          SortSongBloc>(),
+                                                                ),
+                                                                BlocProvider(
+                                                                  create: (context) =>
+                                                                      locator.get<
+                                                                          FavoriteBloc>(),
+                                                                ),
+                                                              ],
+                                                              child: PlayPage(
+                                                                play: true,
+                                                                concatenatingAudioSource:
+                                                                    playlist,
+                                                                index: index,
+                                                                songs: songs,
                                                               ),
-                                                              const SizedBox(width: 20,),
-                                                              Column(
-                                                                children: [
-                                                                  GestureDetector(
-                                                                      child: const CardWidget(
-                                                                        text: 'Info',path:  "assets/icon/information-button.png",)),                                                              const SizedBox(height: 10,),
-
-                                                                  const SizedBox(height: 10,),
-
-                                                                  GestureDetector(
-                                                                    onTap: (){
-                                                                    },
-                                                                      child: const CardWidget(
-                                                                        text: 'Share',path:  "assets/icon/share.png",)),
-
-                                                                ],
-                                                              ),
-                                                              const SizedBox(width: 20,),
-                                                              Column(
-                                                                children: [
-                                                                  GestureDetector(
-                                                                      child: const CardWidget(
-                                                                        text: 'Favorite',path:  "assets/icon/like.png",)),                                                              const SizedBox(height: 10,),
-                                                                  const SizedBox(height: 10,),
-
-
-                                                                  GestureDetector(
-                                                                      onTap: (){
-                                                                        DeleteSongFile().getDeleteSong(snapshot.data![index]);
-                                                                        deleteSong(snapshot.data![index].data);
-                                                                        Navigator.pop(context);
-                                                                      },
-                                                                      child: const CardWidget(
-                                                                        text: 'Delete', path: "assets/icon/delete.png",)),
-                                                                ],
-                                                              )
-                                                            ],
-                                                          ),
-                                                        )
-
-
-
-                                                      ],
-                                                    ),
-
-                                                  ],
-                                                ),
-                                              );
-                                            },
-                                          );
-                                        },
-                                        child: Image.asset("assets/icon/dots.png",width: 25,height: 25,color: themeProvider.isDarkMode?
-                                        Colors.white:Colors.black,),
-                                      ),
-                                    ),
-                                    title: Text(
-                                      style:locator.get<MyThemes>().title(context) ,
-                                      maxLines: 1,
-                                      snapshot.data![index].title,
-                                    ),
-                                    subtitle: Text(
-                                      style: locator.get<MyThemes>().subTitle(context),
-                                      maxLines: 1,
-                                      snapshot.data![index].displayName,
-                                    ),
-                                    leading: QueryArtworkWidget(
-                                        nullArtworkWidget: Image.asset("assets/icon/vinyl-record.png"),
-                                        artworkWidth: 60,
-                                        artworkHeight: 60,
-                                        artworkFit: BoxFit.cover,
-                                        artworkBorder: const BorderRadius.all(
-                                            Radius.circular(5)),
-                                        id: snapshot.data![index].id,
-                                        type: ArtworkType.AUDIO ),
-                                    onTap: () async {
-                                      List<SongModel>songs=await SongList().getSongs(sort);
-                                      // ignore: use_build_context_synchronously
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  MultiBlocProvider(
-                                                    providers: [
-                                                      BlocProvider(
-                                                          create: (context) =>
-                                                              locator.get<
-                                                                  PlaySongBloc>()),
-                                                      BlocProvider(
-                                                        create: (context) => locator
-                                                            .get<PlayNewSongBloc>(),
-                                                      ),
-                                                      BlocProvider(
-                                                        create: (context) => locator
-                                                            .get<FavoriteBloc>(),
-                                                      ),
-                                                      BlocProvider(
-                                                        create: (context) => locator
-                                                            .get<SortSongBloc>(),
-                                                      ),
-                                                      BlocProvider(
-                                                        create: (context) => locator
-                                                            .get<FavoriteBloc>(),
-                                                      ),
-                                                    ],
-                                                    child: PlayPage(
-                                                      play: true, concatenatingAudioSource: playlist, index: index, songs: songs,
-                                                    ),
-                                                  )));
-                                      addRecentPlay(snapshot.data![index]);
-                                      // BlocProvider.of<PlayNewSongBloc>(context).add(PlayNewSongEvent());
-
+                                                            )));
+                                              },
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            height: 15,
+                                          )
+                                        ],
+                                      );
                                     },
                                   );
-                                },
-                              );
-                            } else if (snapshot.hasError) {
-                              return Text('Error: ${snapshot.error}');
-                            }
-                            return const Center(child: CircularProgressIndicator());
+                                } else if (snapshot.hasError) {
+                                  return Text('Error: ${snapshot.error}');
+                                }
+                                return const Center(
+                                    child: CircularProgressIndicator());
+                              },
+                            );
                           },
                         );
                       },
-
                     );
                   },
                 );
               },
-            );
-  },
-),
+            ),
           ),
         ],
       ),
@@ -386,20 +549,22 @@ final TextStyle moon=TextStyle(color: Colors.white,fontSize: 20,fontFamily: "ibm
     DeleteSong deleteSong = DeleteSong(path);
     await box.add(deleteSong);
   }
+
   addRecentPlay(SongModel songModel) async {
-    bool check=false;
+    bool check = false;
     var box = await Hive.openBox<RecentPlay>("Recent play");
-    for(int i=0;i<box.length;i++){
-      if (songModel.data==box.getAt(i)?.path) {
-        check=true;
+    for (int i = 0; i < box.length; i++) {
+      if (songModel.data == box.getAt(i)?.path) {
+        check = true;
         return;
       }
     }
     if (!check) {
-      if (box.length>10) {
+      if (box.length > 10) {
         box.deleteAt(0);
       }
-      RecentPlay recentPlay=RecentPlay(songModel.title, songModel.data, songModel.id, songModel.artist) ;
+      RecentPlay recentPlay = RecentPlay(
+          songModel.title, songModel.data, songModel.id, songModel.artist);
       await box.add(recentPlay);
     }
   }

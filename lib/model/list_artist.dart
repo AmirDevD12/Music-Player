@@ -12,7 +12,7 @@ class ListArtist {
 
       if (hasPermission) {
         // Retrieve a list of songs.
-        List<SongModel>  songs = await SongList().getSongs(SongSortType.TITLE);
+        List<SongModel>  songs = await SongList().getSongs(SongSortType.DATE_ADDED);
 
         for (SongModel song in songs) {
           if (song.artist==nameArtist) {

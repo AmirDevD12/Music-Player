@@ -21,7 +21,7 @@ class SelectSongScreen extends StatefulWidget {
 }
 
 class _SelectSongScreenState extends State<SelectSongScreen> {
-  SongSortType songSortType = SongSortType.TITLE;
+  SongSortType songSortType = SongSortType.DATE_ADDED;
 
   @override
   void initState() {

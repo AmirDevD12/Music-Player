@@ -60,7 +60,7 @@ class _SearchPage extends State<SearchPage> {
           valueListenable: Hive.box<DeleteSong>("Delete Song").listenable(),
           builder: (BuildContext context, value, Widget? child) {
             return FutureBuilder<List<SongModel>>(
-              future: SongList().getSongs(SongSortType.TITLE),
+              future: SongList().getSongs(SongSortType.DATE_ADDED),
               builder: (BuildContext context,
                   AsyncSnapshot<List<SongModel>> snapshot) {
                 if (snapshot.hasData) {

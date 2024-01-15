@@ -116,10 +116,6 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
               BlocBuilder<SortSongBloc, SortSongState>(
 
   builder: (context, state) {
-
-           if (state is SortByAddState) {
-
-           }
     return BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
                 builder: (context, state) {
                   return IconButton(

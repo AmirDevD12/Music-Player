@@ -5,7 +5,7 @@ class SongCountArtist {
   Future<Map<String, int>> getSongCountByArtist() async {
     Map<String, int> songCountByArtist = {};
     List<SongModel> songs = [];
-    songs = await SongList().getSongs(SongSortType.TITLE);
+    songs = await SongList().getSongs(SongSortType.DATE_ADDED);
     for (SongModel song in songs) {
       bool check=false;
       if (song.artist!=null) {

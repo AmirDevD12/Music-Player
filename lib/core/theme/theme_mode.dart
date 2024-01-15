@@ -16,7 +16,7 @@ class ThemeProvider extends ChangeNotifier{
 }
 
 class MyThemes {
-
+  final  Color cContainerSong=const Color(0xfff7f8fa);
   TextStyle title(BuildContext context){
     ThemeProvider themeProvider=Provider.of<ThemeProvider>(context);
     TextStyle textStyleTitle= TextStyle(fontWeight: FontWeight.bold,fontFamily: "ibm",fontSize: 15,color:themeProvider.isDarkMode?Colors.white:Colors.black);
@@ -25,7 +25,7 @@ class MyThemes {
 
   TextStyle subTitle(BuildContext context){
     ThemeProvider themeProvider=Provider.of<ThemeProvider>(context);
-    TextStyle textStySub= TextStyle(fontFamily: "ibm",fontSize: 15,color: themeProvider.isDarkMode?Colors.white:Colors.black);
+    TextStyle textStySub= TextStyle(fontFamily: "ibm",fontSize: 15,color: themeProvider.isDarkMode?Colors.white:const Color(0xffb4b5b9));
     return textStySub;
   }
 
@@ -47,14 +47,14 @@ class MyThemes {
     ),
     fontFamily: "ibm",
     canvasColor: Colors.red,
-    appBarTheme: const AppBarTheme(color: Color(0xff1a1b1d)),
+    appBarTheme: const AppBarTheme(color: Colors.black),
 
     iconButtonTheme: const IconButtonThemeData(style: ButtonStyle()),
     primaryIconTheme: const IconThemeData(color: Colors.green),
 
     unselectedWidgetColor: Colors.red,
     primaryColorLight: Colors.white,
-    scaffoldBackgroundColor: const Color(0xff1a1b1d),
+    scaffoldBackgroundColor: Colors.black,
     primaryColor: Colors.white,
     secondaryHeaderColor: Colors.white,
     iconTheme: const IconThemeData(color: Colors.white,opacity: 0.8),
