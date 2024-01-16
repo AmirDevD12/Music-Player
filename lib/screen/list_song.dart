@@ -20,6 +20,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import '../model/songs_model.dart';
 import 'bottum_navigation/list_song_bottomnav.dart';
 
@@ -272,6 +273,7 @@ final TextStyle moon=TextStyle(color: Colors.white,fontSize: 20,fontFamily: "ibm
 
                                                                   GestureDetector(
                                                                     onTap: (){
+                                                                      shareSong(snapshot.data![index].data);
                                                                     },
                                                                       child: const CardWidget(
                                                                         text: 'Share',path:  "assets/icon/share.png",)),
@@ -418,6 +420,13 @@ final TextStyle moon=TextStyle(color: Colors.white,fontSize: 20,fontFamily: "ibm
       }
       RecentPlay recentPlay=RecentPlay(songModel.title, songModel.data, songModel.id, songModel.artist) ;
       await box.add(recentPlay);
+    }
+  }
+  Future<void> shareSong(String songPath) async {
+    try {
+      await Share.shareFiles([songPath], text: 'Check out this song!');
+    } catch (e) {
+      print('Error sharing file: $e');
     }
   }
 }
