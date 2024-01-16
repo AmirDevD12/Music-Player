@@ -2,15 +2,25 @@ import 'package:first_project/core/theme/theme_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class CardWidget extends StatelessWidget {
+class CardWidget extends StatefulWidget {
   final String text;
   final String path;
    const CardWidget({super.key, required this.text, required this.path,});
 
   @override
+  State<CardWidget> createState() => _CardWidgetState();
+}
+
+class _CardWidgetState extends State<CardWidget> {
+  late final ThemeProvider themeProvider;
+  @override
+  void didChangeDependencies() {
+    themeProvider = Provider.of<ThemeProvider>(context);
+    super.didChangeDependencies();
+  }
+  @override
   Widget build(BuildContext context) {
-    final themeProvider =
-  Provider.of<ThemeProvider>(context);
+
     return   Container(
       width: 40,
       height: 40,
@@ -21,7 +31,7 @@ class CardWidget extends StatelessWidget {
       child: Column(mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Image.asset(
-            path,
+            widget.path,
             color: Colors.white,
             width: 25,
             height: 25,

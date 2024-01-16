@@ -6,9 +6,21 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
 
-class RecentAddScreen extends StatelessWidget {
+class RecentAddScreen extends StatefulWidget {
   RecentAddScreen({Key? key}) : super(key: key);
+
+  @override
+  State<RecentAddScreen> createState() => _RecentAddScreenState();
+}
+
+class _RecentAddScreenState extends State<RecentAddScreen> {
   Box recentPlay = Hive.box<RecentPlay>("Recent play");
+  late final ThemeProvider themeProvider;
+  @override
+  void didChangeDependencies() {
+    themeProvider = Provider.of<ThemeProvider>(context);
+    super.didChangeDependencies();
+  }
   @override
   Widget build(BuildContext context) {
 
@@ -34,8 +46,7 @@ class RecentAddScreen extends StatelessWidget {
                 itemCount: recentPlay.length,
                 itemBuilder: (BuildContext context, int index) {
                   final RecentPlay recentPlay = box.getAt(index);
-                  final themeProvider =
-                  Provider.of<ThemeProvider>(context);
+
                   return ListTile(
                     trailing: SizedBox(
                       width: 36,

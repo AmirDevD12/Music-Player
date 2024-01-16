@@ -15,6 +15,7 @@ import 'package:first_project/screen/bottum_navigation/search_bottum.dart';
 import 'package:first_project/screen/playSong_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
 import 'bottomNavigation_widget.dart';
@@ -47,14 +48,18 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
      OnAudioQuery().permissionsStatus();
   }
-
+  late final ThemeProvider themeProvider;
+  @override
+  void didChangeDependencies() {
+    themeProvider = Provider.of<ThemeProvider>(context);
+    super.didChangeDependencies();
+  }
   late SongModel songModel;
   int  index=0;
   List<SongModel> listSong=[];
   @override
   Widget build(BuildContext context) {
 
-    final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       appBar: AppBar(
         actions: const [ThemeSwitcher()],
@@ -85,8 +90,8 @@ class _MyHomePageState extends State<MyHomePage> {
             listSong=state.listSong;
           }
           return SizedBox(
-            width: double.infinity,
-            height: state is PlaySongInitial?60:120,
+            width: MediaQuery.of(context).size.width,
+            height: locator.get<AudioPlayer>().currentIndex==null?60:130,
             child: Column(mainAxisAlignment: MainAxisAlignment.end,
               children: [
                      state is DurationState ||state is PausePlayState||state is ShowNavState
@@ -121,7 +126,14 @@ class _MyHomePageState extends State<MyHomePage> {
                                         ),
                                       )));
                         },
-                        child: BottomNavigationBarScreen(listSong: listSong,)):const SizedBox(),
+                        child: Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: 60,
+                            decoration: BoxDecoration(
+                                color:
+                                themeProvider.isDarkMode ?  Colors.deepPurple: const Color(0xff1a1b1d),
+                                borderRadius: const BorderRadius.all(Radius.circular(30))),
+                            child: BottomNavigationBarScreen(listSong: listSong,))):const SizedBox(),
 
                 const SizedBox(height: 5,),
                 Expanded(

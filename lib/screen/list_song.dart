@@ -23,21 +23,37 @@ import 'package:provider/provider.dart';
 import '../model/songs_model.dart';
 import 'bottum_navigation/list_song_bottomnav.dart';
 
-class ListMusic extends StatelessWidget {
+class ListMusic extends StatefulWidget {
+
+  ListMusic({super.key});
+
+  @override
+  State<ListMusic> createState() => _ListMusicState();
+}
+
+class _ListMusicState extends State<ListMusic> {
   SongSortType songSortType = SongSortType.TITLE;
 
   String select = "";
+
   Box boxDelete = Hive.box<DeleteSong>("Delete Song");
+
   int length = 0;
+
   SongSortType sort = SongSortType.TITLE;
 
-  ListMusic({super.key});
 final TextStyle sun=TextStyle(color: Colors.black,fontSize: 20,fontFamily: "ibm",fontWeight: FontWeight.bold);
+
 final TextStyle moon=TextStyle(color: Colors.white,fontSize: 20,fontFamily: "ibm",fontWeight: FontWeight.bold);
+  late final ThemeProvider themeProvider;
+  @override
+  void didChangeDependencies() {
+    themeProvider = Provider.of<ThemeProvider>(context);
+    super.didChangeDependencies();
+  }
   @override
   Widget build(BuildContext context) {
-    final themeProvider =
-    Provider.of<ThemeProvider>(context);
+
     return Scaffold(
       backgroundColor: themeProvider.isDarkMode?const Color(0xff1a1b1d):const Color(0xfff3f6fb),
       body: Column(
@@ -386,6 +402,7 @@ final TextStyle moon=TextStyle(color: Colors.white,fontSize: 20,fontFamily: "ibm
     DeleteSong deleteSong = DeleteSong(path);
     await box.add(deleteSong);
   }
+
   addRecentPlay(SongModel songModel) async {
     bool check=false;
     var box = await Hive.openBox<RecentPlay>("Recent play");
