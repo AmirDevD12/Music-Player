@@ -18,21 +18,38 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import '../model/songs_model.dart';
 import 'bottum_navigation/list_song_bottomnav.dart';
 
-class ListMusic extends StatelessWidget {
+class ListMusic extends StatefulWidget {
+
+  ListMusic({super.key});
+
+  @override
+  State<ListMusic> createState() => _ListMusicState();
+}
+
+class _ListMusicState extends State<ListMusic> {
+  SongSortType songSortType = SongSortType.TITLE;
 
   String select = "";
   Box boxDelete = Hive.box<DeleteSong>("Delete Song");
 
   SongSortType sort = SongSortType.DATE_ADDED;
 
-  ListMusic({super.key});
+final TextStyle sun=TextStyle(color: Colors.black,fontSize: 20,fontFamily: "ibm",fontWeight: FontWeight.bold);
 
+final TextStyle moon=TextStyle(color: Colors.white,fontSize: 20,fontFamily: "ibm",fontWeight: FontWeight.bold);
+  late final ThemeProvider themeProvider;
+  @override
+  void didChangeDependencies() {
+    themeProvider = Provider.of<ThemeProvider>(context);
+    super.didChangeDependencies();
+  }
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+
     return Scaffold(
       backgroundColor: themeProvider.isDarkMode ? Colors.black : Colors.white,
       body: Column(
@@ -566,6 +583,13 @@ class ListMusic extends StatelessWidget {
       RecentPlay recentPlay = RecentPlay(
           songModel.title, songModel.data, songModel.id, songModel.artist);
       await box.add(recentPlay);
+    }
+  }
+  Future<void> shareSong(String songPath) async {
+    try {
+      await Share.shareFiles([songPath], text: 'Check out this song!');
+    } catch (e) {
+      print('Error sharing file: $e');
     }
   }
 }

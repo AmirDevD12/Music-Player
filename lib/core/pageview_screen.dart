@@ -22,12 +22,17 @@ import 'bottomNavigation_widget.dart';
 import 'card_widget.dart';
 
 
-class MyHomePage extends StatelessWidget {
+class MyHomePage extends StatefulWidget {
 
    MyHomePage({super.key, });
 
-  PageController controller = PageController();
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
 
+class _MyHomePageState extends State<MyHomePage> {
+
+  PageController controller = PageController();
   final List<Widget> _list = <Widget>[
     const Center(child: PageViewSong()),
      Center(child: SearchPage()),
@@ -35,11 +40,26 @@ class MyHomePage extends StatelessWidget {
     const Center(child: AlbumPage()),
   ];
 
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+     OnAudioQuery().permissionsStatus();
+  }
+  late final ThemeProvider themeProvider;
+  @override
+  void didChangeDependencies() {
+    themeProvider = Provider.of<ThemeProvider>(context);
+    super.didChangeDependencies();
+  }
+  late SongModel songModel;
+  int  index=0;
   List<SongModel> listSong=[];
 
   @override
   Widget build(BuildContext context) {
-
 
     return Scaffold(
       appBar: AppBar(
@@ -105,7 +125,14 @@ class MyHomePage extends StatelessWidget {
                                         ),
                                       )));
                         },
-                        child: BottomNavigationBarScreen(listSong: listSong,)):const SizedBox(),
+                        child: Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: 60,
+                            decoration: BoxDecoration(
+                                color:
+                                themeProvider.isDarkMode ?  Colors.deepPurple: const Color(0xff1a1b1d),
+                                borderRadius: const BorderRadius.all(Radius.circular(30))),
+                            child: BottomNavigationBarScreen(listSong: listSong,))):const SizedBox(),
 
                 const SizedBox(height: 5,),
                 Expanded(

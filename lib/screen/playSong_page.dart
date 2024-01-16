@@ -72,15 +72,21 @@ class _PlayPageState extends State<PlayPage>
   @override
   void dispose() {
     _animationController.dispose();
-    Navigator.pop(context);
+
     super.dispose();
     favorite.close();
+  }
+  late final ThemeProvider themeProvider;
+  @override
+  void didChangeDependencies() {
+     themeProvider = Provider.of<ThemeProvider>(context);
+    super.didChangeDependencies();
   }
   Box favorite = Hive.box<FavoriteSong>("Favorite");
   bool isFavorite=false;
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+
     return Scaffold(
         body: SingleChildScrollView(
             child: Column(

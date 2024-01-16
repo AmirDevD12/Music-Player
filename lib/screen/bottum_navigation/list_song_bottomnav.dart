@@ -56,10 +56,15 @@ class _ListSongBottomNavigationState extends State<ListSongBottomNavigation> {
     super.dispose();
     BlocProvider.of<PlayListBloc>(context).add(AddFromListEvent());
   }
-
+  late final ThemeProvider themeProvider;
+  @override
+  void didChangeDependencies() {
+    themeProvider = Provider.of<ThemeProvider>(context);
+    super.didChangeDependencies();
+  }
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
+
     if (widget.show) {
       BlocProvider.of<PlayListBloc>(context).add(ShowBoxEvent());
     }

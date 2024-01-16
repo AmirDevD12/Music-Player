@@ -62,140 +62,138 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
     _animationMusic.dispose();
     super.dispose();
   }
-
+  late final ThemeProvider themeProvider;
+  @override
+  void didChangeDependencies() {
+    themeProvider = Provider.of<ThemeProvider>(context);
+    super.didChangeDependencies();
+  }
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
-    return Container(
-      width: MediaQuery.of(context).size.width-20,
-      height: 60,
-      decoration: BoxDecoration(
-          color:
-              themeProvider.isDarkMode ?  Colors.deepPurple: const Color(0xff1a1b1d),
-          borderRadius: const BorderRadius.all(Radius.circular(30))),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Row(
-            children: [
-              BlocBuilder<PlaySongBloc, PlaySongState>(
-                builder: (context, state) {
-                  if (state is ShowNavState) {
 
+    return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          children: [
+            BlocBuilder<PlaySongBloc, PlaySongState>(
+              builder: (context, state) {
+                if (state is ShowNavState) {
+
+                  ChangeAnimation().toggleAnimation(
+                      _animationController, locator.get<AudioPlayer>().playing ? true : false);
+                  ChangeAnimation().toggleAnimation(
+                      _animationMusic, locator.get<AudioPlayer>().playing ? true : false);
+                }
+
+                return IconButton(
+                    onPressed: () async {
+                      if (locator.get<AudioPlayer>().playing) {
+                        locator.get<AudioPlayer>().stop();
+                      } else {
+                        locator.get<AudioPlayer>().play();
+                      }
+                      BlocProvider.of<PlaySongBloc>(context)
+                          .add(PausePlayEvent());
                       ChangeAnimation().toggleAnimation(
                           _animationController, locator.get<AudioPlayer>().playing ? true : false);
                       ChangeAnimation().toggleAnimation(
                           _animationMusic, locator.get<AudioPlayer>().playing ? true : false);
-                  }
+                    },
+                    icon: Image.asset(
+                      !locator.get<AudioPlayer>().playing
+                          ? "assets/icon/play-button-arrowhead.png"
+                          : "assets/icon/pause.png",
+                      color: Colors.white,
+                      width: 35,
+                      height: 25,
+                    ));
+              },
+            ),
+            BlocBuilder<SortSongBloc, SortSongState>(
 
-                  return IconButton(
-                      onPressed: () async {
-                        if (locator.get<AudioPlayer>().playing) {
-                          locator.get<AudioPlayer>().stop();
-                        } else {
-                          locator.get<AudioPlayer>().play();
-                        }
-                        BlocProvider.of<PlaySongBloc>(context)
-                            .add(PausePlayEvent());
-                        ChangeAnimation().toggleAnimation(
-                            _animationController, locator.get<AudioPlayer>().playing ? true : false);
-                        ChangeAnimation().toggleAnimation(
-                            _animationMusic, locator.get<AudioPlayer>().playing ? true : false);
-                      },
-                      icon: Image.asset(
-                       !locator.get<AudioPlayer>().playing
-                            ? "assets/icon/play-button-arrowhead.png"
-                            : "assets/icon/pause.png",
-                        color: Colors.white,
-                        width: 35,
-                        height: 25,
-                      ));
-                },
-              ),
-              BlocBuilder<SortSongBloc, SortSongState>(
+              builder: (context, state) {
 
-  builder: (context, state) {
-    return BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
-                builder: (context, state) {
-                  return IconButton(
-                      onPressed: () async {
-                        try{
-                          locator.get<AudioPlayer>().seekToNext();
-                          ChangeAnimation().toggleAnimation(
-                              _animationController,
-                              locator.get<AudioPlayer>().playing
-                                  ? true
-                                  : false);
-                          BlocProvider.of<PlayNewSongBloc>(context).add(
-                              NewSongEvent(locator
-                                  .get<AudioPlayer>()
-                                  .currentIndex!));
-                        }
-                        catch(e){
+                if (state is SortByAddState) {
 
-                        }
+                }
+                return BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
+                  builder: (context, state) {
+                    return IconButton(
+                        onPressed: () async {
+                          try{
+                            locator.get<AudioPlayer>().seekToNext();
+                            ChangeAnimation().toggleAnimation(
+                                _animationController,
+                                locator.get<AudioPlayer>().playing
+                                    ? true
+                                    : false);
+                            BlocProvider.of<PlayNewSongBloc>(context).add(
+                                NewSongEvent(locator
+                                    .get<AudioPlayer>()
+                                    .currentIndex!));
+                          }
+                          catch(e){
 
-                      },
-                      icon: Image.asset(
-                        "assets/icon/music-player(1).png",
-                        color: Colors.white,
-                        width: 35,
-                        height: 30,
-                      ));
-                },
-              );
-  },
-),
-            ],
+                          }
+
+                        },
+                        icon: Image.asset(
+                          "assets/icon/music-player(1).png",
+                          color: Colors.white,
+                          width: 35,
+                          height: 30,
+                        ));
+                  },
+                );
+              },
+            ),
+          ],
+        ),
+        Row(
+          children: [
+            BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
+              builder: (context, state) {
+                return Center(
+                  child: Lottie.asset('assets/animation/Animation - 1702455265848.json',
+                    controller: _animationMusic,
+                  ),);
+              },
+            ),
+          ],
+        ),
+        SizedBox(width: 60,
+          height: 60,
+          child: BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
+            buildWhen: (privioce, current) {
+              if (current is PauseAnimationState||current is ShowNavState) {
+                return false;
+              } else {
+                return true;
+              }
+            },
+            builder: (context, state) {
+
+              return widget.listSong.isNotEmpty? CircleAvatar(
+                                backgroundImage:
+                                    const AssetImage("assets/icon/vinyl-record.png"),
+                                radius: 30,
+                child: RotationTransition(
+                    turns: _animation,
+                    child: Center(
+                      child: QueryArtworkWidget(
+                          nullArtworkWidget: Image.asset("assets/icon/vinyl-record.png"),
+                          artworkBorder:
+                              const BorderRadius.all(Radius.circular(30)),
+                          artworkWidth: 50,
+                          artworkHeight: 50,
+                          id: widget.listSong[locator.get<AudioPlayer>().currentIndex!].id,
+                          type: ArtworkType.AUDIO),
+                    )),
+              ):const SizedBox();
+            },
           ),
-          Row(
-            children: [
-             BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
-  builder: (context, state) {
-    return Center(
-                 child: Lottie.asset('assets/animation/Animation - 1702455265848.json',
-                 controller: _animationMusic,
-                 ),);
-  },
-),
-            ],
-          ),
-          Row(
-            children: [
-              BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
-                buildWhen: (privioce, current) {
-                  if (current is PauseAnimationState||current is ShowNavState) {
-                    return false;
-                  } else {
-                    return true;
-                  }
-                },
-                builder: (context, state) {
-                  print(locator.get<AudioPlayer>().currentIndex);
-                  return RotationTransition(
-                      turns: _animation,
-                      child: CircleAvatar(
-                        backgroundImage:
-                            const AssetImage("assets/icon/vinyl-record.png"),
-                        radius: 30,
-                        child: Center(
-                          child: QueryArtworkWidget(
-                              nullArtworkWidget: Image.asset("assets/icon/vinyl-record.png"),
-                              artworkBorder:
-                                  const BorderRadius.all(Radius.circular(100)),
-                              artworkWidth: 50,
-                              artworkHeight: 50,
-                              id: widget.listSong[locator.get<AudioPlayer>().currentIndex!].id,
-                              type: ArtworkType.AUDIO),
-                        ),
-                      ));
-                },
-              )
-            ],
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
