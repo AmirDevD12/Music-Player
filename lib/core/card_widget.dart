@@ -22,21 +22,17 @@ class _CardWidgetState extends State<CardWidget> {
   Widget build(BuildContext context) {
 
     return   Container(
-      width: 40,
-      height: 40,
-      decoration: const BoxDecoration(
-          color:  Color(0xffff435e),
-          borderRadius: BorderRadius.all(Radius.circular(10))
-      ),
+      width: 70,
+      height: 60,
       child: Column(mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Image.asset(
             widget.path,
-            color: Colors.white,
+            color: Colors.black,
             width: 25,
             height: 25,
           ),
-          Text(text,style: MyThemes().title(context),)
+          Text(widget.text,style: MyThemes().title(context),)
         ],
       ),
     );
