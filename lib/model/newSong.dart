@@ -1,3 +1,4 @@
+import 'package:first_project/bloc/favorite_song/favorite_bloc.dart';
 import 'package:first_project/bloc/newSong/play_new_song_bloc.dart';
 import 'package:first_project/bloc/play_song_bloc.dart';
 import 'package:first_project/locator.dart';
@@ -26,10 +27,11 @@ class PlayNewSong {
         locator.get<AudioPlayer>().positionStream.listen((event) async {
           position = event;
           if (position>=duration&&queue) {
-      print("fsfsfsfffffffffff");
+
             locator.get<AudioPlayer>().setAudioSource(concatenatingAudioSources, initialIndex: index, initialPosition: Duration.zero);
             locator.get<AudioPlayer>().play();
           }
+
           context.read<PlaySongBloc>().add(DurationEvent(
             duration,
             position,
@@ -38,6 +40,7 @@ class PlayNewSong {
       }
       locator.get<AudioPlayer>().durationStream.listen((event) {
         duration = event!;
+
         context.read<PlaySongBloc>().add(DurationEvent(
           duration,
           position,

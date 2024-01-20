@@ -15,7 +15,6 @@ import 'package:first_project/screen/bottum_navigation/search_bottum.dart';
 import 'package:first_project/screen/playSong_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
 import 'bottomNavigation_widget.dart';
@@ -48,19 +47,14 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
      OnAudioQuery().permissionsStatus();
   }
-  late final ThemeProvider themeProvider;
-  @override
-  void didChangeDependencies() {
-    themeProvider = Provider.of<ThemeProvider>(context);
-    super.didChangeDependencies();
-  }
+
   late SongModel songModel;
   int  index=0;
   List<SongModel> listSong=[];
-
   @override
   Widget build(BuildContext context) {
 
+    final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       appBar: AppBar(
         actions: const [ThemeSwitcher()],
@@ -69,6 +63,8 @@ class _MyHomePageState extends State<MyHomePage> {
       bottomNavigationBar: BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
         buildWhen: (privioc, current) {
           if (current is NewSongState) {
+
+
             return true;
           } else {
             return false;
@@ -85,12 +81,12 @@ class _MyHomePageState extends State<MyHomePage> {
         },
         builder: (context, state) {
           if(state is ShowNavState){
-
+            print("amirrrrr");
             listSong=state.listSong;
           }
           return SizedBox(
             width: double.infinity,
-            height: state is DurationState ||state is PausePlayState||state is ShowNavState?120:60,
+            height: state is PlaySongInitial?60:120,
             child: Column(mainAxisAlignment: MainAxisAlignment.end,
               children: [
                      state is DurationState ||state is PausePlayState||state is ShowNavState
@@ -121,59 +117,62 @@ class _MyHomePageState extends State<MyHomePage> {
                                           ),
                                         ],
                                         child: PlayPage(
-                                          play: true, concatenatingAudioSource: null, index:locator.get<AudioPlayer>().currentIndex!, songs:listSong,
+                                          playInList: false, concatenatingAudioSource: null, index:index, songs:listSong, nameList: null,
                                         ),
                                       )));
                         },
-                        child: Container(
-                            width: MediaQuery.of(context).size.width,
-                            height: 60,
-                            decoration: BoxDecoration(
-                                color:
-                                themeProvider.isDarkMode ?  Colors.deepPurple: const Color(0xff1a1b1d),
-                                borderRadius: const BorderRadius.all(Radius.circular(30))),
-                            child: BottomNavigationBarScreen(listSong: listSong,))):const SizedBox(),
+                        child: BottomNavigationBarScreen(listSong: listSong,)):const SizedBox(),
 
                 const SizedBox(height: 5,),
                 Expanded(
 
-                  child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      GestureDetector(
-                          onTap: () {
-                            controller.animateToPage(0,
-                                duration: const Duration(milliseconds: 10),
-                                curve: Curves.easeOut);
-                          },
-                          child: const CardWidget(
-                            text: 'My Music',path: "assets/icon/music(1).png",)),
-                      GestureDetector(
-                          onTap: () {
-                            controller.animateToPage(1,
-                                duration: const Duration(milliseconds: 10),
-                                curve: Curves.easeOut);
-                          },
-                          child: const CardWidget(
-                            text: 'search', path: "assets/icon/magnifying-glass.png",)),
-                      GestureDetector(
-                          onTap: () {
-                            controller.animateToPage(2,
-                                duration: const Duration(milliseconds: 10),
-                                curve: Curves.easeOut);
-                          }
-                          ,
-                          child: const CardWidget(text: 'List', path:"assets/icon/list(2).png",)),
-                      GestureDetector(
-                          onTap: () {
+                  child: SizedBox(
+                   width: MediaQuery.of(context).size.width,
 
-                            controller.animateToPage(3,
-                                duration: const Duration(milliseconds: 10),
-                                curve: Curves.easeOut);
-                          }
-                          ,
-                          child: const CardWidget(
-                            text: 'Path',path:  "assets/icon/information-button.png",)),
-                    ],
+                    height: 70,
+
+                    child: Column(mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            GestureDetector(
+                                onTap: () {
+                                  controller.animateToPage(0,
+                                      duration: const Duration(milliseconds: 10),
+                                      curve: Curves.easeOut);
+                                },
+                                child: const CardWidget(
+                                  text: 'My Music',path: "assets/icon/music(1).png",)),
+                            GestureDetector(
+                                onTap: () {
+                                  controller.animateToPage(1,
+                                      duration: const Duration(milliseconds: 10),
+                                      curve: Curves.easeOut);
+                                },
+                                child: const CardWidget(
+                                  text: 'search', path: "assets/icon/magnifying-glass.png",)),
+                            GestureDetector(
+                                onTap: () {
+                                  controller.animateToPage(2,
+                                      duration: const Duration(milliseconds: 10),
+                                      curve: Curves.easeOut);
+                                }
+                                ,
+                                child: const CardWidget(text: 'List', path:"assets/icon/list(2).png",)),
+                            GestureDetector(
+                                onTap: () {
+
+                                  controller.animateToPage(3,
+                                      duration: const Duration(milliseconds: 10),
+                                      curve: Curves.easeOut);
+                                }
+                                ,
+                                child: const CardWidget(
+                                  text: 'Path',path:  "assets/icon/information-button.png",)),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 )
               ],

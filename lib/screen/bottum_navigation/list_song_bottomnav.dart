@@ -56,15 +56,10 @@ class _ListSongBottomNavigationState extends State<ListSongBottomNavigation> {
     super.dispose();
     BlocProvider.of<PlayListBloc>(context).add(AddFromListEvent());
   }
-  late final ThemeProvider themeProvider;
-  @override
-  void didChangeDependencies() {
-    themeProvider = Provider.of<ThemeProvider>(context);
-    super.didChangeDependencies();
-  }
+
   @override
   Widget build(BuildContext context) {
-
+    final themeProvider = Provider.of<ThemeProvider>(context);
     if (widget.show) {
       BlocProvider.of<PlayListBloc>(context).add(ShowBoxEvent());
     }
@@ -125,25 +120,35 @@ class _ListSongBottomNavigationState extends State<ListSongBottomNavigation> {
             )),
       ),
       bottomNavigationBar: widget.show
-          ? BlocBuilder<PlayListBloc, PlayListState>(
-              builder: (context, state) {
-                return GestureDetector(
-                  onTap: () {
-                    addNewList(boxName);
-                    add(boxName, name);
-                    Navigator.pop(context);
-                    BlocProvider.of<PlayListBloc>(context)
-                        .add(SelectListEvent());
+          ? Row(mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              BlocBuilder<PlayListBloc, PlayListState>(
+                  builder: (context, state) {
+                    return GestureDetector(
+                      onTap: () {
+                        addNewList(boxName);
+                        add(boxName, name);
+                        Navigator.pop(context);
+                        BlocProvider.of<PlayListBloc>(context)
+                            .add(SelectListEvent());
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(color: Colors.blueGrey.shade300,
+                          borderRadius: const BorderRadius.horizontal(right: Radius.circular(30),left: Radius.circular(30))
+                        ),
+                        width: 200,
+                        height: 50,
+                        child:  Column(mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text("add to play list ",textAlign: TextAlign.center,style: locator.get<MyThemes>().title(context),),
+                          ],
+                        ),
+                      ),
+                    );
                   },
-                  child: Container(
-                    width: 300,
-                    height: 50,
-                    color: Colors.red,
-                    child: Text("add"),
-                  ),
-                );
-              },
-            )
+                ),
+            ],
+          )
           : const SizedBox(),
       appBar: widget.show
           ? AppBar(

@@ -27,15 +27,9 @@ class SearchPage extends StatefulWidget {
 class _SearchPage extends State<SearchPage> {
   final TextEditingController _searchController = TextEditingController();
   static String nameText = "";
-  late final ThemeProvider themeProvider;
-  @override
-  void didChangeDependencies() {
-    themeProvider = Provider.of<ThemeProvider>(context);
-    super.didChangeDependencies();
-  }
   @override
   Widget build(BuildContext context) {
-
+    final themeProvider = Provider.of<ThemeProvider>(context);
     return Column(
       children: [
         Padding(
@@ -66,7 +60,7 @@ class _SearchPage extends State<SearchPage> {
           valueListenable: Hive.box<DeleteSong>("Delete Song").listenable(),
           builder: (BuildContext context, value, Widget? child) {
             return FutureBuilder<List<SongModel>>(
-              future: SongList().getSongs(SongSortType.DATE_ADDED),
+              future: SongList().getSongs(SongSortType.TITLE),
               builder: (BuildContext context,
                   AsyncSnapshot<List<SongModel>> snapshot) {
                 if (snapshot.hasData) {

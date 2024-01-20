@@ -12,6 +12,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
 
 import 'package:on_audio_query/on_audio_query.dart';
+import 'package:provider/provider.dart';
 
 class ShowSongFolder extends StatelessWidget {
   final String path;
@@ -20,7 +21,9 @@ class ShowSongFolder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final  themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
+      backgroundColor: themeProvider.isDarkMode?Colors.black:Colors.white,
       appBar: AppBar(
 
         title:Text(nameFile,) ,
@@ -41,48 +44,57 @@ class ShowSongFolder extends StatelessWidget {
                       AudioSource.uri(Uri.parse(snapshot.data![i].data)),
                   ],
                 );
-                return ListTile(
-                  title: Text(maxLines: 1,snapshot.data![index].title,style: locator.get<MyThemes>().title(context),),
-                  subtitle: Text(maxLines: 1,snapshot.data![index].displayName,style: locator.get<MyThemes>().subTitle(context),),
-                  leading: QueryArtworkWidget(
-                      artworkWidth: 60,
-                      artworkHeight: 60,
-                      artworkFit: BoxFit.cover,
-                      artworkBorder: const BorderRadius.all(Radius.circular(0)),
-                      id: snapshot.data![index].id, type: ArtworkType.AUDIO),
-                  onTap: () async {List<SongModel>songs=await locator.get<GetSongFile>().getSongFile(path);
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => MultiBlocProvider(
-                              providers: [
-                                BlocProvider(
-                                    create: (context) =>
-                                        locator.get<
-                                            PlaySongBloc>()),
-                                BlocProvider(
-                                  create: (context) => locator
-                                      .get<PlayNewSongBloc>(),
-                                ),
-                                BlocProvider(
-                                  create: (context) => locator
-                                      .get<FavoriteBloc>(),
-                                ),
-                                BlocProvider(
-                                  create: (context) => locator
-                                      .get<SortSongBloc>(),
-                                ),
-                                BlocProvider(
-                                  create: (context) => locator
-                                      .get<FavoriteBloc>(),
-                                ),
-                              ],
-                              child: PlayPage(
+                return Column(
+                  children: [
+                    Container(
+                      color: themeProvider.isDarkMode?const Color(0xff1a1b1d):locator.get<MyThemes>().cContainerSong,
+                      child: ListTile(
+                        title: Text(maxLines: 1,snapshot.data![index].title,style: locator.get<MyThemes>().title(context),),
+                        subtitle: Text(maxLines: 1,snapshot.data![index].displayName,style: locator.get<MyThemes>().subTitle(context),),
+                        leading: QueryArtworkWidget(
+                            artworkWidth: 60,
+                            artworkHeight: 60,
+                            artworkFit: BoxFit.cover,
+                            artworkBorder: const BorderRadius.all(Radius.circular(0)),
+                            id: snapshot.data![index].id, type: ArtworkType.AUDIO),
+                        onTap: () async {List<SongModel>songs=await locator.get<GetSongFile>().getSongFile(path);
+                          // ignore: use_build_context_synchronously
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MultiBlocProvider(
+                                    providers: [
+                                      BlocProvider(
+                                          create: (context) =>
+                                              locator.get<
+                                                  PlaySongBloc>()),
+                                      BlocProvider(
+                                        create: (context) => locator
+                                            .get<PlayNewSongBloc>(),
+                                      ),
+                                      BlocProvider(
+                                        create: (context) => locator
+                                            .get<FavoriteBloc>(),
+                                      ),
+                                      BlocProvider(
+                                        create: (context) => locator
+                                            .get<SortSongBloc>(),
+                                      ),
+                                      BlocProvider(
+                                        create: (context) => locator
+                                            .get<FavoriteBloc>(),
+                                      ),
+                                    ],
+                                    child: PlayPage(
 
-                                 play: true, concatenatingAudioSource:playlist , index: index, songs:songs ,
-                              ),
-                            )));
-                  },
+                                       playInList: false, concatenatingAudioSource:playlist , index: index, songs:songs, nameList: null ,
+                                    ),
+                                  )));
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 20,)
+                  ],
                 );
               },
             );

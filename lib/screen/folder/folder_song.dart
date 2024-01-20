@@ -6,6 +6,8 @@ import 'package:first_project/screen/folder/showSongFolder.dart';
 import 'package:flutter/material.dart';
 
 class FolderList extends StatelessWidget {
+  const FolderList({super.key});
+
   @override
   Widget build(BuildContext context) {
 

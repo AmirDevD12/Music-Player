@@ -1,6 +1,5 @@
 import 'package:first_project/bloc/favorite_song/favorite_bloc.dart';
 import 'package:first_project/bloc/newSong/play_new_song_bloc.dart';
-import 'package:first_project/bloc/sort/sort_song_bloc.dart';
 import 'package:first_project/locator.dart';
 import 'package:first_project/model/chengeAnimation.dart';
 import 'package:first_project/model/dataBase/favorite_dataBase/favorite_song.dart';
@@ -17,15 +16,16 @@ import '../bloc/play_song_bloc.dart';
 class PlayPage extends StatefulWidget {
   final ConcatenatingAudioSource? concatenatingAudioSource;
   final int index;
-  final bool play;
+  final bool playInList;
   final List<SongModel> songs;
+  final Box? nameList;
 
   const PlayPage({
     super.key,
-    required this.play,
+    required this.playInList,
     required this.concatenatingAudioSource,
     required this.index,
-    required this.songs,
+    required this.songs, required this.nameList,
 
   });
 
@@ -46,16 +46,12 @@ class _PlayPageState extends State<PlayPage>
   int? next = 0;
   @override
   void initState() {
-    if (widget.play) {
+
       PlayNewSong().newSong(
           widget.index, context, widget.concatenatingAudioSource, false);
-    } else {
-      PlayNewSong().newSong(
-          widget.index, context, widget.concatenatingAudioSource, false);
-    }
+
     checkFavorite(
-        widget.songs[locator.get<AudioPlayer>().currentIndex!], context);
-    next = locator.get<AudioPlayer>().currentIndex;
+        widget.songs[locator.get<AudioPlayer>().currentIndex!].data,widget.songs[locator.get<AudioPlayer>().currentIndex!].id ,context);
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 50),
@@ -72,21 +68,15 @@ class _PlayPageState extends State<PlayPage>
   @override
   void dispose() {
     _animationController.dispose();
-
+    Navigator.pop(context);
     super.dispose();
-    favorite.close();
   }
-  late final ThemeProvider themeProvider;
-  @override
-  void didChangeDependencies() {
-     themeProvider = Provider.of<ThemeProvider>(context);
-    super.didChangeDependencies();
-  }
+
   Box favorite = Hive.box<FavoriteSong>("Favorite");
   bool isFavorite=false;
   @override
   Widget build(BuildContext context) {
-
+    final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
         body: SingleChildScrollView(
             child: Column(
@@ -126,7 +116,7 @@ class _PlayPageState extends State<PlayPage>
                             BlocProvider.of<PlaySongBloc>(context)
                                 .add(ShowEvent(isPlaying, widget.songs));
 
-
+                            _animationController.dispose();
                             Navigator.pop(context);
                           },
                           icon: const Icon(
@@ -138,7 +128,9 @@ class _PlayPageState extends State<PlayPage>
                 },
               ),
               const Text("New Song",style: TextStyle(fontSize: 25,fontFamily: "ibm",fontWeight: FontWeight.bold),),
-              BlocBuilder<FavoriteBloc, FavoriteState>(
+              BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
+  builder: (context, state) {
+    return BlocBuilder<FavoriteBloc, FavoriteState>(
                 builder: (context, state) {
                   if (state is FavoriteSongState) {
                     if (state.like) {
@@ -172,7 +164,9 @@ class _PlayPageState extends State<PlayPage>
                     ),
                   );
                 },
-              )
+              );
+  },
+)
 
             ],
           ),
@@ -217,7 +211,7 @@ class _PlayPageState extends State<PlayPage>
                               backgroundColor:Colors.white ,
                               radius: 120,
                               child: Center(
-                                child: QueryArtworkWidget(
+                                child:widget.playInList==false? QueryArtworkWidget(
                                nullArtworkWidget: Image.asset("assets/icon/vinyl-record.png"),
                                   keepOldArtwork: true,
                                     artworkBorder: const BorderRadius.all(
@@ -229,7 +223,35 @@ class _PlayPageState extends State<PlayPage>
                                             .get<AudioPlayer>()
                                             .currentIndex!]
                                         .id:favorite.getAt(locator.get<AudioPlayer>().currentIndex!).id,
-                                    type: ArtworkType.AUDIO),
+                                    type: ArtworkType.AUDIO):
+                                ValueListenableBuilder(
+                                  valueListenable:widget.nameList!.listenable(),
+                                  builder: (context, Box box, child) {
+                                    if (box.values.isEmpty) {
+                                      return const Center(
+                                          child: Padding(
+                                            padding: EdgeInsets.all(50.0),
+                                            child: Text(
+                                              'Song not found',
+                                              style: TextStyle(
+                                                fontSize: 28.0,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ));
+                                    } else {
+                                      return QueryArtworkWidget(
+                                          nullArtworkWidget: Image.asset("assets/icon/vinyl-record.png"),
+                                          keepOldArtwork: true,
+                                          artworkBorder: const BorderRadius.all(
+                                              Radius.circular(120)),
+                                          artworkWidth: 252,
+                                          artworkHeight: 252,
+                                          id:box.getAt(locator.get<AudioPlayer>().currentIndex!).id,
+                                          type: ArtworkType.AUDIO);
+                                    }
+                                  },
+                                ),
                               ),
                             ),
                           ));
@@ -240,7 +262,6 @@ class _PlayPageState extends State<PlayPage>
                 ],
               ),
               Row(
-
                 children: [
                   BlocBuilder<FavoriteBloc, FavoriteState>(
                     buildWhen:(priviuse,current){
@@ -259,7 +280,7 @@ class _PlayPageState extends State<PlayPage>
                     },
                     builder: (context, state) {
                       return Expanded(
-                        child: ListTile(
+                        child:widget.playInList==false? ListTile(
                           title: Row(mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
@@ -285,6 +306,43 @@ class _PlayPageState extends State<PlayPage>
                                       "":favorite.getAt(locator.get<AudioPlayer>().currentIndex!).artist.toString()??""),
                             ],
                           ),
+                        ):   ValueListenableBuilder(
+                          valueListenable:widget.nameList!.listenable(),
+                          builder: (context, Box box, child) {
+                            if (box.values.isEmpty) {
+                              return const Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(50.0),
+                                    child: Text(
+                                      'Song not found',
+                                      style: TextStyle(
+                                        fontSize: 28.0,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ));
+                            } else {
+                              return ListTile(
+                                title: Row(mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                        style: locator.get<MyThemes>().title(context),
+                                        maxLines: 1,
+                                      box.getAt(locator.get<AudioPlayer>().currentIndex!).title.toString()),
+                                  ],
+                                ),
+                                subtitle: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                        style: locator.get<MyThemes>().subTitle(context),
+                                        maxLines: 1,
+                                        box.getAt(locator.get<AudioPlayer>().currentIndex!).artist.toString()??""),
+                                  ],
+                                ),
+                              );
+                            }
+                          },
                         ),
                       );
                     },
@@ -364,22 +422,18 @@ class _PlayPageState extends State<PlayPage>
                 children: [
                   IconButton(
                       onPressed: () {
-                        Duration durationSeek=Duration(seconds: 10);
-                        locator.get<AudioPlayer>().setShuffleModeEnabled(false);
+                        locator.get<AudioPlayer>().seek(const Duration(seconds: 10));
                       },
-                      icon: Icon(
-                        Icons.add_circle_outline,
-                        size: 40,
+                      icon: Image.asset(
+                        "assets/icon/ten(2).png",
                         color: themeProvider.isDarkMode
                             ? Colors.white
                             : const Color(0xff8f969d),
+                        width: 35,
+                        height: 35,
                       )),
-                  BlocBuilder<SortSongBloc, SortSongState>(
+                  BlocBuilder<FavoriteBloc, FavoriteState>(
                     builder: (context, state) {
-                      SongSortType sortSong = SongSortType.DATE_ADDED;
-                      if (state is SortByAddState) {
-                        sortSong = state.songSortType;
-                      }
                       return BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
                         buildWhen: (privioc, current) {
                           if (current is ChangIconState ||
@@ -406,7 +460,31 @@ class _PlayPageState extends State<PlayPage>
                                       locator.get<AudioPlayer>().playing
                                           ? true
                                           : false);
+                                  bool check;
+                                  if (isFavorite) {
 
+                                    check= checkFavorite(
+                                        favorite.getAt(locator.get<AudioPlayer>().currentIndex!).path,favorite.getAt(locator.get<AudioPlayer>().currentIndex!).id, context);
+                                    if (check) {
+                                      like=!check;
+                                    }  else {
+                                      like=!check;
+                                    }
+                                  }else{
+                                    check=   checkFavorite(
+                                        widget.songs[locator.get<AudioPlayer>().currentIndex!].data,widget.songs[locator.get<AudioPlayer>().currentIndex!].id, context);
+                                    if (check) {
+                                      like=!check;
+                                    }  else {
+                                      like=!check;
+                                    }
+                                  }
+
+                                  BlocProvider.of<FavoriteBloc>(context).add(FavoriteSongEvent(like));
+                                  BlocProvider.of<PlayNewSongBloc>(context).add(
+                                      NewSongEvent(locator
+                                          .get<AudioPlayer>()
+                                          .currentIndex!));
                                   // ignore: use_build_context_synchronously
                                   BlocProvider.of<PlayNewSongBloc>(context).add(
                                       NewSongEvent(locator
@@ -454,12 +532,9 @@ class _PlayPageState extends State<PlayPage>
                           ));
                     },
                   ),
-                  BlocBuilder<SortSongBloc, SortSongState>(
+                  BlocBuilder<FavoriteBloc, FavoriteState>(
                     builder: (context, state) {
-                      SongSortType sortSong = SongSortType.DATE_ADDED;
-                      if (state is SortByAddState) {
-                        sortSong = state.songSortType;
-                      }
+
                       return BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
                         buildWhen: (privioc, current) {
                           if (current is ChangIconState ||
@@ -470,7 +545,9 @@ class _PlayPageState extends State<PlayPage>
                           }
                         },
                         builder: (context, state) {
-                          if (state is NewSongState) {}
+                          if (state is NewSongState) {
+
+                          }
                           return Container(
                             width: 40,
                             height: 40,
@@ -485,7 +562,27 @@ class _PlayPageState extends State<PlayPage>
                                       _animationController,
                                       locator.get<AudioPlayer>().playing
                                           ? true
-                                          : false);
+                                          : false);   bool check;
+                                  if (isFavorite) {
+
+                                   check= checkFavorite(
+                                        favorite.getAt(locator.get<AudioPlayer>().currentIndex!).path,favorite.getAt(locator.get<AudioPlayer>().currentIndex!).id, context);
+                                   if (check) {
+                                     like=!check;
+                                   }  else {
+                                     like=!check;
+                                   }
+                                  }else{
+                                    check=   checkFavorite(
+                                        widget.songs[locator.get<AudioPlayer>().currentIndex!].data,widget.songs[locator.get<AudioPlayer>().currentIndex!].id, context);
+                                    if (check) {
+                                      like=!check;
+                                    }  else {
+                                      like=!check;
+                                    }
+                                  }
+
+                                  BlocProvider.of<FavoriteBloc>(context).add(FavoriteSongEvent(like));
                                   BlocProvider.of<PlayNewSongBloc>(context).add(
                                       NewSongEvent(locator
                                           .get<AudioPlayer>()
@@ -618,6 +715,13 @@ class _PlayPageState extends State<PlayPage>
                         onTap: () async {
                           PlayNewSong().newSong(
                               index, context,playlist , false);
+                        bool check=  checkFavorite(
+                              favorite.getAt(locator.get<AudioPlayer>().currentIndex!).path,favorite.getAt(locator.get<AudioPlayer>().currentIndex!).id, context);
+                        if (check) {
+                          like=!check;
+                        }  else {
+                          like=!check;
+                        }
                           isFavorite=true;
                           BlocProvider.of<FavoriteBloc>(context).add(PlayFavoriteEvent());
                         },
@@ -663,19 +767,19 @@ void deleteFavorite(SongModel songModel, BuildContext context) {
   }
 }
 
-checkFavorite(SongModel songModel, BuildContext context) {
+ bool checkFavorite(String pathFile,int id, BuildContext context) {
   Box favorite = Hive.box<FavoriteSong>("Favorite");
   bool check = false;
   for (int i = 0; i < favorite.length; i++) {
     final FavoriteSong favoriteSongs = favorite.getAt(i);
-    if (favoriteSongs.path == songModel.data &&
-        favoriteSongs.id == songModel.id) {
+    if (favoriteSongs.path == pathFile &&
+        favoriteSongs.id == id) {
       BlocProvider.of<FavoriteBloc>(context).add(FavoriteSongEvent(true));
       check = true;
-      return;
     }
     if (!check) {
       BlocProvider.of<FavoriteBloc>(context).add(FavoriteSongEvent(false));
     }
   }
+  return check;
 }

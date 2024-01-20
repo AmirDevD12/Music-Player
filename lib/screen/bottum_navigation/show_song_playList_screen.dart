@@ -1,9 +1,18 @@
+import 'package:first_project/bloc/favorite_song/favorite_bloc.dart';
+import 'package:first_project/bloc/newSong/play_new_song_bloc.dart';
+import 'package:first_project/bloc/play_song_bloc.dart';
+import 'package:first_project/bloc/sort/sort_song_bloc.dart';
 import 'package:first_project/core/theme/theme_mode.dart';
 import 'package:first_project/locator.dart';
+import 'package:first_project/model/songs_model.dart';
+import 'package:first_project/screen/playSong_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
+
 
 class FavoriteScreen extends StatelessWidget {
   final String name;
@@ -40,7 +49,14 @@ class FavoriteScreen extends StatelessWidget {
           return ListView.builder(
             itemCount: box.length,
             itemBuilder: (BuildContext context, int index) {
-
+              final playlist = ConcatenatingAudioSource(
+                useLazyPreparation: true,
+                shuffleOrder: DefaultShuffleOrder(),
+                children: [
+                  for(int i=0;i<box.length;i++)
+                    AudioSource.uri(Uri.parse(box.getAt(i).path)),
+                ],
+              );
               final themeProvider =
               Provider.of<ThemeProvider>(context);
               return ListTile(
@@ -62,7 +78,7 @@ class FavoriteScreen extends StatelessWidget {
                           onTap: () {
                           },
                           value: '/delete',
-                          child: Text("delete"),
+                          child: const Text("delete"),
                         ),
                         const PopupMenuItem(
                           value: '/share',
@@ -95,7 +111,34 @@ class FavoriteScreen extends StatelessWidget {
                     id: boxes.getAt(index).id!,
                     type: ArtworkType.AUDIO),
                 onTap: () async {
+                  List<SongModel>songs=await SongList().getSongs(SongSortType.DATE_ADDED);
 
+                  // ignore: use_build_context_synchronously
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => MultiBlocProvider(
+                            providers: [
+                              BlocProvider(
+                                  create: (context) =>
+                                      locator.get<
+                                          PlaySongBloc>()),
+                              BlocProvider(
+                                create: (context) => locator
+                                    .get<PlayNewSongBloc>(),
+                              ),
+                              BlocProvider(
+                                create: (context) => locator
+                                    .get<FavoriteBloc>(),
+                              ),
+                              BlocProvider(
+                                create: (context) => locator
+                                    .get<SortSongBloc>(),
+                              ),
+                            ],
+                            child: PlayPage(playInList: true, concatenatingAudioSource: playlist , index: index, songs:songs , nameList: boxes,
+                            ),
+                          )));
                 },
               );
             },

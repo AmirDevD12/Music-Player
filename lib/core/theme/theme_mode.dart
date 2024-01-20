@@ -25,7 +25,7 @@ class MyThemes {
 
   TextStyle subTitle(BuildContext context){
     ThemeProvider themeProvider=Provider.of<ThemeProvider>(context);
-    TextStyle textStySub= TextStyle(fontFamily: "ibm",fontSize: 15,color: themeProvider.isDarkMode?Colors.white:const Color(0xffb4b5b9));
+    TextStyle textStySub= TextStyle(fontFamily: "ibm",fontSize: 15,color: themeProvider.isDarkMode?Colors.white:Colors.black);
     return textStySub;
   }
 
@@ -47,14 +47,14 @@ class MyThemes {
     ),
     fontFamily: "ibm",
     canvasColor: Colors.red,
-    appBarTheme: const AppBarTheme(color: Colors.black),
+    appBarTheme: const AppBarTheme(color: Color(0xff1a1b1d)),
 
     iconButtonTheme: const IconButtonThemeData(style: ButtonStyle()),
     primaryIconTheme: const IconThemeData(color: Colors.green),
 
     unselectedWidgetColor: Colors.red,
     primaryColorLight: Colors.white,
-    scaffoldBackgroundColor: Colors.black,
+    scaffoldBackgroundColor: const Color(0xff1a1b1d),
     primaryColor: Colors.white,
     secondaryHeaderColor: Colors.white,
     iconTheme: const IconThemeData(color: Colors.white,opacity: 0.8),
