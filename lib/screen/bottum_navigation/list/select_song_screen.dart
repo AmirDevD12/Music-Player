@@ -8,12 +8,9 @@ import 'package:hive/hive.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
 
-
-
 class SelectSongScreen extends StatefulWidget {
   final String name;
- final
- List<SongModel> songs;
+  final List<SongModel> songs;
   const SelectSongScreen({super.key, required this.name, required this.songs});
 
   @override
@@ -31,42 +28,40 @@ class _SelectSongScreenState extends State<SelectSongScreen> {
     // boxName={widget.name:false};
     // boxName.addAll()
   }
-  List<SongModel> songs=[];
+
+  List<SongModel> songs = [];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Select Screen"),
         actions: [
-         IconButton(
-           onPressed: (){
-             setState(() {
-               add(songs);
-             });
-             Navigator.pop(context);
-           },
-             icon:  const Icon(Icons.check),)
+          IconButton(
+            onPressed: () {
+              setState(() {
+                add(songs);
+              });
+              Navigator.pop(context);
+            },
+            icon: const Icon(Icons.check),
+          )
         ],
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-
           Expanded(
-            child:  FutureBuilder<List<SongModel>>(
-              future:
-              SongList().getSongs(songSortType),
+            child: FutureBuilder<List<SongModel>>(
+              future: SongList().getSongs(songSortType),
               builder: (BuildContext context,
                   AsyncSnapshot<List<SongModel>> snapshot) {
                 if (snapshot.hasData) {
                   return ListView.builder(
                     itemCount: snapshot.data?.length,
                     itemBuilder: (BuildContext context, int index) {
-
-                      final themeProvider =
-                      Provider.of<ThemeProvider>(context);
+                      final themeProvider = Provider.of<ThemeProvider>(context);
                       return ListTile(
-                        trailing:CheckboxIconFormField(
+                        trailing: CheckboxIconFormField(
                           disabledColor: Colors.black,
                           context: context,
                           iconSize: 30,
@@ -75,16 +70,15 @@ class _SelectSongScreenState extends State<SelectSongScreen> {
                           onChanged: (value) {
                             if (value) {
                               songs.add(snapshot.data![index]);
-
                             } else {
                               // ignore: list_remove_unrelated_type
-                              songs.removeWhere((element) =>element== snapshot.data![index]);
+                              songs.removeWhere((element) =>
+                                  element == snapshot.data![index]);
                             }
                           },
                         ),
-
                         title: Text(
-                          style:locator.get<MyThemes>().title(context) ,
+                          style: locator.get<MyThemes>().title(context),
                           maxLines: 1,
                           snapshot.data![index].title,
                         ),
@@ -97,10 +91,10 @@ class _SelectSongScreenState extends State<SelectSongScreen> {
                             artworkWidth: 60,
                             artworkHeight: 60,
                             artworkFit: BoxFit.cover,
-                            artworkBorder: const BorderRadius.all(
-                                Radius.circular(5)),
+                            artworkBorder:
+                                const BorderRadius.all(Radius.circular(5)),
                             id: snapshot.data![index].id,
-                            type: ArtworkType.AUDIO ),
+                            type: ArtworkType.AUDIO),
                         onTap: () {},
                       );
                     },
@@ -116,11 +110,12 @@ class _SelectSongScreenState extends State<SelectSongScreen> {
       ),
     );
   }
+
   add(List<SongModel> selectSong) async {
-    for(int i=0;i<selectSong.length;i++){
+    for (int i = 0; i < selectSong.length; i++) {
       Box boxMain = await Hive.openBox<FavoriteSong>(widget.name);
-      FavoriteSong favoriteSong=FavoriteSong(selectSong[i].title, selectSong[i].data,
-          selectSong[i].id, selectSong[i].artist);
+      FavoriteSong favoriteSong = FavoriteSong(selectSong[i].title,
+          selectSong[i].data, selectSong[i].id, selectSong[i].artist);
       boxMain.add(favoriteSong);
     }
   }

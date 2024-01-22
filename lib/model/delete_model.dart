@@ -10,11 +10,10 @@ class DeleteSongFile {
       File file = File(path);
       file.deleteSync();
       if (file.existsSync()) {
-        print(file.absolute);
+
         file.delete();
       }
       if (await file.exists()) {
-        print("vogod dard");
       }
     }catch(e){
       print(e);}

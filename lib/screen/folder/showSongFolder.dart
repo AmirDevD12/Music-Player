@@ -87,7 +87,7 @@ class ShowSongFolder extends StatelessWidget {
                                     ],
                                     child: PlayPage(
 
-                                       playInList: false, concatenatingAudioSource:playlist , index: index, songs:songs, nameList: null ,
+                                       playInList: false, concatenatingAudioSource:playlist , index: index, songs:songs, nameList: null,
                                     ),
                                   )));
                         },

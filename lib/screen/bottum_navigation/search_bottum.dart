@@ -51,7 +51,7 @@ class _SearchPage extends State<SearchPage> {
             onChanged: (value) {
               nameText = value;
 
-             BlocProvider.of<SortSongBloc>(context).add(SearchEvent());
+              BlocProvider.of<SortSongBloc>(context).add(SearchEvent());
             },
           ),
         ),
@@ -65,213 +65,216 @@ class _SearchPage extends State<SearchPage> {
                   AsyncSnapshot<List<SongModel>> snapshot) {
                 if (snapshot.hasData) {
                   return BlocBuilder<SortSongBloc, SortSongState>(
-  builder: (context, state) {
-    return ListView.builder(
-                    itemCount: snapshot.data?.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      if (_searchController.text.isNotEmpty &&
-                              snapshot.data![index].title
-                                  .toLowerCase()
-                                  .contains(
-                                      _searchController.text.toLowerCase()) ||
-                          snapshot.data![index].displayName
-                                  .toLowerCase()
-                                  .contains(
-                                      _searchController.text.toLowerCase()) &&
-                              nameText != "") {
-                        return ListTile(
-                          trailing: SizedBox(
-                            width: 36,
-                            child: InkWell(
-                              onTap: () {
-                                showModalBottomSheet<void>(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return Container(
-                                      color: themeProvider.isDarkMode
-                                          ? Colors.black
-                                          : Colors.white,
-                                      width: double.infinity,
-                                      height: 180,
-                                      child: Column(
-                                        children: <Widget>[
-                                          const SizedBox(
-                                            height: 10,
-                                          ),
-                                          Text(
-                                            style: locator
-                                                .get<MyThemes>()
-                                                .title(context),
-                                            maxLines: 1,
-                                            snapshot.data![index].title,
-                                          ),
-                                          const SizedBox(
-                                            height: 15,
-                                          ),
-                                          Column(
-                                            children: [
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.all(10.0),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceAround,
-                                                  children: [
-                                                    Column(
+                    builder: (context, state) {
+                      return ListView.builder(
+                        itemCount: snapshot.data?.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          if (_searchController.text.isNotEmpty &&
+                                  snapshot.data![index].title
+                                      .toLowerCase()
+                                      .contains(_searchController.text
+                                          .toLowerCase()) ||
+                              snapshot.data![index].displayName
+                                      .toLowerCase()
+                                      .contains(_searchController.text
+                                          .toLowerCase()) &&
+                                  nameText != "") {
+                            return ListTile(
+                              trailing: SizedBox(
+                                width: 36,
+                                child: InkWell(
+                                  onTap: () {
+                                    showModalBottomSheet<void>(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return Container(
+                                          color: themeProvider.isDarkMode
+                                              ? Colors.black
+                                              : Colors.white,
+                                          width: double.infinity,
+                                          height: 180,
+                                          child: Column(
+                                            children: <Widget>[
+                                              const SizedBox(
+                                                height: 10,
+                                              ),
+                                              Text(
+                                                style: locator
+                                                    .get<MyThemes>()
+                                                    .title(context),
+                                                maxLines: 1,
+                                                snapshot.data![index].title,
+                                              ),
+                                              const SizedBox(
+                                                height: 15,
+                                              ),
+                                              Column(
+                                                children: [
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            10.0),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceAround,
                                                       children: [
-                                                        GestureDetector(
-                                                            child:
-                                                                const CardWidget(
-                                                          text: 'Play next',
-                                                          path:
-                                                              "assets/icon/music-player(1).png",
-                                                        )),
-                                                        const SizedBox(
-                                                          height: 10,
-                                                        ),
-                                                        GestureDetector(
-                                                            onTap: () {
+                                                        Column(
+                                                          children: [
+                                                            GestureDetector(
+                                                                child:
+                                                                    const CardWidget(
+                                                              text: 'Play next',
+                                                              path:
+                                                                  "assets/icon/music-player(1).png",
+                                                            )),
+                                                            const SizedBox(
+                                                              height: 10,
+                                                            ),
+                                                            GestureDetector(
+                                                                onTap: () {
 // addPlayList(snapshot.data![index]);
-                                                              Navigator.pushReplacement(
-                                                                  context,
-                                                                  MaterialPageRoute(
-                                                                      builder: (context) => MultiBlocProvider(
-                                                                              providers: [
-                                                                                BlocProvider(create: (context) => locator.get<PlaySongBloc>()),
-                                                                                BlocProvider(
-                                                                                  create: (context) => locator.get<PlayNewSongBloc>(),
-                                                                                ),
-                                                                                BlocProvider(
-                                                                                  create: (context) => locator.get<FavoriteBloc>(),
-                                                                                ),
-                                                                                BlocProvider(
-                                                                                  create: (context) => locator.get<PlayListBloc>(),
-                                                                                ),
-                                                                              ],
-                                                                              child: ListSongBottomNavigation(
-                                                                                show: true,
-                                                                                songModel: snapshot.data![index],
-                                                                              ))));
-                                                            },
-                                                            child:
-                                                                const CardWidget(
-                                                              text: 'List',
+                                                                  Navigator.pushReplacement(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          builder: (context) => MultiBlocProvider(
+                                                                                  providers: [
+                                                                                    BlocProvider(create: (context) => locator.get<PlaySongBloc>()),
+                                                                                    BlocProvider(
+                                                                                      create: (context) => locator.get<PlayNewSongBloc>(),
+                                                                                    ),
+                                                                                    BlocProvider(
+                                                                                      create: (context) => locator.get<FavoriteBloc>(),
+                                                                                    ),
+                                                                                    BlocProvider(
+                                                                                      create: (context) => locator.get<PlayListBloc>(),
+                                                                                    ),
+                                                                                  ],
+                                                                                  child: ListSongBottomNavigation(
+                                                                                    show: true,
+                                                                                    songModel: snapshot.data![index],
+                                                                                  ))));
+                                                                },
+                                                                child:
+                                                                    const CardWidget(
+                                                                  text: 'List',
+                                                                  path:
+                                                                      "assets/icon/list(2).png",
+                                                                )),
+                                                          ],
+                                                        ),
+                                                        const SizedBox(
+                                                          width: 20,
+                                                        ),
+                                                        Column(
+                                                          children: [
+                                                            GestureDetector(
+                                                                child:
+                                                                    const CardWidget(
+                                                              text: 'Info',
                                                               path:
-                                                                  "assets/icon/list(2).png",
+                                                                  "assets/icon/information-button.png",
                                                             )),
-                                                      ],
-                                                    ),
-                                                    const SizedBox(
-                                                      width: 20,
-                                                    ),
-                                                    Column(
-                                                      children: [
-                                                        GestureDetector(
-                                                            child:
-                                                                const CardWidget(
-                                                          text: 'Info',
-                                                          path:
-                                                              "assets/icon/information-button.png",
-                                                        )),
-                                                        const SizedBox(
-                                                          height: 10,
+                                                            const SizedBox(
+                                                              height: 10,
+                                                            ),
+                                                            const SizedBox(
+                                                              height: 10,
+                                                            ),
+                                                            GestureDetector(
+                                                                child:
+                                                                    const CardWidget(
+                                                              text: 'Share',
+                                                              path:
+                                                                  "assets/icon/information-button.png",
+                                                            )),
+                                                          ],
                                                         ),
                                                         const SizedBox(
-                                                          height: 10,
+                                                          width: 20,
                                                         ),
-                                                        GestureDetector(
-                                                            child:
-                                                                const CardWidget(
-                                                          text: 'Share',
-                                                          path:
-                                                              "assets/icon/information-button.png",
-                                                        )),
-                                                      ],
-                                                    ),
-                                                    const SizedBox(
-                                                      width: 20,
-                                                    ),
-                                                    Column(
-                                                      children: [
-                                                        GestureDetector(
-                                                            child:
-                                                                const CardWidget(
-                                                          text: 'Favorite',
-                                                          path:
-                                                              "assets/icon/like.png",
-                                                        )),
-                                                        const SizedBox(
-                                                          height: 10,
-                                                        ),
-                                                        const SizedBox(
-                                                          height: 10,
-                                                        ),
-                                                        GestureDetector(
-                                                            onTap: () {
-                                                              DeleteSongFile()
-                                                                  .getDeleteSong(
-                                                                      snapshot.data![
-                                                                          index]);
+                                                        Column(
+                                                          children: [
+                                                            GestureDetector(
+                                                                child:
+                                                                    const CardWidget(
+                                                              text: 'Favorite',
+                                                              path:
+                                                                  "assets/icon/like.png",
+                                                            )),
+                                                            const SizedBox(
+                                                              height: 10,
+                                                            ),
+                                                            const SizedBox(
+                                                              height: 10,
+                                                            ),
+                                                            GestureDetector(
+                                                                onTap: () {
+                                                                  DeleteSongFile()
+                                                                      .getDeleteSong(
+                                                                          snapshot
+                                                                              .data![index]);
 // deleteSong(snapshot.data![index].data);
-                                                              Navigator.pop(
-                                                                  context);
-                                                            },
-                                                            child:
-                                                                const CardWidget(
-                                                              text: 'Delete',
-                                                              path:
-                                                                  "assets/icon/delete.png",
-                                                            )),
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                },
+                                                                child:
+                                                                    const CardWidget(
+                                                                  text:
+                                                                      'Delete',
+                                                                  path:
+                                                                      "assets/icon/delete.png",
+                                                                )),
+                                                          ],
+                                                        )
                                                       ],
-                                                    )
-                                                  ],
-                                                ),
-                                              )
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
                                             ],
                                           ),
-                                        ],
-                                      ),
+                                        );
+                                      },
                                     );
                                   },
-                                );
-                              },
-                              child: Image.asset(
-                                "assets/icon/dots.png",
-                                width: 25,
-                                height: 25,
-                                color: themeProvider.isDarkMode
-                                    ? Colors.white
-                                    : Colors.black,
+                                  child: Image.asset(
+                                    "assets/icon/dots.png",
+                                    width: 25,
+                                    height: 25,
+                                    color: themeProvider.isDarkMode
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                          title: Text(
-                            style: locator.get<MyThemes>().title(context),
-                            maxLines: 1,
-                            snapshot.data![index].title,
-                          ),
-                          subtitle: Text(
-                            style: locator.get<MyThemes>().subTitle(context),
-                            maxLines: 1,
-                            snapshot.data![index].displayName,
-                          ),
-                          leading: QueryArtworkWidget(
-                              artworkWidth: 60,
-                              artworkHeight: 60,
-                              artworkFit: BoxFit.cover,
-                              artworkBorder:
-                                  const BorderRadius.all(Radius.circular(5)),
-                              id: snapshot.data![index].id,
-                              type: ArtworkType.AUDIO),
-                          onTap: () {},
-                        );
-                      }
-                      return const SizedBox();
+                              title: Text(
+                                style: locator.get<MyThemes>().title(context),
+                                maxLines: 1,
+                                snapshot.data![index].title,
+                              ),
+                              subtitle: Text(
+                                style:
+                                    locator.get<MyThemes>().subTitle(context),
+                                maxLines: 1,
+                                snapshot.data![index].displayName,
+                              ),
+                              leading: QueryArtworkWidget(
+                                  artworkWidth: 60,
+                                  artworkHeight: 60,
+                                  artworkFit: BoxFit.cover,
+                                  artworkBorder: const BorderRadius.all(
+                                      Radius.circular(5)),
+                                  id: snapshot.data![index].id,
+                                  type: ArtworkType.AUDIO),
+                              onTap: () {},
+                            );
+                          }
+                          return const SizedBox();
+                        },
+                      );
                     },
                   );
-  },
-);
                 } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
                 }

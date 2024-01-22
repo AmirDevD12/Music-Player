@@ -12,8 +12,7 @@ class PopupMenuButtonWidget extends StatelessWidget {
         icon: Image.asset("assets/icon/dots.png",
           width: 40,height: 40,color:themeProvider.isDarkMode?Colors.white:Colors.black ,),
         onSelected: (value) {
-          // your logic
-          print("value");
+
         },
         itemBuilder: (BuildContext bc) {
           return const [

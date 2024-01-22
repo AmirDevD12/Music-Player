@@ -1,4 +1,3 @@
-
 import 'package:first_project/bloc/newSong/play_new_song_bloc.dart';
 import 'package:first_project/bloc/play_song_bloc.dart';
 import 'package:first_project/bloc/sort/sort_song_bloc.dart';
@@ -15,7 +14,10 @@ import 'package:provider/provider.dart';
 
 class BottomNavigationBarScreen extends StatefulWidget {
   final List<SongModel> listSong;
-  const BottomNavigationBarScreen({super.key, required this.listSong,});
+  const BottomNavigationBarScreen({
+    super.key,
+    required this.listSong,
+  });
 
   @override
   State<BottomNavigationBarScreen> createState() =>
@@ -24,18 +26,16 @@ class BottomNavigationBarScreen extends StatefulWidget {
 
 class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
     with TickerProviderStateMixin {
-
   late AnimationController _animationController;
   late AnimationController _animationMusic;
   late Animation<double> _animation;
 
-
   int? number = 0;
-  int? index=0;
+  int? index = 0;
   @override
   void initState() {
-    number=locator.get<AudioPlayer>().currentIndex;
-    index=locator.get<AudioPlayer>().currentIndex;
+    number = locator.get<AudioPlayer>().currentIndex;
+    index = locator.get<AudioPlayer>().currentIndex;
     // TODO: implement initState
     _animationController = AnimationController(
       vsync: this,
@@ -51,9 +51,6 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
         curve: Curves.linear,
       ),
     );
-
-
-
   }
 
   @override
@@ -67,11 +64,11 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     return Container(
-      width: MediaQuery.of(context).size.width-20,
+      width: MediaQuery.of(context).size.width - 20,
       height: 60,
       decoration: BoxDecoration(
           color:
-              themeProvider.isDarkMode ?  Colors.deepPurple: const Color(0xff1a1b1d),
+              themeProvider.isDarkMode ? Colors.black : const Color(0xff1a1b1d),
           borderRadius: const BorderRadius.all(Radius.circular(30))),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -82,11 +79,10 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
               BlocBuilder<PlaySongBloc, PlaySongState>(
                 builder: (context, state) {
                   if (state is ShowNavState) {
-
-                      ChangeAnimation().toggleAnimation(
-                          _animationController, locator.get<AudioPlayer>().playing ? true : false);
-                      ChangeAnimation().toggleAnimation(
-                          _animationMusic, locator.get<AudioPlayer>().playing ? true : false);
+                    ChangeAnimation().toggleAnimation(_animationController,
+                        locator.get<AudioPlayer>().playing ? true : false);
+                    ChangeAnimation().toggleAnimation(_animationMusic,
+                        locator.get<AudioPlayer>().playing ? true : false);
                   }
 
                   return IconButton(
@@ -98,13 +94,13 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
                         }
                         BlocProvider.of<PlaySongBloc>(context)
                             .add(PausePlayEvent());
-                        ChangeAnimation().toggleAnimation(
-                            _animationController, locator.get<AudioPlayer>().playing ? true : false);
-                        ChangeAnimation().toggleAnimation(
-                            _animationMusic, locator.get<AudioPlayer>().playing ? true : false);
+                        ChangeAnimation().toggleAnimation(_animationController,
+                            locator.get<AudioPlayer>().playing ? true : false);
+                        ChangeAnimation().toggleAnimation(_animationMusic,
+                            locator.get<AudioPlayer>().playing ? true : false);
                       },
                       icon: Image.asset(
-                       !locator.get<AudioPlayer>().playing
+                        !locator.get<AudioPlayer>().playing
                             ? "assets/icon/play-button-arrowhead.png"
                             : "assets/icon/pause.png",
                         color: Colors.white,
@@ -114,62 +110,57 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
                 },
               ),
               BlocBuilder<SortSongBloc, SortSongState>(
-
-  builder: (context, state) {
-
-           if (state is SortByAddState) {
-
-           }
-    return BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
                 builder: (context, state) {
-                  return IconButton(
-                      onPressed: () async {
-                        try{
-                          locator.get<AudioPlayer>().seekToNext();
-                          ChangeAnimation().toggleAnimation(
-                              _animationController,
-                              locator.get<AudioPlayer>().playing
-                                  ? true
-                                  : false);
-                          BlocProvider.of<PlayNewSongBloc>(context).add(
-                              NewSongEvent(locator
-                                  .get<AudioPlayer>()
-                                  .currentIndex!));
-                        }
-                        catch(e){
-
-                        }
-
-                      },
-                      icon: Image.asset(
-                        "assets/icon/music-player(1).png",
-                        color: Colors.white,
-                        width: 35,
-                        height: 30,
-                      ));
+                  if (state is SortByAddState) {}
+                  return BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
+                    builder: (context, state) {
+                      return IconButton(
+                          onPressed: () async {
+                            try {
+                              locator.get<AudioPlayer>().seekToNext();
+                              ChangeAnimation().toggleAnimation(
+                                  _animationController,
+                                  locator.get<AudioPlayer>().playing
+                                      ? true
+                                      : false);
+                              BlocProvider.of<PlayNewSongBloc>(context).add(
+                                  NewSongEvent(locator
+                                      .get<AudioPlayer>()
+                                      .currentIndex!));
+                            } catch (e) {}
+                          },
+                          icon: Image.asset(
+                            "assets/icon/music-player(1).png",
+                            color: Colors.white,
+                            width: 35,
+                            height: 30,
+                          ));
+                    },
+                  );
                 },
-              );
-  },
-),
+              ),
             ],
           ),
           Row(
             children: [
-             BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
-  builder: (context, state) {
-    return Center(
-                 child: Lottie.asset('assets/animation/Animation - 1702455265848.json',
-                 controller: _animationMusic,
-                 ),);
-  },
-),
+              BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
+                builder: (context, state) {
+                  return Center(
+                    child: Lottie.asset(
+                      'assets/animation/Animation - 1702455265848.json',
+                      controller: _animationMusic,
+                    ),
+                  );
+                },
+              ),
             ],
           ),
           Row(
             children: [
               BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
                 buildWhen: (privioce, current) {
-                  if (current is PauseAnimationState||current is ShowNavState) {
+                  if (current is PauseAnimationState ||
+                      current is ShowNavState) {
                     return false;
                   } else {
                     return true;
@@ -177,23 +168,30 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
                 },
                 builder: (context, state) {
                   print(locator.get<AudioPlayer>().currentIndex);
-                  return widget.listSong.isNotEmpty? RotationTransition(
-                      turns: _animation,
-                      child: CircleAvatar(
-                        backgroundImage:
-                            const AssetImage("assets/icon/vinyl-record.png"),
-                        radius: 30,
-                        child: Center(
-                          child: QueryArtworkWidget(
-                              nullArtworkWidget: Image.asset("assets/icon/vinyl-record.png"),
-                              artworkBorder:
-                                  const BorderRadius.all(Radius.circular(100)),
-                              artworkWidth: 50,
-                              artworkHeight: 50,
-                              id: widget.listSong[locator.get<AudioPlayer>().currentIndex!].id,
-                              type: ArtworkType.AUDIO),
-                        ),
-                      )):const SizedBox();
+                  return widget.listSong.isNotEmpty
+                      ? RotationTransition(
+                          turns: _animation,
+                          child: CircleAvatar(
+                            backgroundImage: const AssetImage(
+                                "assets/icon/vinyl-record.png"),
+                            radius: 30,
+                            child: Center(
+                              child: QueryArtworkWidget(
+                                  nullArtworkWidget: Image.asset(
+                                      "assets/icon/vinyl-record.png"),
+                                  artworkBorder: const BorderRadius.all(
+                                      Radius.circular(100)),
+                                  artworkWidth: 50,
+                                  artworkHeight: 50,
+                                  id: widget
+                                      .listSong[locator
+                                          .get<AudioPlayer>()
+                                          .currentIndex!]
+                                      .id,
+                                  type: ArtworkType.AUDIO),
+                            ),
+                          ))
+                      : const SizedBox();
                 },
               )
             ],

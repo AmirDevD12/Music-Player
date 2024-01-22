@@ -19,25 +19,24 @@ class RecentAddScreen extends StatelessWidget {
   Box recentPlay = Hive.box<RecentPlay>("Recent play");
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-      backgroundColor: Colors.red,
+        backgroundColor: Colors.red,
         body: ValueListenableBuilder(
-          valueListenable:recentPlay.listenable(),
+          valueListenable: recentPlay.listenable(),
           builder: (context, Box box, child) {
             if (box.values.isEmpty) {
               return const Center(
                   child: Padding(
-                    padding: EdgeInsets.all(50.0),
-                    child: Text(
-                      'No song',
-                      style: TextStyle(
-                        fontSize: 28.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.red,
-                      ),
-                    ),
-                  ));
+                padding: EdgeInsets.all(50.0),
+                child: Text(
+                  'No song',
+                  style: TextStyle(
+                    fontSize: 28.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red,
+                  ),
+                ),
+              ));
             } else {
               return ListView.builder(
                 itemCount: recentPlay.length,
@@ -46,13 +45,12 @@ class RecentAddScreen extends StatelessWidget {
                     useLazyPreparation: true,
                     shuffleOrder: DefaultShuffleOrder(),
                     children: [
-                      for(int i=0;i<box.length;i++)
+                      for (int i = 0; i < box.length; i++)
                         AudioSource.uri(Uri.parse(box.getAt(i).path)),
                     ],
                   );
                   final RecentPlay recentPlay = box.getAt(index);
-                  final themeProvider =
-                  Provider.of<ThemeProvider>(context);
+                  final themeProvider = Provider.of<ThemeProvider>(context);
                   return ListTile(
                     trailing: SizedBox(
                       width: 36,
@@ -69,8 +67,7 @@ class RecentAddScreen extends StatelessWidget {
                         itemBuilder: (BuildContext bc) {
                           return [
                             PopupMenuItem(
-                              onTap: () {
-                              },
+                              onTap: () {},
                               value: '/delete',
                               child: Text("delete"),
                             ),
@@ -100,41 +97,45 @@ class RecentAddScreen extends StatelessWidget {
                         artworkWidth: 60,
                         artworkHeight: 60,
                         artworkFit: BoxFit.cover,
-                        artworkBorder: const BorderRadius.all(
-                            Radius.circular(5)),
+                        artworkBorder:
+                            const BorderRadius.all(Radius.circular(5)),
                         id: recentPlay.id!,
                         type: ArtworkType.AUDIO),
                     onTap: () async {
-                      List<SongModel>songs=await SongList().getSongs(SongSortType.DATE_ADDED);
+                      List<SongModel> songs =
+                          await SongList().getSongs(SongSortType.DATE_ADDED);
                       Box boxList =
-                      await Hive.openBox<RecentPlay>(
-                          "Recent play");
+                          await Hive.openBox<RecentPlay>("Recent play");
                       // ignore: use_build_context_synchronously
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => MultiBlocProvider(
-                                providers: [
-                                  BlocProvider(
-                                      create: (context) =>
-                                          locator.get<
-                                              PlaySongBloc>()),
-                                  BlocProvider(
-                                    create: (context) => locator
-                                        .get<PlayNewSongBloc>(),
-                                  ),
-                                  BlocProvider(
-                                    create: (context) => locator
-                                        .get<FavoriteBloc>(),
-                                  ),
-                                  BlocProvider(
-                                    create: (context) => locator
-                                        .get<SortSongBloc>(),
-                                  ),
-                                ],
-                                child: PlayPage(playInList: true, concatenatingAudioSource: playlist , index: index, songs:songs, nameList: boxList,
-                                ),
-                              )));
+                                    providers: [
+                                      BlocProvider(
+                                          create: (context) =>
+                                              locator.get<PlaySongBloc>()),
+                                      BlocProvider(
+                                        create: (context) =>
+                                            locator.get<PlayNewSongBloc>(),
+                                      ),
+                                      BlocProvider(
+                                        create: (context) =>
+                                            locator.get<FavoriteBloc>(),
+                                      ),
+                                      BlocProvider(
+                                        create: (context) =>
+                                            locator.get<SortSongBloc>(),
+                                      ),
+                                    ],
+                                    child: PlayPage(
+                                      playInList: true,
+                                      concatenatingAudioSource: playlist,
+                                      index: index,
+                                      songs: songs,
+                                      nameList: boxList,
+                                    ),
+                                  )));
                     },
                   );
                 },

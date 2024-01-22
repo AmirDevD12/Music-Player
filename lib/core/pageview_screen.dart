@@ -20,168 +20,185 @@ import 'package:provider/provider.dart';
 import 'bottomNavigation_widget.dart';
 import 'card_widget.dart';
 
-
 class MyHomePage extends StatefulWidget {
-
-   MyHomePage({super.key, });
+  MyHomePage({
+    super.key,
+  });
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   PageController controller = PageController();
   final List<Widget> _list = <Widget>[
     const Center(child: PageViewSong()),
-     Center(child: SearchPage()),
-    const Center(child: ListSongBottomNavigation(show: false, songModel: null,)),
+    Center(child: SearchPage()),
+    const Center(
+        child: ListSongBottomNavigation(
+      show: false,
+      songModel: null,
+    )),
     const Center(child: AlbumPage()),
   ];
-
-
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-     OnAudioQuery().permissionsStatus();
+    OnAudioQuery().permissionsStatus();
   }
 
   late SongModel songModel;
-  int  index=0;
-  List<SongModel> listSong=[];
+  int index = 0;
+  List<SongModel> listSong = [];
   @override
   Widget build(BuildContext context) {
-
-    final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       appBar: AppBar(
         actions: const [ThemeSwitcher()],
-        title: const Text('My music', style: TextStyle(color: Colors.white),),
+        title: const Text(
+          'My music',
+          style: TextStyle(color: Colors.white),
+        ),
       ),
       bottomNavigationBar: BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
         buildWhen: (privioc, current) {
           if (current is NewSongState) {
-
-
             return true;
           } else {
             return false;
-          }
-        },
-  builder: (context, state) {
-    return BlocBuilder<PlaySongBloc, PlaySongState>(
-        buildWhen: (privioc, current) {
-          if (current is DurationState ==privioc is DurationState) {
-            return false;
-          } else {
-            return true;
           }
         },
         builder: (context, state) {
-          if(state is ShowNavState){
-            print("amirrrrr");
-            listSong=state.listSong;
-          }
-          return SizedBox(
-            width: double.infinity,
-            height: state is PlaySongInitial?60:120,
-            child: Column(mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                     state is DurationState ||state is PausePlayState||state is ShowNavState
-                    ?GestureDetector(
-                        onTap: (){
-
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      MultiBlocProvider(
-                                        providers: [
-                                          BlocProvider(
-                                              create: (context) =>
-                                                  locator.get<
-                                                      PlaySongBloc>()),
-                                          BlocProvider(
-                                            create: (context) => locator
-                                                .get<PlayNewSongBloc>(),
-                                          ),
-                                          BlocProvider(
-                                            create: (context) => locator
-                                                .get<FavoriteBloc>(),
-                                          ),
-                                          BlocProvider(
-                                            create: (context) => locator
-                                                .get<SortSongBloc>(),
-                                          ),
-                                        ],
-                                        child: PlayPage(
-                                          playInList: false, concatenatingAudioSource: null, index:index, songs:listSong, nameList: null,
-                                        ),
-                                      )));
-                        },
-                        child: BottomNavigationBarScreen(listSong: listSong,)):const SizedBox(),
-
-                const SizedBox(height: 5,),
-                Expanded(
-
-                  child: SizedBox(
-                   width: MediaQuery.of(context).size.width,
-
-                    height: 70,
-
-                    child: Column(mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
+          return BlocBuilder<PlaySongBloc, PlaySongState>(
+            buildWhen: (privioc, current) {
+              if (current is DurationState == privioc is DurationState) {
+                return false;
+              } else {
+                return true;
+              }
+            },
+            builder: (context, state) {
+              if (state is ShowNavState) {
+                listSong = state.listSong;
+              }
+              return Container(
+                width: double.infinity,
+                height: state is PlaySongInitial ? 60 : 120,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    state is DurationState ||
+                            state is PausePlayState ||
+                            state is ShowNavState
+                        ? GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => MultiBlocProvider(
+                                            providers: [
+                                              BlocProvider(
+                                                  create: (context) => locator
+                                                      .get<PlaySongBloc>()),
+                                              BlocProvider(
+                                                create: (context) => locator
+                                                    .get<PlayNewSongBloc>(),
+                                              ),
+                                              BlocProvider(
+                                                create: (context) =>
+                                                    locator.get<FavoriteBloc>(),
+                                              ),
+                                              BlocProvider(
+                                                create: (context) =>
+                                                    locator.get<SortSongBloc>(),
+                                              ),
+                                            ],
+                                            child: PlayPage(
+                                              playInList: false,
+                                              concatenatingAudioSource: null,
+                                              index: index,
+                                              songs: listSong,
+                                              nameList: null,
+                                            ),
+                                          )));
+                            },
+                            child: BottomNavigationBarScreen(
+                              listSong: listSong,
+                            ))
+                        : const SizedBox(),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Expanded(
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        height: 70,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            GestureDetector(
-                                onTap: () {
-                                  controller.animateToPage(0,
-                                      duration: const Duration(milliseconds: 10),
-                                      curve: Curves.easeOut);
-                                },
-                                child: const CardWidget(
-                                  text: 'My Music',path: "assets/icon/music(1).png",)),
-                            GestureDetector(
-                                onTap: () {
-                                  controller.animateToPage(1,
-                                      duration: const Duration(milliseconds: 10),
-                                      curve: Curves.easeOut);
-                                },
-                                child: const CardWidget(
-                                  text: 'search', path: "assets/icon/magnifying-glass.png",)),
-                            GestureDetector(
-                                onTap: () {
-                                  controller.animateToPage(2,
-                                      duration: const Duration(milliseconds: 10),
-                                      curve: Curves.easeOut);
-                                }
-                                ,
-                                child: const CardWidget(text: 'List', path:"assets/icon/list(2).png",)),
-                            GestureDetector(
-                                onTap: () {
-
-                                  controller.animateToPage(3,
-                                      duration: const Duration(milliseconds: 10),
-                                      curve: Curves.easeOut);
-                                }
-                                ,
-                                child: const CardWidget(
-                                  text: 'Path',path:  "assets/icon/information-button.png",)),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                GestureDetector(
+                                    onTap: () {
+                                      controller.animateToPage(0,
+                                          duration:
+                                              const Duration(milliseconds: 10),
+                                          curve: Curves.easeOut);
+                                    },
+                                    child: const CardWidget(
+                                      text: 'My Music',
+                                      path: "assets/icon/music(1).png",
+                                    )),
+                                GestureDetector(
+                                    onTap: () {
+                                      controller.animateToPage(1,
+                                          duration:
+                                              const Duration(milliseconds: 10),
+                                          curve: Curves.easeOut);
+                                    },
+                                    child: const CardWidget(
+                                      text: 'search',
+                                      path: "assets/icon/magnifying-glass.png",
+                                    )),
+                                GestureDetector(
+                                    onTap: () {
+                                      controller.animateToPage(2,
+                                          duration:
+                                              const Duration(milliseconds: 10),
+                                          curve: Curves.easeOut);
+                                    },
+                                    child: const CardWidget(
+                                      text: 'List',
+                                      path: "assets/icon/list(2).png",
+                                    )),
+                                GestureDetector(
+                                    onTap: () {
+                                      controller.animateToPage(3,
+                                          duration:
+                                              const Duration(milliseconds: 10),
+                                          curve: Curves.easeOut);
+                                    },
+                                    child: const CardWidget(
+                                      text: 'Path',
+                                      path:
+                                          "assets/icon/information-button.png",
+                                    )),
+                              ],
+                            ),
                           ],
                         ),
-                      ],
-                    ),
-                  ),
-                )
-              ],
-            ),
+                      ),
+                    )
+                  ],
+                ),
+              );
+            },
           );
         },
-      );
-  },
-),
+      ),
       body: Column(
         children: [
           Expanded(
@@ -189,9 +206,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: PageView(
               scrollDirection: Axis.horizontal,
               controller: controller,
-
-              children:
-              _list,
+              children: _list,
             ),
           ),
         ],
@@ -199,4 +214,3 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
-

@@ -120,9 +120,10 @@ class _ListSongBottomNavigationState extends State<ListSongBottomNavigation> {
             )),
       ),
       bottomNavigationBar: widget.show
-          ? Row(mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              BlocBuilder<PlayListBloc, PlayListState>(
+          ? Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                BlocBuilder<PlayListBloc, PlayListState>(
                   builder: (context, state) {
                     return GestureDetector(
                       onTap: () {
@@ -133,22 +134,29 @@ class _ListSongBottomNavigationState extends State<ListSongBottomNavigation> {
                             .add(SelectListEvent());
                       },
                       child: Container(
-                        decoration: BoxDecoration(color: Colors.blueGrey.shade300,
-                          borderRadius: const BorderRadius.horizontal(right: Radius.circular(30),left: Radius.circular(30))
-                        ),
+                        decoration: BoxDecoration(
+                            color: Colors.blueGrey.shade300,
+                            borderRadius: const BorderRadius.horizontal(
+                                right: Radius.circular(30),
+                                left: Radius.circular(30))),
                         width: 200,
                         height: 50,
-                        child:  Column(mainAxisAlignment: MainAxisAlignment.center,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text("add to play list ",textAlign: TextAlign.center,style: locator.get<MyThemes>().title(context),),
+                            Text(
+                              "add to play list ",
+                              textAlign: TextAlign.center,
+                              style: locator.get<MyThemes>().title(context),
+                            ),
                           ],
                         ),
                       ),
                     );
                   },
                 ),
-            ],
-          )
+              ],
+            )
           : const SizedBox(),
       appBar: widget.show
           ? AppBar(
@@ -179,10 +187,12 @@ class _ListSongBottomNavigationState extends State<ListSongBottomNavigation> {
                               builder: (context, state) {
                                 return widget.show
                                     ? CheckboxIconFormField(
-                                  trueIconColor: themeProvider.isDarkMode?Colors.white:Colors.black,
-                                  falseIconColor: themeProvider.isDarkMode?Colors.white:Colors.black,
-
-
+                                        trueIconColor: themeProvider.isDarkMode
+                                            ? Colors.white
+                                            : Colors.black,
+                                        falseIconColor: themeProvider.isDarkMode
+                                            ? Colors.white
+                                            : Colors.black,
                                         disabledColor: Colors.black,
                                         context: context,
                                         iconSize: 30,
@@ -197,77 +207,114 @@ class _ListSongBottomNavigationState extends State<ListSongBottomNavigation> {
                                         },
                                       )
                                     : SizedBox(
-                                  height: 50,
-                                  width: 36,
-                                  child: PopupMenuButton(
-                                    iconSize: 200,
-                                    icon: Image.asset(
-                                      "assets/icon/dots.png",
-                                      width: 40,
-                                      height: 40,
-                                      color: themeProvider.isDarkMode
-                                          ? Colors.white
-                                          : Colors.black,
-                                    ),
-                                    itemBuilder: (BuildContext bc) {
-                                      return [
-                                        PopupMenuItem(
-                                          onTap: () async {
-                                            Box boxNew = await Hive.openBox<FavoriteSong>(name[index]);
-                                            final playlist = ConcatenatingAudioSource(
-                                              useLazyPreparation: true,
-                                              shuffleOrder: DefaultShuffleOrder(),
-                                              children: [
-                                                for(int i=0;i<boxNew.length;i++)
-                                                  AudioSource.uri(Uri.parse(boxNew.getAt(i).path)),
-                                              ],
-                                            );
-                                            // ignore: use_build_context_synchronously
-                                            PlayNewSong().newSong(0, context, playlist,true);
-                                          },
-                                          value: '/add',
-                                          child:
-                                          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              const Text("Add to queue",style: TextStyle(fontSize: 15,fontFamily: "ibm",fontWeight: FontWeight.bold),),
-                                              SizedBox(
-                                                  width: 30,
-
-                                                  child: Image.asset("assets/icon/add-to-playlist.png"))
-                                            ],
+                                        height: 50,
+                                        width: 36,
+                                        child: PopupMenuButton(
+                                          iconSize: 200,
+                                          icon: Image.asset(
+                                            "assets/icon/dots.png",
+                                            width: 40,
+                                            height: 40,
+                                            color: themeProvider.isDarkMode
+                                                ? Colors.white
+                                                : Colors.black,
                                           ),
+                                          itemBuilder: (BuildContext bc) {
+                                            return [
+                                              PopupMenuItem(
+                                                onTap: () async {
+                                                  Box boxNew = await Hive
+                                                      .openBox<FavoriteSong>(
+                                                          name[index]);
+                                                  final playlist =
+                                                      ConcatenatingAudioSource(
+                                                    useLazyPreparation: true,
+                                                    shuffleOrder:
+                                                        DefaultShuffleOrder(),
+                                                    children: [
+                                                      for (int i = 0;
+                                                          i < boxNew.length;
+                                                          i++)
+                                                        AudioSource.uri(
+                                                            Uri.parse(boxNew
+                                                                .getAt(i)
+                                                                .path)),
+                                                    ],
+                                                  );
+                                                  // ignore: use_build_context_synchronously
+                                                  PlayNewSong().newSong(0,
+                                                      context, playlist, true);
+                                                },
+                                                value: '/add',
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    const Text(
+                                                      "Add to queue",
+                                                      style: TextStyle(
+                                                          fontSize: 15,
+                                                          fontFamily: "ibm",
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    SizedBox(
+                                                        width: 30,
+                                                        child: Image.asset(
+                                                            "assets/icon/add-to-playlist.png"))
+                                                  ],
+                                                ),
+                                              ),
+                                              PopupMenuItem(
+                                                onTap: () async {
+                                                  Box boxNew = await Hive
+                                                      .openBox<FavoriteSong>(
+                                                          name[index]);
+                                                  final playlist =
+                                                      ConcatenatingAudioSource(
+                                                    useLazyPreparation: true,
+                                                    shuffleOrder:
+                                                        DefaultShuffleOrder(),
+                                                    children: [
+                                                      for (int i = 0;
+                                                          i < boxNew.length;
+                                                          i++)
+                                                        AudioSource.uri(
+                                                            Uri.parse(boxNew
+                                                                .getAt(i)
+                                                                .path)),
+                                                    ],
+                                                  );
+                                                  // ignore: use_build_context_synchronously
+                                                  PlayNewSong().newSong(0,
+                                                      context, playlist, false);
+                                                },
+                                                value: '/add',
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    const Text(
+                                                      "play",
+                                                      style: TextStyle(
+                                                          fontSize: 15,
+                                                          fontFamily: "ibm",
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    SizedBox(
+                                                        width: 30,
+                                                        child: Image.asset(
+                                                            "assets/icon/play-button.png"))
+                                                  ],
+                                                ),
+                                              )
+                                            ];
+                                          },
                                         ),
-                                        PopupMenuItem(
-                                          onTap: () async {
-                                            Box boxNew = await Hive.openBox<FavoriteSong>(name[index]);
-                                            final playlist = ConcatenatingAudioSource(
-                                              useLazyPreparation: true,
-                                              shuffleOrder: DefaultShuffleOrder(),
-                                              children: [
-                                                for(int i=0;i<boxNew.length;i++)
-                                                  AudioSource.uri(Uri.parse(boxNew.getAt(i).path)),
-
-                                              ],
-                                            );
-                                            // ignore: use_build_context_synchronously
-                                            PlayNewSong().newSong(0, context, playlist,false);
-                                          },
-                                          value: '/add',
-                                          child:
-                                          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              const Text("play",style: TextStyle(fontSize: 15,fontFamily: "ibm",fontWeight: FontWeight.bold),),
-                                              SizedBox(
-                                                  width: 30,
-
-                                                  child: Image.asset("assets/icon/play-button.png"))
-                                            ],
-                                          ),
-                                        )
-                                      ];
-                                    },
-                                  ),
-                                );
+                                      );
                               },
                             ),
                             title: Text(
@@ -358,7 +405,6 @@ class _ListSongBottomNavigationState extends State<ListSongBottomNavigation> {
                         return const SizedBox();
                       } else {
                         return ListView.builder(
-
                           itemCount: box.length,
                           itemBuilder: (BuildContext context, int index) {
                             final themeProvider =
@@ -370,8 +416,14 @@ class _ListSongBottomNavigationState extends State<ListSongBottomNavigation> {
                                 child: ListTile(
                                   trailing: widget.show
                                       ? CheckboxIconFormField(
-                                    trueIconColor: themeProvider.isDarkMode?Colors.white:Colors.black,
-                                    falseIconColor: themeProvider.isDarkMode?Colors.white:Colors.black,
+                                          trueIconColor:
+                                              themeProvider.isDarkMode
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                          falseIconColor:
+                                              themeProvider.isDarkMode
+                                                  ? Colors.white
+                                                  : Colors.black,
                                           disabledColor: Colors.white,
                                           context: context,
                                           iconSize: 30,
@@ -405,81 +457,133 @@ class _ListSongBottomNavigationState extends State<ListSongBottomNavigation> {
                                                 PopupMenuItem(
                                                   onTap: () {
                                                     box.deleteAt(index);
-
                                                   },
                                                   value: '/delete',
-                                                  child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
                                                     children: [
-                                                       const Text("delete",style: TextStyle(fontSize: 15,fontFamily: "ibm",fontWeight: FontWeight.bold),),
+                                                      const Text(
+                                                        "delete",
+                                                        style: TextStyle(
+                                                            fontSize: 15,
+                                                            fontFamily: "ibm",
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
                                                       SizedBox(
                                                           width: 30,
                                                           height: 30,
-                                                          child: Image.asset("assets/icon/delete.png"))
+                                                          child: Image.asset(
+                                                              "assets/icon/delete.png"))
                                                     ],
                                                   ),
                                                 ),
-                                                 PopupMenuItem(
-                                                  onTap: (){
+                                                PopupMenuItem(
+                                                  onTap: () {
                                                     showDialog(
                                                       context: context,
-                                                      builder: (BuildContext context) {
+                                                      builder: (BuildContext
+                                                          context) {
                                                         return Dialog(
                                                           child: SizedBox(
                                                             width: 200,
                                                             height: 200,
                                                             child: Padding(
-                                                              padding: const EdgeInsets.all(8.0),
-                                                              child: Column(mainAxisAlignment: MainAxisAlignment.center,
-                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(8.0),
+                                                              child: Column(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
                                                                 children: [
                                                                   Padding(
-                                                                    padding: const EdgeInsets.all(8.0),
-                                                                    child:  Text('New Name',style: TextStyle(color: themeProvider.isDarkMode?Colors.white:Colors.black,fontSize: 20,fontFamily: "ibm",fontWeight: FontWeight.bold),),
+                                                                    padding:
+                                                                        const EdgeInsets
+                                                                            .all(
+                                                                            8.0),
+                                                                    child: Text(
+                                                                      'New Name',
+                                                                      style: TextStyle(
+                                                                          color: themeProvider.isDarkMode
+                                                                              ? Colors
+                                                                                  .white
+                                                                              : Colors
+                                                                                  .black,
+                                                                          fontSize:
+                                                                              20,
+                                                                          fontFamily:
+                                                                              "ibm",
+                                                                          fontWeight:
+                                                                              FontWeight.bold),
+                                                                    ),
                                                                   ),
-                                                                   Row(mainAxisAlignment: MainAxisAlignment.center,
-                                                                     children: [
-                                                                       SizedBox(
-                                                                         width: 200,
-                                                                         height: 60,
-                                                                         child: TextField(
-                                                                           onChanged: (value) {
-
-                                                                             nameNew = value;
-                                                                           },
-                                                                           decoration:  const InputDecoration(
-                                                                               labelText: "New Name",
-                                                                               border: UnderlineInputBorder(
-                                                                                 borderSide: BorderSide(
-                                                                                   color: Colors.deepPurple
-                                                                                 )
-                                                                               )),
-                                                                         ),
-                                                                       ),
-                                                                     ],
-                                                                   ),
+                                                                  Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .center,
+                                                                    children: [
+                                                                      SizedBox(
+                                                                        width:
+                                                                            200,
+                                                                        height:
+                                                                            60,
+                                                                        child:
+                                                                            TextField(
+                                                                          onChanged:
+                                                                              (value) {
+                                                                            nameNew =
+                                                                                value;
+                                                                          },
+                                                                          decoration: const InputDecoration(
+                                                                              labelText: "New Name",
+                                                                              border: UnderlineInputBorder(borderSide: BorderSide(color: Colors.deepPurple))),
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  ),
                                                                   Padding(
-                                                                    padding: const EdgeInsets.all(8.0),
-                                                                    child: Row(mainAxisAlignment: MainAxisAlignment.center,
+                                                                    padding:
+                                                                        const EdgeInsets
+                                                                            .all(
+                                                                            8.0),
+                                                                    child: Row(
+                                                                      mainAxisAlignment:
+                                                                          MainAxisAlignment
+                                                                              .center,
                                                                       children: [
                                                                         ElevatedButton(
-                                                                        //   style: ElevatedButton.styleFrom(
-                                                                        //   primary: Colors.blueGrey.shade300
-                                                                        // ),
-                                                                          onPressed: () {
-                                                                            nameNew="";
+                                                                          //   style: ElevatedButton.styleFrom(
+                                                                          //   primary: Colors.blueGrey.shade300
+                                                                          // ),
+                                                                          onPressed:
+                                                                              () {
+                                                                            nameNew =
+                                                                                "";
                                                                             dispose();
                                                                             Navigator.of(context).pop();
                                                                           },
-                                                                          child: const Text('CANCEL'),
+                                                                          child:
+                                                                              const Text('CANCEL'),
                                                                         ),
                                                                         ElevatedButton(
-                                                                          onPressed: () async {
-                                                                            box.putAt(index, MapPlayList(nameNew, false));
-                                                                            nameNew="";
+                                                                          onPressed:
+                                                                              () async {
+                                                                            box.putAt(index,
+                                                                                MapPlayList(nameNew, false));
+                                                                            nameNew =
+                                                                                "";
                                                                             dispose();
                                                                             Navigator.of(context).pop();
                                                                           },
-                                                                          child: const Text('ok'),
+                                                                          child:
+                                                                              const Text('ok'),
                                                                         ),
                                                                       ],
                                                                     ),
@@ -491,69 +595,130 @@ class _ListSongBottomNavigationState extends State<ListSongBottomNavigation> {
                                                         );
                                                       },
                                                     );
-
                                                   },
                                                   value: '/share',
-                                                  child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
                                                     children: [
-                                                       const Text("rename",style: TextStyle(fontSize: 15,fontFamily: "ibm",fontWeight: FontWeight.bold),),
+                                                      const Text(
+                                                        "rename",
+                                                        style: TextStyle(
+                                                            fontSize: 15,
+                                                            fontFamily: "ibm",
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
                                                       SizedBox(
                                                           width: 30,
-
-                                                          child: Image.asset("assets/icon/edit.png"))
+                                                          child: Image.asset(
+                                                              "assets/icon/edit.png"))
                                                     ],
                                                   ),
                                                 ),
-                                                 PopupMenuItem(
-                                                   onTap: () async {
-                                                     Box boxNew = await Hive.openBox<FavoriteSong>(box.getAt(index).title);
-                                                     final playlist = ConcatenatingAudioSource(
-                                                       useLazyPreparation: true,
-                                                       shuffleOrder: DefaultShuffleOrder(),
-                                                       children: [
-                                                         for(int i=0;i<boxNew.length;i++)
-                                                         AudioSource.uri(Uri.parse(boxNew.getAt(i).path)),
-                                                       ],
-                                                     );
-                                                     // ignore: use_build_context_synchronously
-                                                     PlayNewSong().newSong(0, context, playlist,true);
-                                                   },
-                                                  value: '/add',
-                                                  child:
-                                                      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                        children: [
-                                                           Text("Add to queue",style: TextStyle(fontSize: 15,fontFamily: "ibm",fontWeight: FontWeight.bold),),
-                                                          SizedBox(
-                                                              width: 30,
-
-                                                              child: Image.asset("assets/icon/add-to-playlist.png"))
-                                                        ],
-                                                      ),
-                                                ),
                                                 PopupMenuItem(
                                                   onTap: () async {
-                                                    Box boxNew = await Hive.openBox<FavoriteSong>(box.getAt(index).title);
-                                                    final playlist = ConcatenatingAudioSource(
+                                                    Box boxNew =
+                                                        await Hive.openBox<
+                                                                FavoriteSong>(
+                                                            box
+                                                                .getAt(index)
+                                                                .title);
+                                                    final playlist =
+                                                        ConcatenatingAudioSource(
                                                       useLazyPreparation: true,
-                                                      shuffleOrder: DefaultShuffleOrder(),
+                                                      shuffleOrder:
+                                                          DefaultShuffleOrder(),
                                                       children: [
-                                                        for(int i=0;i<boxNew.length;i++)
-                                                          AudioSource.uri(Uri.parse(boxNew.getAt(i).path)),
-
+                                                        for (int i = 0;
+                                                            i < boxNew.length;
+                                                            i++)
+                                                          AudioSource.uri(
+                                                              Uri.parse(boxNew
+                                                                  .getAt(i)
+                                                                  .path)),
                                                       ],
                                                     );
                                                     // ignore: use_build_context_synchronously
-                                                    PlayNewSong().newSong(0, context, playlist,false);
+                                                    PlayNewSong().newSong(
+                                                        0,
+                                                        context,
+                                                        playlist,
+                                                        true);
                                                   },
                                                   value: '/add',
-                                                  child:
-                                                  Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
                                                     children: [
-                                                       const Text("play",style: TextStyle(fontSize: 15,fontFamily: "ibm",fontWeight: FontWeight.bold),),
+                                                      Text(
+                                                        "Add to queue",
+                                                        style: TextStyle(
+                                                            fontSize: 15,
+                                                            fontFamily: "ibm",
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
                                                       SizedBox(
                                                           width: 30,
-
-                                                          child: Image.asset("assets/icon/play-button.png"))
+                                                          child: Image.asset(
+                                                              "assets/icon/add-to-playlist.png"))
+                                                    ],
+                                                  ),
+                                                ),
+                                                PopupMenuItem(
+                                                  onTap: () async {
+                                                    Box boxNew =
+                                                        await Hive.openBox<
+                                                                FavoriteSong>(
+                                                            box
+                                                                .getAt(index)
+                                                                .title);
+                                                    final playlist =
+                                                        ConcatenatingAudioSource(
+                                                      useLazyPreparation: true,
+                                                      shuffleOrder:
+                                                          DefaultShuffleOrder(),
+                                                      children: [
+                                                        for (int i = 0;
+                                                            i < boxNew.length;
+                                                            i++)
+                                                          AudioSource.uri(
+                                                              Uri.parse(boxNew
+                                                                  .getAt(i)
+                                                                  .path)),
+                                                      ],
+                                                    );
+                                                    // ignore: use_build_context_synchronously
+                                                    PlayNewSong().newSong(
+                                                        0,
+                                                        context,
+                                                        playlist,
+                                                        false);
+                                                  },
+                                                  value: '/add',
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      const Text(
+                                                        "play",
+                                                        style: TextStyle(
+                                                            fontSize: 15,
+                                                            fontFamily: "ibm",
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                      SizedBox(
+                                                          width: 30,
+                                                          child: Image.asset(
+                                                              "assets/icon/play-button.png"))
                                                     ],
                                                   ),
                                                 )

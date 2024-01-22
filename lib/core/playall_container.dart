@@ -10,7 +10,7 @@ class PlayAllContainer extends StatelessWidget {
     final themeProvider = Provider.of<ThemeProvider>(context);
     return Container(
       decoration:  BoxDecoration(
-          color: themeProvider.isDarkMode?Colors.deepPurple:Color(0xff1a1b1d),
+          color: themeProvider.isDarkMode?Colors.deepPurple:const Color(0xff1a1b1d),
         borderRadius: const BorderRadius.all(Radius.circular(15))
       ),
       child: Row(mainAxisAlignment: MainAxisAlignment.center,
