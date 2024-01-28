@@ -3,7 +3,7 @@ import 'package:first_project/bloc/newSong/play_new_song_bloc.dart';
 import 'package:first_project/bloc/play_list/play_list_bloc.dart';
 import 'package:first_project/bloc/play_song_bloc.dart';
 import 'package:first_project/bloc/sort/sort_song_bloc.dart';
-import 'package:first_project/core/pageview_screen.dart';
+import 'package:first_project/screen/bottum_navigation/pageview_screen.dart';
 import 'package:first_project/locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,6 +13,7 @@ import 'package:on_audio_query/on_audio_query.dart';
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
+  @override
   _SplashScreenState createState() => _SplashScreenState();
 }
 

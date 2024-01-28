@@ -2,7 +2,8 @@ import 'package:first_project/core/popup.dart';
 import 'package:first_project/core/theme/theme_mode.dart';
 import 'package:first_project/locator.dart';
 import 'package:first_project/model/song_count_artist.dart';
-import 'package:first_project/screen/artist/showSong_artist.dart';
+import 'package:first_project/screen/division_songs/artist/showSong_artist.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -33,8 +34,7 @@ class _ListMusicState extends State<Artist> {
                   Container(
                     color: themeProvider.isDarkMode?const Color(0xff1a1b1d):locator.get<MyThemes>().cContainerSong,
                     child: ListTile(
-                      trailing:
-                          const SizedBox(width: 35, child: PopupMenuButtonWidget()),
+
                       title: Text(
                         style: locator.get<MyThemes>().title(context),
                         maxLines: 1,

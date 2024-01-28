@@ -17,6 +17,7 @@ import 'model/get_song_file.dart';
 import 'model/list_artist.dart';
 import 'model/newSong.dart';
 import 'model/path_song.dart';
+import 'model/player_controler.dart';
 import 'model/song_count_artist.dart';
 import 'model/songs_model.dart';
 
@@ -24,6 +25,7 @@ final locator= GetIt.instance;
 
 Future<void> setup() async {
   GetIt.I.registerSingleton<AudioPlayer>(AudioPlayer());
+  GetIt.I.registerSingleton<PlayerControllerWave>(PlayerControllerWave());
   GetIt.I.registerSingleton<PlaySongBloc>(PlaySongBloc());
   GetIt.I.registerSingleton<SortSongBloc>(SortSongBloc());
   GetIt.I.registerSingleton<FavoriteBloc>(FavoriteBloc());

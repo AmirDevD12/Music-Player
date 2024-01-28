@@ -17,12 +17,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../model/songs_model.dart';
-import 'bottum_navigation/list_song_bottomnav.dart';
+import '../../../model/songs_model.dart';
+import '../../bottum_navigation/list/list_song_bottomnav.dart';
 
 class ListMusic extends StatefulWidget {
   SongSortType sort = SongSortType.DATE_ADDED;
@@ -93,10 +94,8 @@ class _ListMusicState extends State<ListMusic> {
                           builder: (BuildContext context,
                               AsyncSnapshot<List<SongModel>> snapshot) {
                             if (snapshot.hasData) {
-                              return state is DurationState ||
-                                      state is PausePlayState ||
-                                      state is ShowNavState
-                                  ? Padding(
+                              return
+                                   Padding(
                                       padding: const EdgeInsets.only(left: 10),
                                       child: SizedBox(
                                           width: MediaQuery.of(context)
@@ -104,11 +103,13 @@ class _ListMusicState extends State<ListMusic> {
                                                   .width -
                                               100,
                                           child: Text(
+                                              locator
+                                                  .get<AudioPlayer>()
+                                                  .currentIndex==null?"Song not played":
                                             snapshot
                                                     .data![locator
                                                             .get<AudioPlayer>()
-                                                            .currentIndex ??
-                                                        0]
+                                                            .currentIndex!]
                                                     .artist ??
                                                 "Not found",
                                             style: TextStyle(
@@ -120,8 +121,7 @@ class _ListMusicState extends State<ListMusic> {
                                                 fontWeight: FontWeight.bold),
                                             maxLines: 1,
                                           )),
-                                    )
-                                  : const SizedBox();
+                                    );
                             } else if (snapshot.hasError) {
                               return const Text('Song not played');
                             }
@@ -268,18 +268,6 @@ class _ListMusicState extends State<ListMusic> {
                                     itemCount: snapshot.data?.length,
                                     itemBuilder:
                                         (BuildContext context, int index) {
-                                      print(snapshot.data!.length);
-                                      final playlist = ConcatenatingAudioSource(
-                                        useLazyPreparation: true,
-                                        shuffleOrder: DefaultShuffleOrder(),
-                                        children: [
-                                          for (int i = 0;
-                                              i < snapshot.data!.length;
-                                              i++)
-                                            AudioSource.uri(Uri.parse(
-                                                snapshot.data![i].data)),
-                                        ],
-                                      );
 
                                       return Column(
                                         children: [
@@ -364,7 +352,7 @@ class _ListMusicState extends State<ListMusic> {
                                                                                 children: [
                                                                                   GestureDetector(
                                                                                       onTap: () {
-                                                                                        locator.get<AudioPlayer>().setAudioSource(playlist);
+                                                                                        // locator.get<AudioPlayer>().setAudioSource(playlist!);
                                                                                       },
                                                                                       child: const CardWidget(
                                                                                         text: 'Play next',
@@ -435,7 +423,7 @@ class _ListMusicState extends State<ListMusic> {
                                                                                                     ),
                                                                                                     Text("artist: ${snapshot.data![index].artist}", maxLines: 1, style: locator.get<MyThemes>().title(context)),
                                                                                                     snapshot.data![index].album != null ? Text("album:: ${snapshot.data![index].album}", maxLines: 1, style: locator.get<MyThemes>().title(context)) : const SizedBox(),
-                                                                                                    Text("duration: ${duration ?? "0"}", maxLines: 1, style: locator.get<MyThemes>().title(context)),
+                                                                                                    Text("duration: $duration ", maxLines: 1, style: locator.get<MyThemes>().title(context)),
                                                                                                     Text("dis playName: ${snapshot.data![index].displayName}", maxLines: 1, style: locator.get<MyThemes>().title(context)),
                                                                                                   ],
                                                                                                 ),
@@ -536,9 +524,9 @@ class _ListMusicState extends State<ListMusic> {
                                                   id: snapshot.data![index].id,
                                                   type: ArtworkType.AUDIO),
                                               onTap: () async {
-                                                List<SongModel> songs =
-                                                    await SongList()
-                                                        .getSongs(songSortType);
+                                                final playList=await locator.get<SongList>().getAudioSource(songSortType);
+                                                List<SongModel> songs = await locator.get<SongList>().getSongs(songSortType);
+
                                                 // ignore: use_build_context_synchronously
                                                 Navigator.push(
                                                     context,
@@ -575,7 +563,7 @@ class _ListMusicState extends State<ListMusic> {
                                                                 playInList:
                                                                     false,
                                                                 concatenatingAudioSource:
-                                                                    playlist,
+                                                                    playList,
                                                                 index: index,
                                                                 songs: songs,
                                                                 nameList: null,

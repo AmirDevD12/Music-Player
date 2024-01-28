@@ -1,18 +1,11 @@
 
-import 'package:first_project/bloc/favorite_song/favorite_bloc.dart';
-import 'package:first_project/bloc/newSong/play_new_song_bloc.dart';
-import 'package:first_project/bloc/play_list/play_list_bloc.dart';
-import 'package:first_project/bloc/play_song_bloc.dart';
-import 'package:first_project/bloc/sort/sort_song_bloc.dart';
 import 'package:first_project/core/theme/theme_mode.dart';
 import 'package:first_project/screen/spalsh/splashScreeen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:provider/provider.dart';
-import 'core/pageview_screen.dart';
 import 'locator.dart';
-
 import 'model/dataBase/delete_song_dataBase/delete_song.dart';
 import 'model/dataBase/favorite_dataBase/favorite_song.dart';
 import 'model/dataBase/map_string_bool/map_playList.dart';
@@ -22,7 +15,8 @@ import 'model/dataBase/recent_play/add_recent_play.dart';
 
 
 
-void main() async {
+Future<void> main() async {
+
  await Hive.initFlutter();
   Hive.registerAdapter(FavoriteSongAdapter());
   Hive.registerAdapter(DeleteSongAdapter());
@@ -36,6 +30,11 @@ await  Hive.openBox<PlayListRecentAdd>("Recent add");
 await  Hive.openBox<RecentPlay>("Recent play");
 await  Hive.openBox<MapPlayList>("Map");
  setup();
+ await JustAudioBackground.init(
+    androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
+    androidNotificationChannelName: 'Audio playback',
+    androidNotificationOngoing: true,
+  );
   runApp(
       MultiProvider(
         providers: [

@@ -3,7 +3,6 @@ import 'package:first_project/bloc/play_song_bloc.dart';
 import 'package:first_project/bloc/sort/sort_song_bloc.dart';
 import 'package:first_project/locator.dart';
 import 'package:first_project/model/chengeAnimation.dart';
-import 'package:first_project/model/songs_model.dart';
 import 'package:first_project/core/theme/theme_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -80,9 +79,9 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
                 builder: (context, state) {
                   if (state is ShowNavState) {
                     ChangeAnimation().toggleAnimation(_animationController,
-                        locator.get<AudioPlayer>().playing ? true : false);
+                        );
                     ChangeAnimation().toggleAnimation(_animationMusic,
-                        locator.get<AudioPlayer>().playing ? true : false);
+                        );
                   }
 
                   return IconButton(
@@ -95,14 +94,14 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
                         BlocProvider.of<PlaySongBloc>(context)
                             .add(PausePlayEvent());
                         ChangeAnimation().toggleAnimation(_animationController,
-                            locator.get<AudioPlayer>().playing ? true : false);
+                            );
                         ChangeAnimation().toggleAnimation(_animationMusic,
-                            locator.get<AudioPlayer>().playing ? true : false);
+                        );
                       },
                       icon: Image.asset(
-                        !locator.get<AudioPlayer>().playing
-                            ? "assets/icon/play-button-arrowhead.png"
-                            : "assets/icon/pause.png",
+                        locator.get<AudioPlayer>().playing
+                            ? "assets/icon/pause.png"
+                            : "assets/icon/play-button-arrowhead.png",
                         color: Colors.white,
                         width: 35,
                         height: 25,
@@ -120,14 +119,14 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
                               locator.get<AudioPlayer>().seekToNext();
                               ChangeAnimation().toggleAnimation(
                                   _animationController,
-                                  locator.get<AudioPlayer>().playing
-                                      ? true
-                                      : false);
+                              );
                               BlocProvider.of<PlayNewSongBloc>(context).add(
                                   NewSongEvent(locator
                                       .get<AudioPlayer>()
                                       .currentIndex!));
-                            } catch (e) {}
+                            } catch (e) {
+                              print(e);
+                            }
                           },
                           icon: Image.asset(
                             "assets/icon/music-player(1).png",

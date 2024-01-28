@@ -2,23 +2,18 @@ import 'package:first_project/bloc/favorite_song/favorite_bloc.dart';
 import 'package:first_project/bloc/newSong/play_new_song_bloc.dart';
 import 'package:first_project/bloc/play_song_bloc.dart';
 import 'package:first_project/bloc/sort/sort_song_bloc.dart';
-import 'package:first_project/core/pageview_widget.dart';
+import 'package:first_project/screen/division_songs/pags_bottomnavigation.dart';
 import 'package:first_project/core/them_seitcher.dart';
-import 'package:first_project/core/theme/theme_mode.dart';
 import 'package:first_project/locator.dart';
-
-import 'package:first_project/model/songs_model.dart';
-import 'package:first_project/screen/album/albom_page.dart';
-import 'package:first_project/screen/bottum_navigation/show_song_playList_screen.dart';
-import 'package:first_project/screen/bottum_navigation/list_song_bottomnav.dart';
-import 'package:first_project/screen/bottum_navigation/search_bottum.dart';
+import 'package:first_project/screen/bottum_navigation/list/list_song_bottomnav.dart';
+import 'package:first_project/screen/bottum_navigation/page_search/search_bottum.dart';
+import 'package:first_project/screen/division_songs/album/albom_page.dart';
 import 'package:first_project/screen/playSong_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:on_audio_query/on_audio_query.dart';
-import 'package:provider/provider.dart';
-import 'bottomNavigation_widget.dart';
-import 'card_widget.dart';
+import '../../core/bottomNavigation_widget.dart';
+import '../../core/card_widget.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({
@@ -33,7 +28,7 @@ class _MyHomePageState extends State<MyHomePage> {
   PageController controller = PageController();
   final List<Widget> _list = <Widget>[
     const Center(child: PageViewSong()),
-    Center(child: SearchPage()),
+    const Center(child: SearchPage()),
     const Center(
         child: ListSongBottomNavigation(
       show: false,
@@ -83,7 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
               if (state is ShowNavState) {
                 listSong = state.listSong;
               }
-              return Container(
+              return SizedBox(
                 width: double.infinity,
                 height: state is PlaySongInitial ? 60 : 120,
                 child: Column(

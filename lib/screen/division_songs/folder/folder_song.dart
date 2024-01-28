@@ -1,7 +1,8 @@
 import 'package:first_project/core/theme/theme_mode.dart';
 import 'package:first_project/locator.dart';
 import 'package:first_project/model/addres_folder.dart';
-import 'package:first_project/screen/folder/showSongFolder.dart';
+import 'package:first_project/screen/division_songs/folder/showSongFolder.dart';
+
 import 'package:flutter/material.dart';
 
 class FolderList extends StatelessWidget {

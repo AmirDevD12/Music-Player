@@ -11,6 +11,7 @@ import 'package:first_project/screen/playSong_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
 
@@ -46,7 +47,13 @@ class _AlbumPageState extends State<AlbumPage> {
                         shuffleOrder: DefaultShuffleOrder(),
                         children: [
                           for(int i=0;i<snapshot.data!.length;i++)
-                            AudioSource.uri(Uri.parse(snapshot.data![i].data)),
+                            AudioSource.uri(Uri.parse(snapshot.data![i].data),
+                                tag: MediaItem(
+                                  id: '${snapshot.data![i].id}',
+                                  album: snapshot.data![i].album??"",
+                                  title: snapshot.data![i].title,
+                                  artUri: Uri.parse('https://example.com/albumart.jpg'),
+                                )),
                         ],
                       );
                       return Column(
@@ -54,8 +61,6 @@ class _AlbumPageState extends State<AlbumPage> {
                           Container(
                             color: themeProvider.isDarkMode?const Color(0xff1a1b1d):locator.get<MyThemes>().cContainerSong,
                             child: ListTile(
-                              trailing:
-                                  const SizedBox(width: 35, child: PopupMenuButtonWidget()),
                               title: Text(
                                 style: locator.get<MyThemes>().title(context),
                                 maxLines: 1,

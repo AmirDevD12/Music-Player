@@ -69,7 +69,7 @@ class RecentAddScreen extends StatelessWidget {
                             PopupMenuItem(
                               onTap: () {},
                               value: '/delete',
-                              child: Text("delete"),
+                              child: const Text("delete"),
                             ),
                             const PopupMenuItem(
                               value: '/share',

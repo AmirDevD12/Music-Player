@@ -59,7 +59,6 @@ class _SelectSongScreenState extends State<SelectSongScreen> {
                   return ListView.builder(
                     itemCount: snapshot.data?.length,
                     itemBuilder: (BuildContext context, int index) {
-                      final themeProvider = Provider.of<ThemeProvider>(context);
                       return ListTile(
                         trailing: CheckboxIconFormField(
                           disabledColor: Colors.black,

@@ -1,7 +1,8 @@
-import 'package:first_project/screen/album/albom_page.dart';
-import 'package:first_project/screen/artist/count_artist.dart';
-import 'package:first_project/screen/folder/folder_song.dart';
-import 'package:first_project/screen/list_song.dart';
+
+import 'package:first_project/screen/division_songs/album/albom_page.dart';
+import 'package:first_project/screen/division_songs/artist/count_artist.dart';
+import 'package:first_project/screen/division_songs/folder/folder_song.dart';
+import 'package:first_project/screen/division_songs/songs/list_song.dart';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -20,7 +21,7 @@ class _PageViewSong extends State<PageViewSong> {
     const Center(child: FolderList()),
   ];
 
-  static const List<String> ListIssue = <String>[
+  static const List<String> listIssue = <String>[
     "Songs ",
     "Artist",
     "Album",
@@ -60,7 +61,7 @@ class _PageViewSong extends State<PageViewSong> {
                                       curve: Curves.easeOut);
                                 },
                                 child: Text(
-                                  ListIssue[index],
+                                  listIssue[index],
                                   style: const TextStyle(
                                       fontFamily: "ibm",
                                       fontSize: 15,
@@ -99,9 +100,9 @@ class _PageViewSong extends State<PageViewSong> {
             child: PageView(
               scrollDirection: Axis.horizontal,
               controller: controller,
-              onPageChanged: (num) {
+              onPageChanged: (value) {
                 setState(() {
-                  curr = num;
+                  curr = value;
                 });
               },
               children: _list,

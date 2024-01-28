@@ -654,7 +654,7 @@ class _ListSongBottomNavigationState extends State<ListSongBottomNavigation> {
                                                         MainAxisAlignment
                                                             .spaceBetween,
                                                     children: [
-                                                      Text(
+                                                      const Text(
                                                         "Add to queue",
                                                         style: TextStyle(
                                                             fontSize: 15,

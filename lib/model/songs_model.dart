@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'package:first_project/locator.dart';
 import 'package:first_project/model/dataBase/delete_song_dataBase/delete_song.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 
 
@@ -36,5 +39,23 @@ class SongList {
     songs=songs.reversed.toList();
     return songs;
   }
-
+  Future<ConcatenatingAudioSource> getAudioSource(SongSortType? songSortType) async {
+    List<SongModel> songs=await locator.get<SongList>().getSongs(songSortType);
+    final playlist = ConcatenatingAudioSource(
+      useLazyPreparation: true,
+      shuffleOrder: DefaultShuffleOrder(),
+      children: [
+        for (int i = 0; i <songs.length; i++)
+          AudioSource.uri(Uri.parse(
+              songs[i].data),
+              tag: MediaItem(
+                id: '${songs[i].id}',
+                album: songs[i].album??"",
+                title: songs[i].title,
+                artUri: Uri.parse('https://example.com/albumart.jpg'),
+              )),
+      ],
+    );
+    return playlist;
+  }
 }

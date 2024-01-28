@@ -51,6 +51,8 @@ dependencies:
   hive_flutter: ^1.1.0
   checkbox_formfield: ^0.2.0
   share_plus: ^7.2.1
+  audio_waveforms: ^1.0.4
+  just_audio_background: ^0.0.1-beta.5
 
 
 

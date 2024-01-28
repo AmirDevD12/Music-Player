@@ -10,7 +10,7 @@ import 'package:first_project/locator.dart';
 import 'package:first_project/model/dataBase/delete_song_dataBase/delete_song.dart';
 import 'package:first_project/model/delete_model.dart';
 import 'package:first_project/model/songs_model.dart';
-import 'package:first_project/screen/bottum_navigation/list_song_bottomnav.dart';
+import 'package:first_project/screen/bottum_navigation/list/list_song_bottomnav.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
@@ -20,6 +20,8 @@ import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
 
 class SearchPage extends StatefulWidget {
+  const SearchPage({super.key});
+
   @override
   _SearchPage createState() => _SearchPage();
 }

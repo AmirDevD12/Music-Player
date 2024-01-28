@@ -38,16 +38,17 @@ class _PlayPageState extends State<PlayPage>
   late AnimationController _animationController;
   late Animation<double> _animation;
 
-  bool isPlaying = true;
   bool like = true;
   bool shuffle = false;
   late List<SongModel> songs;
   late final blocPlaySong;
   late final blocNewSong;
   int? next = 0;
+                        // Refresh waveform to original position
+                                 // Dispose controller
   @override
   void initState() {
-    blocPlaySong = BlocProvider.of<PlaySongBloc>(context);
+  blocPlaySong = BlocProvider.of<PlaySongBloc>(context);
     blocNewSong = BlocProvider.of<PlayNewSongBloc>(context);
     PlayNewSong()
         .newSong(widget.index, context, widget.concatenatingAudioSource, false);
@@ -65,18 +66,18 @@ class _PlayPageState extends State<PlayPage>
       ),
     );
 
-    ChangeAnimation().toggleAnimation(_animationController, isPlaying);
+    ChangeAnimation().toggleAnimation(_animationController,);
   }
 
   @override
   void dispose() {
-    try {
+  try {
       if (locator.get<AudioPlayer>().currentIndex == widget.index) {
         blocNewSong.add(NewSongEvent(
           widget.index,
         ));
       }
-      blocPlaySong.add(ShowEvent(isPlaying, widget.songs));
+      blocPlaySong.add(ShowEvent(locator.get<AudioPlayer>().playing, widget.songs));
     } catch (e) {
       print(e);
     }
@@ -101,7 +102,7 @@ class _PlayPageState extends State<PlayPage>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
-                buildWhen: (privioce, current) {
+                buildWhen: (previous, current) {
                   if (current is NewSongState) {
                     return true;
                   } else {
@@ -110,7 +111,7 @@ class _PlayPageState extends State<PlayPage>
                 },
                 builder: (context, state) {
                   return BlocBuilder<PlaySongBloc, PlaySongState>(
-                    buildWhen: (privioce, current) {
+                    buildWhen: (previous, current) {
                       if (current is PausePlayState) {
                         return true;
                       } else {
@@ -187,7 +188,7 @@ class _PlayPageState extends State<PlayPage>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   BlocBuilder<FavoriteBloc, FavoriteState>(
-                    buildWhen: (priviuse, current) {
+                    buildWhen: (previous, current) {
                       if (current is PlayFavoriteState) {
                         return true;
                       } else {
@@ -196,7 +197,7 @@ class _PlayPageState extends State<PlayPage>
                     },
                     builder: (context, state) {
                       return BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
-                        buildWhen: (privioce, current) {
+                        buildWhen: (previous, current) {
                           if (current is PauseAnimationState ||
                               current is ChangIconState) {
                             return false;
@@ -205,6 +206,7 @@ class _PlayPageState extends State<PlayPage>
                           }
                         },
                         builder: (context, state) {
+
                           return RotationTransition(
                               turns: _animation,
                               child: Container(
@@ -295,7 +297,7 @@ class _PlayPageState extends State<PlayPage>
               Row(
                 children: [
                   BlocBuilder<FavoriteBloc, FavoriteState>(
-                    buildWhen: (priviuse, current) {
+                    buildWhen: (previous, current) {
                       if (current is PlayFavoriteState) {
                         return true;
                       } else {
@@ -304,7 +306,7 @@ class _PlayPageState extends State<PlayPage>
                     },
                     builder: (context, state) {
                       return BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
-                        buildWhen: (privioce, current) {
+                        buildWhen: (previous, current) {
                           if (current is PauseAnimationState ||
                               current is ChangIconState) {
                             return false;
@@ -336,8 +338,7 @@ class _PlayPageState extends State<PlayPage>
                                                             .get<AudioPlayer>()
                                                             .currentIndex!)
                                                         .title
-                                                        .toString() ??
-                                                    ""),
+                                                        .toString()),
                                       ],
                                     ),
                                     subtitle: Row(
@@ -361,8 +362,7 @@ class _PlayPageState extends State<PlayPage>
                                                             .get<AudioPlayer>()
                                                             .currentIndex!)
                                                         .artist
-                                                        .toString() ??
-                                                    ""),
+                                                        .toString()),
                                       ],
                                     ),
                                   )
@@ -416,8 +416,7 @@ class _PlayPageState extends State<PlayPage>
                                                                   AudioPlayer>()
                                                               .currentIndex!)
                                                           .artist
-                                                          .toString() ??
-                                                      ""),
+                                                          .toString()),
                                             ],
                                           ),
                                         );
@@ -431,7 +430,26 @@ class _PlayPageState extends State<PlayPage>
                   ),
                 ],
               ),
-              Row(
+              // Row(mainAxisAlignment: MainAxisAlignment.center,
+              //   children: [
+              //     Container(
+              //
+              //         width:MediaQuery.of(context).size.width-40,
+              //         height: 100,
+              //         child: AudioFileWaveforms(continuousWaveform: false,
+              //           enableSeekGesture: false,
+              //           playerWaveStyle: const PlayerWaveStyle(showSeekLine: true,liveWaveColor: Colors.red,fixedWaveColor: Colors.black),
+              //
+              //           backgroundColor: Colors.black,
+              //           size: Size(MediaQuery.of(context).size.width-40, 100.0),
+              //           playerController:locator.get<PlayerControllerWave>().playerController ,
+              //         )
+              //
+              //     ),
+              //   ],
+              // ),
+
+               Row(
                 children: [
                   Expanded(child: BlocBuilder<PlaySongBloc, PlaySongState>(
                     builder: (context, state) {
@@ -487,7 +505,7 @@ class _PlayPageState extends State<PlayPage>
                           maxLines: 1,
                           duration.toString().split(".")[0],
                         ),
-                        Text(maxLines: 1, position.toString().split(".")[0]),
+                        Text(maxLines: 1, position.toString().split(".")[0],),
                       ],
                     );
                   },
@@ -500,10 +518,11 @@ class _PlayPageState extends State<PlayPage>
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   IconButton(
-                      onPressed: () {
+                      onPressed: () async {
+                        Duration duration=const Duration(seconds: 10);
                         locator
                             .get<AudioPlayer>()
-                            .seek(const Duration(seconds: 10));
+                            .seek(locator.get<AudioPlayer>().position+duration);
                       },
                       icon: Image.asset(
                         "assets/icon/ten(2).png",
@@ -516,7 +535,7 @@ class _PlayPageState extends State<PlayPage>
                   BlocBuilder<FavoriteBloc, FavoriteState>(
                     builder: (context, state) {
                       return BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
-                        buildWhen: (privioc, current) {
+                        buildWhen: (previous, current) {
                           if (current is ChangIconState ||
                               current is PauseAnimationState) {
                             return false;
@@ -540,9 +559,7 @@ class _PlayPageState extends State<PlayPage>
 
                                   ChangeAnimation().toggleAnimation(
                                       _animationController,
-                                      locator.get<AudioPlayer>().playing
-                                          ? true
-                                          : false);
+                                      );
                                   bool check;
                                   if (isFavorite) {
                                     check = checkFavorite(
@@ -611,20 +628,18 @@ class _PlayPageState extends State<PlayPage>
                     builder: (context, state) {
                       return IconButton(
                           onPressed: () async {
-                            if (isPlaying) {
+                            if (locator.get<AudioPlayer>().playing) {
                               locator.get<AudioPlayer>().pause();
                             } else {
                               locator.get<AudioPlayer>().play();
                             }
-                            isPlaying = !isPlaying;
-
                             BlocProvider.of<PlaySongBloc>(context)
                                 .add(PausePlayEvent());
                             ChangeAnimation().toggleAnimation(
-                                _animationController, isPlaying ? true : false);
+                                _animationController,);
                           },
                           icon: Image.asset(
-                            isPlaying
+                            locator.get<AudioPlayer>().playing
                                 ? "assets/icon/pause.png"
                                 : "assets/icon/play-button.png",
                             width: 50,
@@ -661,9 +676,7 @@ class _PlayPageState extends State<PlayPage>
                                   locator.get<AudioPlayer>().seekToNext();
                                   ChangeAnimation().toggleAnimation(
                                       _animationController,
-                                      locator.get<AudioPlayer>().playing
-                                          ? true
-                                          : false);
+                                      );
                                   bool check;
                                   if (isFavorite) {
                                     check = checkFavorite(
@@ -784,7 +797,7 @@ class _PlayPageState extends State<PlayPage>
                           useLazyPreparation: true,
                           shuffleOrder: DefaultShuffleOrder(),
                           children: [
-                            for (int i = 0; i < box.length!; i++)
+                            for (int i = 0; i < box.length; i++)
                               AudioSource.uri(Uri.parse(box.getAt(i).path)),
                           ],
                         );
