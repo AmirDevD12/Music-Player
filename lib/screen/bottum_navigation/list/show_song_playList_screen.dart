@@ -4,12 +4,16 @@ import 'package:first_project/bloc/play_song_bloc.dart';
 import 'package:first_project/bloc/sort/sort_song_bloc.dart';
 import 'package:first_project/core/theme/theme_mode.dart';
 import 'package:first_project/locator.dart';
+import 'package:first_project/model/info_for_route.dart';
+import 'package:first_project/model/newSong.dart';
 import 'package:first_project/model/songs_model.dart';
 import 'package:first_project/screen/playSong_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
 
@@ -21,12 +25,11 @@ class FavoriteScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final  themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
         appBar: AppBar(
-          foregroundColor: Colors.white,
+          backgroundColor: themeProvider.isDarkMode?Colors.black:Colors.white,
           title: Text(
-            style: const TextStyle(color: Colors.white),
-            maxLines: 1,
             name,
           ),
         ),
@@ -38,11 +41,8 @@ class FavoriteScreen extends StatelessWidget {
                   child: Padding(
                 padding: EdgeInsets.all(50.0),
                 child: Text(
-                  'هیچ لیستی وجود ندارد',
+                  'Not Found',
                   style: TextStyle(
-                    fontSize: 28.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.red,
                   ),
                 ),
               ));
@@ -55,7 +55,13 @@ class FavoriteScreen extends StatelessWidget {
                     shuffleOrder: DefaultShuffleOrder(),
                     children: [
                       for (int i = 0; i < box.length; i++)
-                        AudioSource.uri(Uri.parse(box.getAt(i).path)),
+                        AudioSource.uri(Uri.parse(box.getAt(i).path),  tag: MediaItem(
+                        id: '${box.getAt(i).id}',
+                          album: "",
+                          title: box.getAt(i).title!,
+                          artUri: Uri.parse(box.getAt(i).id.toString()),
+                        )),
+
                     ],
                   );
                   final themeProvider = Provider.of<ThemeProvider>(context);
@@ -110,39 +116,18 @@ class FavoriteScreen extends StatelessWidget {
                         id: boxes.getAt(index).id!,
                         type: ArtworkType.AUDIO),
                     onTap: () async {
-                      List<SongModel> songs =
-                          await SongList().getSongs(SongSortType.DATE_ADDED);
-
+                      List<String> paths=[];
+                      for(int i=0;i<box.length;i++){
+                        paths.add(box.getAt(i).path);
+                      }
+                        List<SongModel>songs=await locator.get<SongList>().getSongBox(paths);
                       // ignore: use_build_context_synchronously
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => MultiBlocProvider(
-                                    providers: [
-                                      BlocProvider(
-                                          create: (context) =>
-                                              locator.get<PlaySongBloc>()),
-                                      BlocProvider(
-                                        create: (context) =>
-                                            locator.get<PlayNewSongBloc>(),
-                                      ),
-                                      BlocProvider(
-                                        create: (context) =>
-                                            locator.get<FavoriteBloc>(),
-                                      ),
-                                      BlocProvider(
-                                        create: (context) =>
-                                            locator.get<SortSongBloc>(),
-                                      ),
-                                    ],
-                                    child: PlayPage(
-                                      playInList: true,
-                                      concatenatingAudioSource: playlist,
-                                      index: index,
-                                      songs: songs,
-                                      nameList: boxes,
-                                    ),
-                                  )));
+                      locator.get<InfoPage>().setInfo( playlist, index, songs, boxes);
+                      context.push(
+                          PlayPage.routePlayPage,
+                          extra:locator.get<InfoPage>());
+                      locator.get<PlayNewSong>()
+                          .newSong(index, context,playlist, false);
                     },
                   );
                 },

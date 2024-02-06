@@ -4,8 +4,10 @@ import 'package:first_project/bloc/sort/sort_song_bloc.dart';
 import 'package:first_project/locator.dart';
 import 'package:first_project/model/chengeAnimation.dart';
 import 'package:first_project/core/theme/theme_mode.dart';
+import 'package:first_project/model/info_for_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:lottie/lottie.dart';
 import 'package:on_audio_query/on_audio_query.dart';
@@ -166,8 +168,8 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
                   }
                 },
                 builder: (context, state) {
-                  print(locator.get<AudioPlayer>().currentIndex);
-                  return widget.listSong.isNotEmpty
+
+                  return locator.get<AudioPlayer>().currentIndex!=null
                       ? RotationTransition(
                           turns: _animation,
                           child: CircleAvatar(
@@ -182,8 +184,7 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen>
                                       Radius.circular(100)),
                                   artworkWidth: 50,
                                   artworkHeight: 50,
-                                  id: widget
-                                      .listSong[locator
+                                  id: locator.get<InfoPage>().songs![locator
                                           .get<AudioPlayer>()
                                           .currentIndex!]
                                       .id,

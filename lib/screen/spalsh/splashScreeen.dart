@@ -7,12 +7,13 @@ import 'package:first_project/screen/bottum_navigation/pageview_screen.dart';
 import 'package:first_project/locator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:on_audio_query/on_audio_query.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
-
+  static String routeSplashScreen="/SplashScreen";
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
@@ -23,24 +24,7 @@ class _SplashScreenState extends State<SplashScreen> {
     OnAudioQuery().permissionsStatus();
     super.initState();
     Future.delayed(const Duration(seconds: 1), () {
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => MultiBlocProvider(
-                    providers: [
-                      BlocProvider<PlaySongBloc>(
-                          create: (context) => locator.get<PlaySongBloc>()),
-                      BlocProvider<SortSongBloc>(
-                          create: (context) => locator.get<SortSongBloc>()),
-                      BlocProvider<PlayNewSongBloc>(
-                          create: (context) => locator.get<PlayNewSongBloc>()),
-                      BlocProvider<FavoriteBloc>(
-                          create: (context) => locator.get<FavoriteBloc>()),
-                      BlocProvider<PlayListBloc>(
-                          create: (context) => locator.get<PlayListBloc>()),
-                    ],
-                    child: MyHomePage(),
-                  )));
+      context.pushReplacement(MyHomePage.routeMyHomePage);
     });
   }
 

@@ -16,6 +16,6 @@ class ThemeSwitcher extends StatelessWidget {
         onPressed: (){
           themeProvider.toggleTheme();
         },
-        icon: switchIcon,color: Colors.white,);
+        icon: switchIcon,color: themeProvider.isDarkMode?Colors.white:Colors.black,);
   }
 }

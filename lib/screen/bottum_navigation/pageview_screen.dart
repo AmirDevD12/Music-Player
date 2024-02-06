@@ -1,25 +1,28 @@
-import 'package:first_project/bloc/favorite_song/favorite_bloc.dart';
+
 import 'package:first_project/bloc/newSong/play_new_song_bloc.dart';
 import 'package:first_project/bloc/play_song_bloc.dart';
-import 'package:first_project/bloc/sort/sort_song_bloc.dart';
+import 'package:first_project/core/theme/theme_mode.dart';
+import 'package:first_project/locator.dart';
+import 'package:first_project/model/info_for_route.dart';
 import 'package:first_project/screen/division_songs/pags_bottomnavigation.dart';
 import 'package:first_project/core/them_seitcher.dart';
-import 'package:first_project/locator.dart';
 import 'package:first_project/screen/bottum_navigation/list/list_song_bottomnav.dart';
 import 'package:first_project/screen/bottum_navigation/page_search/search_bottum.dart';
 import 'package:first_project/screen/division_songs/album/albom_page.dart';
 import 'package:first_project/screen/playSong_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
+import 'package:provider/provider.dart';
 import '../../core/bottomNavigation_widget.dart';
-import '../../core/card_widget.dart';
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({
+  const MyHomePage({
     super.key,
   });
-
+  static String routeMyHomePage='/MyHomePage';
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -34,7 +37,6 @@ class _MyHomePageState extends State<MyHomePage> {
       show: false,
       songModel: null,
     )),
-    const Center(child: AlbumPage()),
   ];
 
   @override
@@ -45,20 +47,24 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   late SongModel songModel;
-  int index = 0;
-  List<SongModel> listSong = [];
+
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       appBar: AppBar(
         actions: const [ThemeSwitcher()],
-        title: const Text(
+        title: Text(
           'My music',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(
+              color: themeProvider.isDarkMode?Colors.white:Colors.black,
+              fontSize: 20,
+              fontFamily: "ibm",
+              fontWeight: FontWeight.bold),
         ),
       ),
       bottomNavigationBar: BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
-        buildWhen: (privioc, current) {
+        buildWhen: (previous, current) {
           if (current is NewSongState) {
             return true;
           } else {
@@ -67,8 +73,8 @@ class _MyHomePageState extends State<MyHomePage> {
         },
         builder: (context, state) {
           return BlocBuilder<PlaySongBloc, PlaySongState>(
-            buildWhen: (privioc, current) {
-              if (current is DurationState == privioc is DurationState) {
+            buildWhen: (previous, current) {
+              if (current is DurationState == previous is DurationState) {
                 return false;
               } else {
                 return true;
@@ -76,11 +82,10 @@ class _MyHomePageState extends State<MyHomePage> {
             },
             builder: (context, state) {
               if (state is ShowNavState) {
-                listSong = state.listSong;
               }
               return SizedBox(
                 width: double.infinity,
-                height: state is PlaySongInitial ? 60 : 120,
+                height: state is PlaySongInitial ? 55 : 120,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -89,38 +94,12 @@ class _MyHomePageState extends State<MyHomePage> {
                             state is ShowNavState
                         ? GestureDetector(
                             onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => MultiBlocProvider(
-                                            providers: [
-                                              BlocProvider(
-                                                  create: (context) => locator
-                                                      .get<PlaySongBloc>()),
-                                              BlocProvider(
-                                                create: (context) => locator
-                                                    .get<PlayNewSongBloc>(),
-                                              ),
-                                              BlocProvider(
-                                                create: (context) =>
-                                                    locator.get<FavoriteBloc>(),
-                                              ),
-                                              BlocProvider(
-                                                create: (context) =>
-                                                    locator.get<SortSongBloc>(),
-                                              ),
-                                            ],
-                                            child: PlayPage(
-                                              playInList: false,
-                                              concatenatingAudioSource: null,
-                                              index: index,
-                                              songs: listSong,
-                                              nameList: null,
-                                            ),
-                                          )));
+                              context.push(
+                                  PlayPage.routePlayPage,
+                                  extra: locator.get<InfoPage>());
                             },
                             child: BottomNavigationBarScreen(
-                              listSong: listSong,
+                              listSong: locator.get<InfoPage>().songs!,
                             ))
                         : const SizedBox(),
                     const SizedBox(
@@ -129,60 +108,103 @@ class _MyHomePageState extends State<MyHomePage> {
                     Expanded(
                       child: SizedBox(
                         width: MediaQuery.of(context).size.width,
-                        height: 70,
+                          height: 50,
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                GestureDetector(
-                                    onTap: () {
-                                      controller.animateToPage(0,
-                                          duration:
-                                              const Duration(milliseconds: 10),
-                                          curve: Curves.easeOut);
-                                    },
-                                    child: const CardWidget(
-                                      text: 'My Music',
-                                      path: "assets/icon/music(1).png",
-                                    )),
-                                GestureDetector(
-                                    onTap: () {
-                                      controller.animateToPage(1,
-                                          duration:
-                                              const Duration(milliseconds: 10),
-                                          curve: Curves.easeOut);
-                                    },
-                                    child: const CardWidget(
-                                      text: 'search',
-                                      path: "assets/icon/magnifying-glass.png",
-                                    )),
-                                GestureDetector(
-                                    onTap: () {
-                                      controller.animateToPage(2,
-                                          duration:
-                                              const Duration(milliseconds: 10),
-                                          curve: Curves.easeOut);
-                                    },
-                                    child: const CardWidget(
-                                      text: 'List',
-                                      path: "assets/icon/list(2).png",
-                                    )),
-                                GestureDetector(
-                                    onTap: () {
-                                      controller.animateToPage(3,
-                                          duration:
-                                              const Duration(milliseconds: 10),
-                                          curve: Curves.easeOut);
-                                    },
-                                    child: const CardWidget(
-                                      text: 'Path',
-                                      path:
-                                          "assets/icon/information-button.png",
-                                    )),
-                              ],
-                            ),
+                            SizedBox(
+
+                            height: 50,
+                            child: BottomNavigationBar(
+                              onTap: (index){
+                                controller.animateToPage(
+                                    index,
+                                    duration:
+                                    const Duration(milliseconds: 10),
+                                    curve: Curves.easeOut);
+                              },
+                              unselectedItemColor: themeProvider.isDarkMode?Colors.white:Colors.black ,
+                              showUnselectedLabels: true,
+                                     fixedColor:themeProvider.isDarkMode?Colors.white:Colors.black ,
+                                items:<BottomNavigationBarItem>[
+                              BottomNavigationBarItem(
+                                  icon: Image.asset("assets/icon/music(1).png",
+                                  width: 20,
+                                  height: 15,
+                                    color: themeProvider.isDarkMode?Colors.white:Colors.black ,
+                              ),label:'My Music',
+                              ),
+                              BottomNavigationBarItem(
+                                  icon: Image.asset("assets/icon/magnifying-glass.png",
+                                width: 20,
+                                height: 15,
+                                    color: themeProvider.isDarkMode?Colors.white:Colors.black ,
+                                  ),label:'Search' ,),
+                              BottomNavigationBarItem(
+                                  icon: Image.asset("assets/icon/list(2).png",
+                                width: 20,
+                                height: 15,
+                                    color: themeProvider.isDarkMode?Colors.white:Colors.black ,
+                                  ),label:'List Song' ,),
+                              BottomNavigationBarItem(
+                                  icon: Image.asset("assets/icon/information-button.png",
+                                    width: 20,
+                                    height: 15,
+                                    color: themeProvider.isDarkMode?Colors.white:Colors.black ,
+                                  ),label:'Info' ,),
+                            ]),
+                          ),
+                            // Row(
+                            //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            //   children: [
+                            //
+                            //     GestureDetector(
+                            //         onTap: () {
+                            //           controller.animateToPage(0,
+                            //               duration:
+                            //                   const Duration(milliseconds: 10),
+                            //               curve: Curves.easeOut);
+                            //         },
+                            //         child: const CardWidget(
+                            //           text: 'My Music',
+                            //           path: "assets/icon/music(1).png",
+                            //         )),
+                            //     GestureDetector(
+                            //         onTap: () {
+                            //           controller.animateToPage(1,
+                            //               duration:
+                            //                   const Duration(milliseconds: 10),
+                            //               curve: Curves.easeOut);
+                            //         },
+                            //         child: const CardWidget(
+                            //           text: 'search',
+                            //           path: "assets/icon/magnifying-glass.png",
+                            //         )),
+                            //     GestureDetector(
+                            //         onTap: () {
+                            //           controller.animateToPage(2,
+                            //               duration:
+                            //                   const Duration(milliseconds: 10),
+                            //               curve: Curves.easeOut);
+                            //         },
+                            //         child: const CardWidget(
+                            //           text: 'List',
+                            //           path: "assets/icon/list(2).png",
+                            //         )),
+                            //     GestureDetector(
+                            //         onTap: () {
+                            //           controller.animateToPage(3,
+                            //               duration:
+                            //                   const Duration(milliseconds: 10),
+                            //               curve: Curves.easeOut);
+                            //         },
+                            //         child: const CardWidget(
+                            //           text: 'Path',
+                            //           path:
+                            //               "assets/icon/information-button.png",
+                            //         )),
+                            //   ],
+                            // ),
                           ],
                         ),
                       ),

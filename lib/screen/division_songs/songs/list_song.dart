@@ -5,23 +5,24 @@ import 'package:first_project/bloc/play_list/play_list_bloc.dart';
 import 'package:first_project/bloc/play_song_bloc.dart';
 import 'package:first_project/bloc/sort/sort_song_bloc.dart';
 import 'package:first_project/core/card_widget.dart';
-import 'package:first_project/core/playall_container.dart';
 import 'package:first_project/locator.dart';
+import 'package:first_project/model/chckFavorite.dart';
 import 'package:first_project/model/dataBase/delete_song_dataBase/delete_song.dart';
 import 'package:first_project/model/dataBase/recent_play/add_recent_play.dart';
 import 'package:first_project/model/delete_model.dart';
-import 'package:first_project/screen/playSong_page.dart';
+import 'package:first_project/model/info_for_route.dart';
 import 'package:first_project/core/theme/theme_mode.dart';
+import 'package:first_project/model/newSong.dart';
+import 'package:first_project/screen/playSong_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:just_audio_background/just_audio_background.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
-
 import '../../../model/songs_model.dart';
 import '../../bottum_navigation/list/list_song_bottomnav.dart';
 
@@ -79,7 +80,7 @@ class _ListMusicState extends State<ListMusic> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 BlocBuilder<PlayNewSongBloc, PlayNewSongState>(
-                  buildWhen: (privioc, current) {
+                  buildWhen: (previous, current) {
                     if (current is NewSongState) {
                       return true;
                     } else {
@@ -106,8 +107,7 @@ class _ListMusicState extends State<ListMusic> {
                                               locator
                                                   .get<AudioPlayer>()
                                                   .currentIndex==null?"Song not played":
-                                            snapshot
-                                                    .data![locator
+                                            locator.get<InfoPage>().songs![locator
                                                             .get<AudioPlayer>()
                                                             .currentIndex!]
                                                     .artist ??
@@ -162,8 +162,11 @@ class _ListMusicState extends State<ListMusic> {
                                       fontSize: 20,
                                       fontFamily: "ibm"),
                             ),
-                            const SizedBox(
-                              width: 10,
+                            Image.asset(
+                              "assets/icon/clock(1).png",
+                              color: themeProvider.isDarkMode?Colors.black:Colors.white,
+                              width: 25,
+                              height: 25,
                             ),
                           ],
                         ),
@@ -190,8 +193,11 @@ class _ListMusicState extends State<ListMusic> {
                                       fontSize: 20,
                                       fontFamily: "ibm"),
                             ),
-                            const SizedBox(
-                              width: 10,
+                            Image.asset(
+                              "assets/icon/signature.png",
+                              color: themeProvider.isDarkMode?Colors.black:Colors.white,
+                              width: 25,
+                              height: 25,
                             ),
                           ],
                         ),
@@ -218,8 +224,11 @@ class _ListMusicState extends State<ListMusic> {
                                       fontSize: 20,
                                       fontFamily: "ibm"),
                             ),
-                            const SizedBox(
-                              width: 10,
+                            Image.asset(
+                              "assets/icon/artist.png",
+                              color: themeProvider.isDarkMode?Colors.black:Colors.white,
+                              width: 25,
+                              height: 25,
                             ),
                           ],
                         ),
@@ -263,7 +272,7 @@ class _ListMusicState extends State<ListMusic> {
                               future: SongList().getSongs(songSortType),
                               builder: (BuildContext context,
                                   AsyncSnapshot<List<SongModel>> snapshot) {
-                                if (snapshot.hasData) {
+                                if (snapshot.hasData&&snapshot.data!.isNotEmpty) {
                                   return ListView.builder(
                                     itemCount: snapshot.data?.length,
                                     itemBuilder:
@@ -511,67 +520,34 @@ class _ListMusicState extends State<ListMusic> {
                                                 maxLines: 1,
                                                 snapshot
                                                     .data![index].displayName,
-                                              ),
-                                              leading: QueryArtworkWidget(
-                                                  nullArtworkWidget: Image.asset(
-                                                      "assets/icon/vinyl-record.png"),
-                                                  artworkWidth: 60,
-                                                  artworkHeight: 60,
-                                                  artworkFit: BoxFit.cover,
-                                                  artworkBorder:
-                                                      const BorderRadius.all(
-                                                          Radius.circular(5)),
-                                                  id: snapshot.data![index].id,
-                                                  type: ArtworkType.AUDIO),
+                                              ), leading: QueryArtworkWidget(
+                                                nullArtworkWidget: Image.asset(
+                                                    "assets/icon/vinyl-record.png"),
+                                                artworkWidth: 60,
+                                                artworkHeight: 60,
+                                                artworkFit: BoxFit.cover,
+                                                artworkBorder:
+                                                const BorderRadius.all(
+                                                    Radius.circular(5)),
+                                                id: snapshot.data![index].id,
+                                                type: ArtworkType.AUDIO),
+
                                               onTap: () async {
+
+                                                 locator.get<CheckFavorite>().check(snapshot.data![index].data, context,false);
                                                 final playList=await locator.get<SongList>().getAudioSource(songSortType);
                                                 List<SongModel> songs = await locator.get<SongList>().getSongs(songSortType);
-
+                                                       locator.get<InfoPage>().setInfo( playList, index, songs, null);
                                                 // ignore: use_build_context_synchronously
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            MultiBlocProvider(
-                                                              providers: [
-                                                                BlocProvider(
-                                                                    create: (context) =>
-                                                                        locator.get<
-                                                                            PlaySongBloc>()),
-                                                                BlocProvider(
-                                                                  create: (context) =>
-                                                                      locator.get<
-                                                                          PlayNewSongBloc>(),
-                                                                ),
-                                                                BlocProvider(
-                                                                  create: (context) =>
-                                                                      locator.get<
-                                                                          FavoriteBloc>(),
-                                                                ),
-                                                                BlocProvider(
-                                                                  create: (context) =>
-                                                                      locator.get<
-                                                                          SortSongBloc>(),
-                                                                ),
-                                                                BlocProvider(
-                                                                  create: (context) =>
-                                                                      locator.get<
-                                                                          FavoriteBloc>(),
-                                                                ),
-                                                              ],
-                                                              child: PlayPage(
-                                                                playInList:
-                                                                    false,
-                                                                concatenatingAudioSource:
-                                                                    playList,
-                                                                index: index,
-                                                                songs: songs,
-                                                                nameList: null,
-                                                              ),
-                                                            )));
+                                                context.push(
+                                                    PlayPage.routePlayPage,
+                                                    extra:locator.get<InfoPage>());
+                                                // ignore: use_build_context_synchronously
+                                                locator.get<PlayNewSong>()
+                                                    .newSong(index, context,playList, false);
                                                 addRecentPlay(
                                                     snapshot.data![index]);
-                                                // BlocProvider.of<PlayNewSongBloc>(context).add(PlayNewSongEvent());
+
                                               },
                                             ),
                                           ),
@@ -635,4 +611,5 @@ class _ListMusicState extends State<ListMusic> {
       print('Error sharing file: $e');
     }
   }
+
 }

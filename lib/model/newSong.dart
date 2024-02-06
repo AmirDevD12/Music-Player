@@ -6,7 +6,7 @@ import 'package:just_audio/just_audio.dart';
 
 
 class PlayNewSong {
-  void newSong(int index, BuildContext context,ConcatenatingAudioSource? concatenatingAudioSources,bool queue) {
+  Future<void> newSong(int index, BuildContext context,ConcatenatingAudioSource? concatenatingAudioSources,bool queue) async {
 
     Duration duration = const Duration();
     Duration position = const Duration();
@@ -21,7 +21,7 @@ class PlayNewSong {
 
           );
         }
-        locator.get<AudioPlayer>().play();
+       locator.get<AudioPlayer>().play();
         locator.get<AudioPlayer>().durationStream.listen((event) {
           if (event!=null) {
             duration = event;

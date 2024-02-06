@@ -24,7 +24,7 @@ class CardWidget extends StatelessWidget {
             width: 25,
             height: 25,
           ),
-          Text(text,style: locator.get<MyThemes>().title(context),)
+          Text(text,style: locator.get<MyThemes>().subTitle(context),)
         ],
       ),
     );

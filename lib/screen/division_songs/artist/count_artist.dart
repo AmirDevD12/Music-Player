@@ -5,6 +5,7 @@ import 'package:first_project/model/song_count_artist.dart';
 import 'package:first_project/screen/division_songs/artist/showSong_artist.dart';
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 class Artist extends StatefulWidget {
@@ -34,7 +35,12 @@ class _ListMusicState extends State<Artist> {
                   Container(
                     color: themeProvider.isDarkMode?const Color(0xff1a1b1d):locator.get<MyThemes>().cContainerSong,
                     child: ListTile(
-
+                          trailing:     Image.asset(
+              "assets/icon/artist.png",
+              color: themeProvider.isDarkMode?Colors.white:Colors.black,
+              width: 25,
+              height: 25,
+              ),
                       title: Text(
                         style: locator.get<MyThemes>().title(context),
                         maxLines: 1,
@@ -45,11 +51,7 @@ class _ListMusicState extends State<Artist> {
                           'Song Count: $songCount',
                           style: locator.get<MyThemes>().subTitle(context)),
                       onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    ShowListArtist(nameArtist: artist)));
+                        context.push(ShowListArtist.routeShowListArtist,extra:artist);
                       },
                     ),
                   ),

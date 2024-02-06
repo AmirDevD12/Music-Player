@@ -9,13 +9,18 @@ import 'package:first_project/core/theme/theme_mode.dart';
 import 'package:first_project/locator.dart';
 import 'package:first_project/model/dataBase/delete_song_dataBase/delete_song.dart';
 import 'package:first_project/model/delete_model.dart';
+import 'package:first_project/model/info_for_route.dart';
+import 'package:first_project/model/newSong.dart';
 import 'package:first_project/model/songs_model.dart';
 import 'package:first_project/screen/bottum_navigation/list/list_song_bottomnav.dart';
+import 'package:first_project/screen/playSong_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:provider/provider.dart';
 
@@ -62,7 +67,7 @@ class _SearchPage extends State<SearchPage> {
           valueListenable: Hive.box<DeleteSong>("Delete Song").listenable(),
           builder: (BuildContext context, value, Widget? child) {
             return FutureBuilder<List<SongModel>>(
-              future: SongList().getSongs(SongSortType.TITLE),
+              future: locator.get<SongList>().getSongs(SongSortType.DATE_ADDED),
               builder: (BuildContext context,
                   AsyncSnapshot<List<SongModel>> snapshot) {
                 if (snapshot.hasData) {
@@ -135,27 +140,26 @@ class _SearchPage extends State<SearchPage> {
                                                             ),
                                                             GestureDetector(
                                                                 onTap: () {
-// addPlayList(snapshot.data![index]);
-                                                                  Navigator.pushReplacement(
-                                                                      context,
-                                                                      MaterialPageRoute(
-                                                                          builder: (context) => MultiBlocProvider(
-                                                                                  providers: [
-                                                                                    BlocProvider(create: (context) => locator.get<PlaySongBloc>()),
-                                                                                    BlocProvider(
-                                                                                      create: (context) => locator.get<PlayNewSongBloc>(),
-                                                                                    ),
-                                                                                    BlocProvider(
-                                                                                      create: (context) => locator.get<FavoriteBloc>(),
-                                                                                    ),
-                                                                                    BlocProvider(
-                                                                                      create: (context) => locator.get<PlayListBloc>(),
-                                                                                    ),
-                                                                                  ],
-                                                                                  child: ListSongBottomNavigation(
-                                                                                    show: true,
-                                                                                    songModel: snapshot.data![index],
-                                                                                  ))));
+                                                                  final  playlist = ConcatenatingAudioSource(
+                                                                    useLazyPreparation: true,
+                                                                    shuffleOrder: DefaultShuffleOrder(),
+                                                                    children: [
+                                                                        AudioSource.uri(Uri.parse(snapshot.data![index].data), tag: MediaItem(
+                                                                          id: '${snapshot.data![index].id}',
+                                                                          album: snapshot.data![index].album??"",
+                                                                          title: snapshot.data![index].title,
+                                                                          artUri: Uri.parse(snapshot.data![index].id.toString()),
+                                                                        )),
+                                                                    ],
+                                                                  );
+                                                                  List<SongModel> songs=snapshot.data!;
+                                                                  locator.get<InfoPage>().setInfo(playlist, index, songs, null);
+                                                                  // ignore: use_build_context_synchronously
+                                                                  context.push(
+                                                                      PlayPage.routePlayPage,
+                                                                      extra: locator.get<InfoPage>());
+                                                                  locator.get<PlayNewSong>()
+                                                                      .newSong(index, context,playlist, false);
                                                                 },
                                                                 child:
                                                                     const CardWidget(
@@ -269,7 +273,29 @@ class _SearchPage extends State<SearchPage> {
                                       Radius.circular(5)),
                                   id: snapshot.data![index].id,
                                   type: ArtworkType.AUDIO),
-                              onTap: () {},
+                              onTap: () {
+                                final  playlist = ConcatenatingAudioSource(
+                                  useLazyPreparation: true,
+                                  shuffleOrder: DefaultShuffleOrder(),
+                                  children: [
+                                      AudioSource.uri(Uri.parse(snapshot.data![index].data), tag: MediaItem(
+                                        id: '${snapshot.data![index].id}',
+                                        album: snapshot.data![index].album??"",
+                                        title: snapshot.data![index].title,
+                                        artUri: Uri.parse(snapshot.data![index].id.toString()),
+                                      )),
+                                  ],
+                                );
+                                List<SongModel>songs=[];
+                                songs.add(snapshot.data![index]);
+                                locator.get<InfoPage>().setInfo(playlist, 0, songs, null);
+                                // ignore: use_build_context_synchronously
+                                context.push(
+                                    PlayPage.routePlayPage,
+                                    extra: locator.get<InfoPage>());
+                                locator.get<PlayNewSong>()
+                                    .newSong(0, context,playlist, false);
+                              },
                             );
                           }
                           return const SizedBox();
